@@ -1,30 +1,46 @@
+
+import { useState } from 'react';
+
 import Pickbot from '../components/Pickbot.jsx'
 import './Onboard.css'
 
 export default function Onboard() {
+  const [progIdx, setProgIdx] = useState(0);
+  
+  function handleContinue() {
+    setProgIdx(progIdx + 1);
+  }
+  
+  const pickBotDialogue = [
+    "Hi! I'm PickBot, your musical companion!",
+    "I'm always here to jam with you! Let's get rocking and make some beautiful music together!",
+    "NO SHAME IN STARTING FROM SCRATCH - I GOT YOU!",
+    "GREAT CHOICE! NOW LET'S PICK YOUR GUITAR!",
+  ]
+  
+  let continueBtnText = ""
+  if (progIdx == 0) {
+    continueBtnText = "Let's Start!"
+  } else if (progIdx == 1) {
+    continueBtnText = "Awesome!"
+  } else {
+    continueBtnText = "Continue"
+  }
+  
   return (
     <>
     <main class="main-container">
       <div class="registration-card">
         <div class="character-section">
           <Pickbot />
+          <Dialogue text={pickBotDialogue[progIdx]} />
             
-          <div class="dialogue-bubble">
-            Hi! I'm PickBot, your musical companion!
-          </div>
         </div>
   
-        {/* <div class="progress-indicator">
-          <div class="progress-dot active"></div>
-          <div class="progress-dot"></div>
-          <div class="progress-dot"></div>
-          <div class="progress-dot"></div>
-        </div>*/}
-  
-          <Progress pos={0} />
+          <Progress pos={progIdx} />
           
         <div class="continue-section">
-          <a href="reg2.html" class="continue-btn" id="continue-btn">Let's Start!</a>
+              <ContinueBtn text={continueBtnText} onContinue={handleContinue} />
         </div>
       </div>
     </main>
@@ -32,15 +48,27 @@ export default function Onboard() {
   )
 }
 
+function ContinueBtn({ text, enabled, onContinue }) {
+  return (
+    <button class="continue-btn" id="continue-btn" onClick={onContinue}>{text}</button>
+  )
+}
+
+function Dialogue({ text }) {
+  return (
+    <div class="dialogue-bubble">{text}</div>
+  )
+}
+
 function Progress({ pos }) {
   let dots = []
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 6; i++) {
     dots.push(
-      <div className={`progress-dot ${ i == pos ? 'active' : ''}`}></div> 
+      <div key={i} className={`progress-dot ${ i == pos ? 'active' : ''}`}></div> 
     )
   }
   
   return (
-     <div class="progress-indicator">{dots}</div>
+     <div className="progress-indicator">{dots}</div>
   )
 }
