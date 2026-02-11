@@ -1,5 +1,6 @@
 import logo from '../assets/logo.png'
 import AccountTypeButton from '../components/AccountTypeButton'
+import { Link } from 'react-router-dom'
 import './Start.css'
 
 export default function Start() {
@@ -13,8 +14,10 @@ export default function Start() {
         <div className="account-type-selection">
           <h3>Get Started</h3>
           <div className="account-types">
-            <AccountTypeButton action="create" icon="✨" title="Create Account"
-              description="New to TechTunes? Sign up and start your musical journey!" />
+            <Link to="/onboard">
+              <AccountTypeButton action="create" icon="✨" title="Create Account"
+                description="New to TechTunes? Sign up and start your musical journey!" />
+            </Link>
             <AccountTypeButton action="freemium" icon="🎵" title="Try for Free"
               description="Explore TechTunes without creating an account!" />
             <AccountTypeButton action="login" icon="🔑" title="Login to Account"

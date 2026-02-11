@@ -3,6 +3,7 @@ import Logo from './components/Logo'
 import './App.css'
 import Signup from './pages/Signup'
 import Start from './pages/Start'
+import Onboard from './pages/Onboard'
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
         <Route path="/" element={<LogoLink />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/start" element={<Start />} />
+        <Route path="/onboard" element={<Onboard />} />
       </Routes>
     </BrowserRouter>
   )

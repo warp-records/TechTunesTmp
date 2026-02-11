@@ -1,0 +1,177 @@
+:root {
+  --primary-purple: #d49efb;
+  --accent-yellow: #fceabb;
+  --dark-purple: #4c1a80;
+  --teal: #003d4d;
+  --dark-bg: #0a0f0f;
+  --white: #ffffff;
+  --light-gray: #cccccc;
+  --shadow-dark: rgba(0, 0, 0, 0.4);
+  --shadow-light: rgba(0, 0, 0, 0.2);
+  --border-radius: 20px;
+  --border-width: 2.5px;
+  --transition: all 0.3s ease;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.main-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8rem 2rem 2rem;
+}
+
+.registration-card {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(20px);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 30px;
+  padding: 3rem;
+  width: 100%;
+  max-width: 800px;
+  box-shadow: 0 20px 60px var(--shadow-dark);
+  animation: scaleIn 0.8s ease 0.2s both;
+  text-align: center;
+}
+
+.dialogue-bubble {
+  background: linear-gradient(135deg, var(--primary-purple), #e8c5ff);
+  color: #2d1b3d;
+  border: var(--border-width) solid #2d1b3d;
+  border-radius: 25px;
+  padding: 2rem 2.5rem;
+  font-size: 1.8rem;
+  font-weight: 600;
+  position: relative;
+  margin: 0 auto 3rem;
+  max-width: 500px;
+  box-shadow: 0 8px 25px var(--shadow-light);
+  animation: slideInUp 0.8s ease 0.6s both;
+  line-height: 1.4;
+}
+
+.dialogue-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border: 15px solid transparent;
+  border-top: 15px solid var(--primary-purple);
+  transform: translateX(-50%);
+  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.2));
+}
+
+.progress-indicator {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 3rem;
+  animation: slideInUp 0.8s ease 0.8s both;
+}
+
+.progress-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transition: var(--transition);
+}
+
+.progress-dot.active {
+  background: linear-gradient(45deg, var(--primary-purple), var(--accent-yellow));
+  transform: scale(1.3);
+}
+
+.continue-section {
+  animation: slideInUp 0.8s ease 1.0s both;
+}
+
+.continue-btn {
+  background: linear-gradient(135deg, var(--primary-purple), var(--dark-purple));
+  color: var(--white);
+  border: var(--border-width) solid var(--white);
+  border-radius: var(--border-radius);
+  padding: 1.2rem 3rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: inherit;
+  box-shadow: 0 8px 25px var(--shadow-light);
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.continue-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.continue-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px var(--shadow-dark);
+}
+
+.continue-btn:hover::before {
+  left: 100%;
+}
+
+@media (max-width: 768px) {
+  .main-container {
+    padding: 7rem 1rem 1rem;
+  }
+
+  .registration-card {
+    padding: 2rem 1.5rem;
+  }
+
+  .dialogue-bubble {
+    font-size: 1.4rem;
+    padding: 1.5rem 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .continue-btn {
+    font-size: 1.2rem;
+    padding: 1rem 2.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .dialogue-bubble {
+    font-size: 1.2rem;
+    padding: 1.2rem 1.5rem;
+  }
+}
