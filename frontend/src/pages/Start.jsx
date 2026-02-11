@@ -1,6 +1,5 @@
-
-
-import logo from './assets/logo.png'
+import logo from '../assets/logo.png'
+import AccountTypeButton from '../components/AccountTypeButton'
 import './Start.css'
 
 export default function Start() {
@@ -24,17 +23,5 @@ export default function Start() {
         </div>
       </div>
     </div>
-  )
-}
-
-function AccountTypeButton({ action, icon, title, description }) {
-  return (
-    <button className="account-type-btn" data-action={action}>
-      <div className="account-icon">{icon}</div>
-      <div className="account-info">
-        <h4>{title}</h4>
-        <p>{description}</p>
-      </div>
-    </button>
   )
 }

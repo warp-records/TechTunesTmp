@@ -1,8 +1,8 @@
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
-import logo from './assets/logo.png'
+import Logo from './components/Logo'
 import './App.css'
-import Signup from './Signup'
-import Start from './Start'
+import Signup from './pages/Signup'
+import Start from './pages/Start'
 
 function App() {
   return (
@@ -18,20 +18,10 @@ function App() {
 
 export default App
 
-function Logo() {
-  return (
-    <>
-      <img src={logo} className="logo-container" alt="Tech Tunes Logo" />
-    </>
-  )
-}
-
 function LogoLink() {
   return (
-    <>
-      <Link to="/signup">
-        <Logo />
-      </Link>
-    </>
+    <Link to="/signup">
+      <Logo />
+    </Link>
   )
 }
