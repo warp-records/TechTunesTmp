@@ -14,18 +14,33 @@ export default function Onboard() {
           </div>
         </div>
   
-        <div class="progress-indicator">
+        {/* <div class="progress-indicator">
           <div class="progress-dot active"></div>
           <div class="progress-dot"></div>
           <div class="progress-dot"></div>
           <div class="progress-dot"></div>
-        </div>
+        </div>*/}
   
+          <Progress pos={0} />
+          
         <div class="continue-section">
           <a href="reg2.html" class="continue-btn" id="continue-btn">Let's Start!</a>
         </div>
       </div>
     </main>
     </>
+  )
+}
+
+function Progress({ pos }) {
+  let dots = []
+  for (let i = 0; i < 4; i++) {
+    dots.push(
+      <div className={`progress-dot ${ i == pos ? 'active' : ''}`}></div> 
+    )
+  }
+  
+  return (
+     <div class="progress-indicator">{dots}</div>
   )
 }
