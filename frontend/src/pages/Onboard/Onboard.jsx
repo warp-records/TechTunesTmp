@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Pickbot from '../../components/Pickbot.jsx'
 import './Onboard.css'
 import './Select.css'
+import './Guitar.css'
 
 export default function Onboard() {
   const [progIdx, setProgIdx] = useState(0);
@@ -35,6 +36,13 @@ export default function Onboard() {
     "I'm Advanced but want to keep growing (Expert)",
   ]
   
+  const guitarTypes = [
+    "Acoustic",
+    "Electric",
+    "Both",
+    "Not Sure Yet",
+  ]
+  
   return (
     <>
       <main class="main-container">
@@ -43,7 +51,9 @@ export default function Onboard() {
             <Pickbot />
             <Dialogue text={pickBotDialogue[progIdx]} />
           </div>
-          <Select options={skillOptions} multiSelect={false} />
+          
+          {/* <ListSelect options={skillOptions} multiSelect={false} />*/}
+          <RectSelect options={guitarTypes} emojis={['🎸', '⚡', '🎵', '🤔']} />
           <ProgressDots pos={progIdx} />
           <div class="continue-section">
             
@@ -80,7 +90,7 @@ function ProgressDots({ pos }) {
   )
 }
 
-function Select({ options, multiSelect }) {
+function ListSelect({ options, multiSelect }) {
   const items = options.map(option =>
     <div class="skill-option">
       <div className="skill-label">
@@ -95,4 +105,21 @@ function Select({ options, multiSelect }) {
         {items}
       </div>
   )
+}
+
+function RectSelect({ options, emojis }) {
+  const items = options.map((option, idx) =>
+    <div class="guitar-option">
+      <input type="radio" name="guitarType" value="acoustic" id="acoustic"/>
+      <label for="acoustic" class="guitar-label">
+        <div class="guitar-icon">{emojis[idx]}</div>
+        <div>{option}</div>
+      </label>
+    </div>
+  );
+  
+  return (
+    <div class="guitar-options">
+      {items}
+    </div>);
 }
