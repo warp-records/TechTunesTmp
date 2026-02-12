@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Pickbot from '../../components/Pickbot.jsx'
 import './Onboard.css'
 import './Select.css'
-import './Guitar.css'
+import './RectSelect.css'
 
 export default function Onboard() {
   const [progIdx, setProgIdx] = useState(0);
