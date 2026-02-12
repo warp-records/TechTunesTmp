@@ -3,7 +3,7 @@ import Logo from './components/Logo'
 import './App.css'
 import Signup from './pages/Signup'
 import Start from './pages/Start'
-import Onboard from './pages/Onboard'
+import Onboard from './pages/Onboard/Onboard'
 
 function App() {
   return (
