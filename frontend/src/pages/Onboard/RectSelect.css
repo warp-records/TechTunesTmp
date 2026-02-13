@@ -11,10 +11,10 @@
   animation: slideInUp 0.6s ease both;
 }
 
-.guitar-option:nth-child(1) { animation-delay: 1.0s; }
+/*.guitar-option:nth-child(1) { animation-delay: 1.0s; }
 .guitar-option:nth-child(2) { animation-delay: 1.1s; }
 .guitar-option:nth-child(3) { animation-delay: 1.2s; }
-.guitar-option:nth-child(4) { animation-delay: 1.3s; }
+.guitar-option:nth-child(4) { animation-delay: 1.3s; }*/
 
 .guitar-option input[type="radio"] {
   position: absolute;
@@ -84,4 +84,10 @@
 
 .guitar-option input[type="radio"]:checked + .guitar-label::before {
   opacity: 0;
+}
+
+.genre-desc {
+  font-size: 1rem;
+  opacity: 0.8;
+  font-weight: 400;
 }

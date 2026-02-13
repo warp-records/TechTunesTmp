@@ -45,6 +45,54 @@ export default function Onboard() {
     "Not Sure Yet",
   ]
   
+  const guitarEmojis = [
+    '🎸',
+    '⚡',
+    '🎵',
+    '🤔',
+  ]
+  
+  const genres = [
+    "Rock",
+    "Pop",
+    "R & B / Soul",
+    "Indie / Folk",
+    "Country",
+    "Hip - Hop",
+    "Jazz",
+    "Classical",
+    "Electronic",
+    "Metal",
+    "Reggae",
+    "Blues",
+    "Latin",
+    "A Mix of Everything",
+  ]
+
+  const genreDescs = [
+    "Classic & Modern",
+    "Chart Toppers",
+    "Smooth Grooves",
+    "Alternative Vibes",
+    "Stories & Heart",
+    "Beats & Rhymes",
+    "Smooth & Improvised",
+    "Orchestral & Elegant",
+    "Synth & Dance",
+    "Heavy & Loud",
+    "Roots & Vibes",
+    "Soulful & Raw",
+    "Rhythmic & Festive",
+    "All Genres",
+  ]
+
+  const genreEmojis = [
+    "🎸", "🎤", "🎵", "🎶", "🤠",
+    "🎧", "🎷", "🎻", "🎛️", "🤘",
+    "🇯🇲", "🎹", "🥁", "🌟",
+  ]
+  
+  
   let useCases = [
     "A personalized library of songs that match my skill level",
     "Gamified lessons & challenges",
@@ -72,8 +120,9 @@ export default function Onboard() {
           </div>
           
           {progIdx === 2 && <ListSelect options={skillOptions} multiSelect={false} />}
-          {progIdx === 3 && <RectSelect options={guitarTypes} emojis={['🎸', '⚡', '🎵', '🤔']} />}
+          {progIdx === 3 && <RectSelect options={guitarTypes} emojis={guitarEmojis} descriptions={[]} />}
           {progIdx === 4 && <ListSelect options={useCases} multiSelect={true} />}
+          {progIdx === 5 && <RectSelect options={genres} emojis={genreEmojis} descriptions={genreDescs} />}
           
           <ProgressDots pos={progIdx} />
           <div class="continue-section">
@@ -111,7 +160,7 @@ function ProgressDots({ pos }) {
   )
 }
 
-function QuestionTitle({ text}) {
+function QuestionTitle({ text }) {
   return (<h2 class="question-title">{text}</h2>)
 }
 
@@ -132,13 +181,14 @@ function ListSelect({ options, multiSelect }) {
   )
 }
 
-function RectSelect({ options, emojis }) {
+function RectSelect({ options, emojis, descriptions }) {
   const items = options.map((option, idx) =>
     <div class="guitar-option">
       <input type="radio" name="guitarType" value="acoustic" id="acoustic"/>
       <label for="acoustic" class="guitar-label">
         <div class="guitar-icon">{emojis[idx]}</div>
         <div>{option}</div>
+        <div class="genre-desc">{descriptions[idx]}</div>
       </label>
     </div>
   );
