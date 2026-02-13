@@ -18,6 +18,8 @@ export default function Onboard() {
     "I'm always here to jam with you! Let's get rocking and make some beautiful music together!",
     "NO SHAME IN STARTING FROM SCRATCH - I GOT YOU!",
     "GREAT CHOICE! NOW LET'S PICK YOUR GUITAR!",
+    "GREAT CHOICE! ANYTHING ELSE?",
+    "ONE LAST THING - WHAT MUSIC DO YOU LOVE MOST?",
   ]
   
   let continueBtnText = ""
@@ -43,6 +45,22 @@ export default function Onboard() {
     "Not Sure Yet",
   ]
   
+  let useCases = [
+    "A personalized library of songs that match my skill level",
+    "Gamified lessons & challenges",
+    "Progress tracking - So I can see how far I've come",
+    "Just here for sheet music, I don't need lessons",
+  ]
+  
+  const questTitle = [
+    "",
+    "",
+    "What's your currnet guitar skill level?",
+    "What type of guitar are you learning on?",
+    "What are you planning to use Tech Tunes for the most?",
+    "Choose as many genres as you like:",
+  ];
+  
   return (
     <>
       <main class="main-container">
@@ -50,10 +68,13 @@ export default function Onboard() {
           <div class="character-section">
             <Pickbot />
             <Dialogue text={pickBotDialogue[progIdx]} />
+            <QuestionTitle text={questTitle[progIdx]} />
           </div>
           
-          {/* <ListSelect options={skillOptions} multiSelect={false} />*/}
-          <RectSelect options={guitarTypes} emojis={['🎸', '⚡', '🎵', '🤔']} />
+          {progIdx === 2 && <ListSelect options={skillOptions} multiSelect={false} />}
+          {progIdx === 3 && <RectSelect options={guitarTypes} emojis={['🎸', '⚡', '🎵', '🤔']} />}
+          {progIdx === 4 && <ListSelect options={useCases} multiSelect={true} />}
+          
           <ProgressDots pos={progIdx} />
           <div class="continue-section">
             
@@ -88,6 +109,10 @@ function ProgressDots({ pos }) {
   return (
     <div className="progress-indicator">{dots}</div>
   )
+}
+
+function QuestionTitle({ text}) {
+  return (<h2 class="question-title">{text}</h2>)
 }
 
 function ListSelect({ options, multiSelect }) {
