@@ -4,6 +4,7 @@ import './App.css'
 import Signup from './pages/Signup'
 import Start from './pages/Start'
 import Onboard from './pages/Onboard/Onboard'
+import Pricing from './pages/Pricing'
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/start" element={<Start />} />
         <Route path="/onboard" element={<Onboard />} />
+        <Route path="/pricing" element={<Pricing />} />
       </Routes>
     </BrowserRouter>
   )

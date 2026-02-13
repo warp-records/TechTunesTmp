@@ -27,6 +27,8 @@ export default function Onboard() {
     continueBtnText = "Let's Start!"
   } else if (progIdx == 1) {
     continueBtnText = "Awesome!"
+  } else if (progIdx == 5) {
+    continueBtnText = "Finish"
   } else {
     continueBtnText = "Continue"
   }
