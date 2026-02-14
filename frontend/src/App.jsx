@@ -5,6 +5,7 @@ import Signup from './pages/Signup'
 import Start from './pages/Start'
 import Onboard from './pages/Onboard/Onboard'
 import Pricing from './pages/Pricing'
+import Username from './pages/Username'
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/start" element={<Start />} />
         <Route path="/onboard" element={<Onboard />} />
         <Route path="/pricing" element={<Pricing />} />
+        <Route path="/username" element={<Username />} />
       </Routes>
     </BrowserRouter>
   )
