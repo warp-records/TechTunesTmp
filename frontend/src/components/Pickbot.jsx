@@ -7,3 +7,9 @@ export default function Pickbot() {
     <img className="pickbot-image" src={pickbot}></img>
   )
 }
+
+export function Dialogue({ text }) {
+  return (
+    <div class="dialogue-bubble">{text}</div>
+  )
+}

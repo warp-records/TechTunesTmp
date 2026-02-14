@@ -30,7 +30,14 @@ body {
   box-shadow: 0 20px 60px var(--shadow-dark);
   animation: scaleIn 0.8s ease 0.2s both;
   display: flex;
+  flex-direction: column;
   gap: 2rem;
+}
+
+.plans-container {
+  display: flex;
+  gap: 2rem;
+  width: 100%;
 }
 
 .header-section {

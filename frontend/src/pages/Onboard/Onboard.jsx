@@ -1,16 +1,23 @@
 
 import { useState } from 'react';
 
-import Pickbot from '../../components/Pickbot.jsx'
+import Pickbot, { Dialogue } from '../../components/Pickbot.jsx'
 import './Onboard.css'
 import './Select.css'
 import './RectSelect.css'
+
+const numPages = 6;
 
 export default function Onboard() {
   const [progIdx, setProgIdx] = useState(0);
   
   function handleContinue() {
-    setProgIdx(progIdx + 1);
+    
+    if (progIdx == numPages-1) {
+      window.open('/pricing', '_self');
+    } else {
+      setProgIdx(progIdx + 1);
+    }
   }
   
   const pickBotDialogue = [
@@ -143,15 +150,10 @@ function ContinueBtn({ text, enabled, onContinue }) {
   )
 }
 
-function Dialogue({ text }) {
-  return (
-    <div class="dialogue-bubble">{text}</div>
-  )
-}
 
 function ProgressDots({ pos }) {
   let dots = []
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < numPages; i++) {
     dots.push(
       <div key={i} className={`progress-dot ${ i == pos ? 'active' : ''}`}></div> 
     )
@@ -167,19 +169,19 @@ function QuestionTitle({ text }) {
 }
 
 function ListSelect({ options, multiSelect }) {
-  const items = options.map(option =>
+  const items = options.map((option, idx) =>
     <div class="skill-option">
       <div className="skill-label">
-        <input type={`${ multiSelect ? 'checkbox' : 'radio' }`} name="skillLevel" value="never" id="never" />
+        <input type={`${ multiSelect ? 'checkbox' : 'radio' }`} name="skillLevel" key={idx} />
         <label>{option}</label>
       </div>
     </div>
   );
   
   return (
-      <div class="skill-options">
-        {items}
-      </div>
+    <div class="skill-options">
+      {items}
+    </div>
   )
 }
 

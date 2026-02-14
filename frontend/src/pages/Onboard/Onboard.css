@@ -56,34 +56,6 @@
   text-align: center;
 }
 
-.dialogue-bubble {
-  background: linear-gradient(135deg, var(--primary-purple), #e8c5ff);
-  color: #2d1b3d;
-  border: var(--border-width) solid #2d1b3d;
-  border-radius: 25px;
-  padding: 2rem 2.5rem;
-  font-size: 1.8rem;
-  font-weight: 600;
-  position: relative;
-  margin: 0 auto 3rem;
-  max-width: 500px;
-  box-shadow: 0 8px 25px var(--shadow-light);
-  animation: slideInUp 0.8s ease 0.6s both;
-  line-height: 1.4;
-}
-
-.dialogue-bubble::after {
-  content: '';
-  position: absolute;
-  bottom: -15px;
-  left: 50%;
-  width: 0;
-  height: 0;
-  border: 15px solid transparent;
-  border-top: 15px solid var(--primary-purple);
-  transform: translateX(-50%);
-  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.2));
-}
 
 .progress-indicator {
   display: flex;
