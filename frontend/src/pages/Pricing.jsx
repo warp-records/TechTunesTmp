@@ -10,22 +10,27 @@ export default function Pricing() {
         
         <div class="header-section">
           <Pickbot />
-          <Dialogue text={"here's the catch you were waiting for"} />
+          <Dialogue text={"Free gets you started.\nPremium gives you everything - lessons, songs, and impact! "} />
         </div>
         
         <div className="plans-container">
           <PlanCard
             title={"Freemium"}
-            desc={"Perfect if you're poor or broke"}
+            desc={"Perfect to get started on your musical journey"}
             startText={"Start Free"}
-            features={["Will be hounded with pop ups insisting you pay up", "Intrusive ads"]}
+            features={["First five lessons for free", "Limited song library", "Progress tracking", "Free with ads"]}
           />
           
           <PlanCard
             title={"Premium"}
-            desc={"Great if you love forking over your hard earned money to us"}
+            desc={"Everything you need plus exclusive features and content"}
             startText={"Go Premium"}
-            features={["Can flex to your friends that you're rich"]}
+            features={
+              ["All premium lessons", "Complete song library",
+                "Personal chatbot", "Select your school; See your real time impact!",
+              "Add & Battle your friends!"
+              ]
+            }
             isPremium={true}
           />
         </div>
