@@ -1,16 +1,22 @@
 
+import { useState } from 'react'
+
 import './Create.css'
-import eyesBtn from '../../assets/DressingRoom/Accessory/Eyes Button.png'
-import mouthBtn from '../../assets/DressingRoom/Accessory/Mouth Button.png'
-import accessoryBtn from '../../assets/DressingRoom/Accessory/AccessoryButton.png'
-import bodyBtn from '../../assets/DressingRoom/Accessory/Body Button.png'
+import eyesBtn from '../../assets/DressingRoom/Dressing/Eyes Button.png'
+import mouthBtn from '../../assets/DressingRoom/Dressing/Mouth Button.png'
+import accessoryBtn from '../../assets/DressingRoom/Dressing/AccessoryButton.png'
+import bodyBtn from '../../assets/DressingRoom/Dressing/Body Button.png'
 
 const avatars = import.meta.glob('../../assets/Avatar/*.png', { eager: true, import: 'default' })
-const eyes = import.meta.glob('../../assets/DressingRoom/Accessory/Eyes/*.png', { eager: true, import: 'default' })
-const hands = import.meta.glob('../../assets/DressingRoom/Accessory/Hands/*.png', { eager: true, import: 'default' })
-const mouths = import.meta.glob('../../assets/DressingRoom/Accessory/Mouth/*.png', { eager: true, import: 'default' })
+const eyes = import.meta.glob('../../assets/DressingRoom/Dressing/Eyes/*.png', { eager: true, import: 'default' })
+const hands = import.meta.glob('../../assets/DressingRoom/Dressing/Hands/*.png', { eager: true, import: 'default' })
+const accessories = import.meta.glob('../../assets/DressingRoom/Dressing/Mouth/*.png', { eager: true, import: 'default' })
 
 export default function Create() {
+  const [avatar, setAvatar] = useState(0)
+  const [eyes, setEyes] = useState(0)
+  const [mouth, setMouth] = useState(0)
+  
   return (
     <>
     
@@ -24,10 +30,10 @@ export default function Create() {
       <div class="mirror"></div>
       <div class="light"></div>
       <div class="stand"></div>
-      <div class="arrow-back"></div>
-      <div class="arrow-forward"></div>
+      <div class="arrow-back" onClick={() => { setAvatar((avatar - 1 + Object.keys(avatars).length) % Object.keys(avatars).length) }}></div>
+      <div class="arrow-forward" onClick={() => { setAvatar((avatar + 1) % Object.keys(avatars).length) }}></div>
       <div class="avatar-container">
-        <Avatar />
+        <Avatar variant={avatar}/>
         <div class="avatar-slider">
         </div>
       </div>
@@ -44,7 +50,7 @@ export function Avatar({ variant, color, eyes, mouth, accessory }) {
   
   return (
   <div class="avatar-image">
-      <div class="body-image" style={{backgroundImage: `url(${avatarList[0]})`}}></div>
+      <div class="body-image" style={{backgroundImage: `url(${avatarList[variant]})`}}></div>
       <div class="body-color-layer"></div>
       <div class="avatar-eyes"></div>
       <div class="avatar-mouth"></div>
