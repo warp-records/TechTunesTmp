@@ -4,7 +4,11 @@ import eyesBtn from '../../assets/DressingRoom/Accessory/Eyes Button.png'
 import mouthBtn from '../../assets/DressingRoom/Accessory/Mouth Button.png'
 import accessoryBtn from '../../assets/DressingRoom/Accessory/AccessoryButton.png'
 import bodyBtn from '../../assets/DressingRoom/Accessory/Body Button.png'
-import avatar1 from '../../assets/Avatar/Avatar1.png'
+
+const avatars = import.meta.glob('../../assets/Avatar/*.png', { eager: true, import: 'default' })
+const eyes = import.meta.glob('../../assets/DressingRoom/Accessory/Eyes/*.png', { eager: true, import: 'default' })
+const hands = import.meta.glob('../../assets/DressingRoom/Accessory/Hands/*.png', { eager: true, import: 'default' })
+const mouths = import.meta.glob('../../assets/DressingRoom/Accessory/Mouth/*.png', { eager: true, import: 'default' })
 
 export default function Create() {
   return (
@@ -23,7 +27,7 @@ export default function Create() {
       <div class="arrow-back"></div>
       <div class="arrow-forward"></div>
       <div class="avatar-container">
-        <Avatar/>
+        <Avatar />
         <div class="avatar-slider">
         </div>
       </div>
@@ -36,9 +40,11 @@ export default function Create() {
 
 // variant is 0, 1, 2, 3, or 4
 export function Avatar({ variant, color, eyes, mouth, accessory }) {
+  const avatarList = Object.values(avatars)
+  
   return (
   <div class="avatar-image">
-      <div class="body-image" style={{backgroundImage: `url(${avatar1})`}}></div>
+      <div class="body-image" style={{backgroundImage: `url(${avatarList[0]})`}}></div>
       <div class="body-color-layer"></div>
       <div class="avatar-eyes"></div>
       <div class="avatar-mouth"></div>
