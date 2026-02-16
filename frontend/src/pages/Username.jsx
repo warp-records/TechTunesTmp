@@ -1,3 +1,4 @@
+import { Route, Link } from 'react-router-dom'
 import './Username.css'
 
 const defaultSuggestions = ['MusicMaster', 'GuitarHero', 'PickBotFan', 'RockStar', 'MelodyMaker']
@@ -25,9 +26,11 @@ export default function Username({ suggestions = defaultSuggestions }) {
           ))}
         </div>
 
-        <button className="username-continue-btn">
-          Continue to PickBot Creation
-        </button>
+        <Link to="/create">
+          <button className="username-continue-btn">
+            Continue to PickBot Creation
+          </button>
+        </Link>
       </div>
     </main>
   )
