@@ -1,0 +1,652 @@
+
+.floor {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 200px;
+    background-image: url('../../assets/DressingRoom/Floor.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    z-index: 10;
+}
+
+.choice-frame {
+    position: fixed;
+    right: 10%;
+    top: 50%;
+    transform: translateY(-90%);
+    width: 500px;
+    height: 300px;
+    background-image: url('../../assets/DressingRoom/Accessory/Choice Frame.png');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 20;
+    overflow: hidden;
+}
+
+.mirror {
+    position: fixed;
+    left: 5%;
+    top: 50%;
+    transform: translateY(-60%);
+    width: 600px;
+    height: 400px;
+    background-image: url('../../assets/DressingRoom/Accessory/Mirror.png');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 20;
+}
+
+.light {
+    position: fixed;
+    left: 5%;
+    top: 50%;
+    transform: translateY(-120%);
+    width: 600px;
+    height: 300px;
+    background-image: url('../../assets/DressingRoom/Light.png');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 25;
+}
+
+.stand {
+    position: fixed;
+    left: 22%;
+    top: 50%;
+    transform: translateY(15%);
+    width: 200px;
+    height: 250px;
+    background-image: url('../../assets/DressingRoom/Stand.png');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 30;
+}
+
+.arrow-back {
+    position: fixed;
+    left: 15%;
+    top: 50%;
+    transform: translateY(calc(15% + 30px));
+    width: 40px;
+    height: 40px;
+    background-image: url('../../assets/DressingRoom/BackArrow.png');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 35;
+    cursor: pointer;
+}
+
+.arrow-forward {
+    position: fixed;
+    left: 35%;
+    top: 50%;
+    transform: translateY(calc(15% + 30px));
+    width: 40px;
+    height: 40px;
+    background-image: url('../../assets/DressingRoom/ForwardArrow.png');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 35;
+    cursor: pointer;
+}
+
+.avatar-container {
+    position: fixed;
+    left: calc(22% - 43px);
+    top: 50%;
+    transform: translateY(calc(15% - 240px));
+    width: 200px;
+    height: 300px;
+    z-index: 35;
+    overflow: hidden;
+}
+
+.avatar-slider {
+    display: flex;
+    transition: transform 0.3s ease;
+    height: 100%;
+}
+
+.avatar-image {
+    width: auto;
+    height: auto;
+    background-size: contain;
+    background-position: bottom center;
+    background-repeat: no-repeat;
+    flex-shrink: 0;
+    background-color: transparent;
+    min-width: 200px;
+    min-height: 300px;
+    position: relative;
+    isolation: isolate;
+}
+
+.body-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../../assets/Avatar/Avatar1.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: bottom center;
+    z-index: 10; /* base body */
+    pointer-events: none;
+}
+
+.body-color-layer{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    background: var(--body-color, transparent); /* wheel sets this */
+    z-index:11;                                  /* above base body, below eyes/mouth */
+    pointer-events:none;
+
+    /* show color ONLY inside the avatar shape */
+    -webkit-mask-size: contain;  mask-size: contain;
+    -webkit-mask-repeat: no-repeat;  mask-repeat: no-repeat;
+    -webkit-mask-position: bottom center;  mask-position: bottom center;
+}
+
+/* Action buttons styling */
+.action-buttons {
+    position: fixed;
+    z-index: 1000;
+}
+
+.chip {
+    background: rgba(212,158,251,.12);
+    border: 1px solid rgba(212,158,251,.35);
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-size: .9rem;
+    cursor: pointer;
+    transition: transform .15s ease, background .15s ease;
+    text-decoration: none;
+    color: inherit;
+    display: inline-block;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+}
+
+.chip:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+.help-button {
+    position: fixed;
+    top: 70px;
+    left: 20px;
+    z-index: 1000;
+    background: transparent;
+    border: 2px solid rgba(147, 51, 234, 0.7);
+    padding: 6px 10px;
+    border-radius: 50%;
+    font-size: 0.8rem;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(147, 51, 234, 0.4);
+    transition: all 0.3s ease;
+    color: #9333ea;
+}
+
+.help-button:hover {
+    background: rgba(147, 51, 234, 0.2);
+    border-color: rgba(147, 51, 234, 0.9);
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(147, 51, 234, 0.6);
+    color: #ffffff;
+}
+
+.help-button::after {
+    content: "Tutorial";
+    position: absolute;
+    bottom: -35px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-family: 'Comic Sans MS', cursive;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 1001;
+}
+
+.help-button:hover::after {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Simple Tutorial System */
+.tutorial-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 9999;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.tutorial-content {
+    background: linear-gradient(135deg, rgba(147, 51, 234, 0.9), rgba(168, 85, 247, 0.9), rgba(196, 181, 253, 0.8));
+    color: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(147, 51, 234, 0.4);
+    font-family: 'Comic Sans MS', cursive;
+    font-size: 22px;
+    font-weight: bold;
+    text-align: center;
+    max-width: 450px;
+    border: 4px solid rgba(147, 51, 234, 0.7);
+    animation: bounce 2s ease-in-out infinite;
+}
+
+.tutorial-title {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #ffffff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.tutorial-text {
+    font-size: 20px;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.tutorial-spin {
+    font-size: 22px;
+    color: #ffffff;
+    font-weight: bold;
+    margin-top: 15px;
+    margin-bottom: 25px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+.tutorial-skip {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.tutorial-skip:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+}
+
+.save-button {
+    position: fixed;
+    top: 50%;
+    right: calc(17.5% - -100px);
+    transform: translateY(calc(-20% + 100px));
+    background: linear-gradient(135deg, #8A2BE2, #9370DB);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 20px;
+    cursor: pointer;
+    font-family: 'Arial', sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(138, 43, 226, 0.3);
+    transition: all 0.3s ease;
+    z-index: 50;
+}
+
+.reset-button {
+    position: fixed;
+    top: 50%;
+    right: calc(17.5% - -95px);
+    transform: translateY(calc(-20% + 150px));
+    background: linear-gradient(135deg, #9370DB, #8A2BE2);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 20px;
+    cursor: pointer;
+    font-family: 'Arial', sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(138, 43, 226, 0.3);
+    transition: all 0.3s ease;
+    z-index: 50;
+}
+
+.save-button:hover {
+    transform: translateY(calc(-20% + 100px)) scale(1.05);
+    box-shadow: 0 6px 12px rgba(138, 43, 226, 0.5);
+}
+
+.reset-button:hover {
+    transform: translateY(calc(-20% + 150px)) scale(1.05);
+    box-shadow: 0 6px 12px rgba(138, 43, 226, 0.5);
+}
+
+.save-button:active {
+    transform: translateY(calc(-20% + 100px)) scale(0.95);
+    box-shadow: 0 0 20px rgba(138, 43, 226, 0.8), 0 0 40px rgba(138, 43, 226, 0.6);
+}
+
+.reset-button:active {
+    transform: translateY(calc(-20% + 150px)) scale(0.95);
+    box-shadow: 0 0 20px rgba(138, 43, 226, 0.8), 0 0 40px rgba(138, 43, 226, 0.6);
+}
+
+.avatar-eyes {
+    position: absolute;
+    top: 50%;
+    left: 57%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 40px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 13;
+}
+
+.avatar-mouth {
+    position: absolute;
+    top: 70%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 30px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 13;
+}
+
+.avatar-accessory {
+    position: absolute;
+    top: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 60px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 14;
+}
+
+.button-row {
+    position: fixed;
+    right: 17.5%;
+    top: 50%;
+    transform: translateY(-20%);
+    display: flex;
+    gap: 20px;
+    z-index: 40;
+}
+
+.button-icon {
+    width: 60px;
+    height: 60px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.button-icon:hover {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.8));
+}
+
+.eye-options {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    z-index: 45;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.eye-options.show {
+    opacity: 1;
+}
+
+.eye-row {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+}
+
+.eye-option {
+    width: 100px;
+    height: 100px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.eye-option:hover {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.8));
+}
+
+.mouth-options {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none; /* Initially hidden */
+    flex-direction: column; /* For 2x3 grid */
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    z-index: 45;
+    opacity: 0; /* For smooth animation */
+    transition: opacity 0.3s ease-in-out; /* For smooth animation */
+}
+.mouth-options.show { /* For smooth animation */
+    opacity: 1;
+}
+.mouth-row { /* For 2x3 grid */
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+}
+.mouth-option {
+    width: 90px;
+    height: 90px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+.mouth-option:hover { /* Added glow effect */
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.8));
+}
+
+.accessory-options {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none; /* Initially hidden */
+    flex-direction: column; /* For 5-in-a-row layout */
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+    z-index: 45;
+    opacity: 0; /* For smooth animation */
+    transition: opacity 0.3s ease-in-out; /* For smooth animation */
+}
+.accessory-options.show { /* For smooth animation */
+    opacity: 1;
+}
+.accessory-row { /* For 5-in-a-row layout */
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+}
+.accessory-option {
+    width: 50px;
+    height: 50px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+.accessory-option:hover { /* Added glow effect */
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.8));
+}
+
+.choice-frame.wider {
+    width: 500px; /* Same as default */
+    height: 300px; /* Same as default */
+}
+
+.body-options {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    flex-direction: row;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    z-index: 45;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.body-options.show {
+    opacity: 1;
+}
+
+.color-wheel-container {
+    position: relative;
+    width: 150px;
+    height: 150px;
+}
+
+.color-wheel {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 3px solid #000;
+    position: relative;
+    background: conic-gradient(
+    #FFFF00 0deg 45deg,
+    #008B8B 45deg 90deg,
+    #8A2BE2 90deg 135deg,
+    #FFFFFF 135deg 180deg,
+    #FF0000 180deg 225deg,
+    #32CD32 225deg 270deg,
+    #0000FF 270deg 315deg,
+    #FF8C00 315deg 360deg
+    );
+    transition: transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.wheel-pointer {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 15px solid #FF8C00;
+    border-bottom: 2px solid #fff;
+    z-index: 10;
+    transition: all 0.5s ease;
+    filter: drop-shadow(0 0 10px rgba(255, 140, 0, 0.8));
+}
+
+.wheel-pointer.glow-orange { filter: drop-shadow(0 0 20px rgba(255, 140, 0, 1)) drop-shadow(0 0 30px rgba(255, 140, 0, 0.8)); }
+.wheel-pointer.glow-purple { filter: drop-shadow(0 0 20px rgba(138, 43, 226, 1)) drop-shadow(0 0 30px rgba(138, 43, 226, 0.8)); }
+.wheel-pointer.glow-white { filter: drop-shadow(0 0 20px rgba(255, 255, 255, 1)) drop-shadow(0 0 30px rgba(255, 255, 255, 0.8)); }
+.wheel-pointer.glow-red { filter: drop-shadow(0 0 20px rgba(255, 0, 0, 1)) drop-shadow(0 0 30px rgba(255, 0, 0, 0.8)); }
+.wheel-pointer.glow-green { filter: drop-shadow(0 0 20px rgba(50, 205, 50, 1)) drop-shadow(0 0 30px rgba(50, 205, 50, 0.8)); }
+.wheel-pointer.glow-blue { filter: drop-shadow(0 0 20px rgba(0, 0, 255, 1)) drop-shadow(0 0 30px rgba(0, 0, 255, 0.8)); }
+.wheel-pointer.glow-yellow { filter: drop-shadow(0 0 20px rgba(255, 255, 0, 1)) drop-shadow(0 0 30px rgba(255, 255, 0, 0.8)); }
+.wheel-pointer.glow-teal { filter: drop-shadow(0 0 20px rgba(0, 139, 139, 1)) drop-shadow(0 0 30px rgba(0, 139, 139, 0.8)); }
+
+.spin-button {
+    background: linear-gradient(135deg, #8A2BE2, #4169E1);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 15px 30px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(138, 43, 226, 0.3);
+}
+
+.spin-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(138, 43, 226, 0.5);
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.8));
+}
+
+.spin-button:active {
+    transform: scale(0.95);
+}

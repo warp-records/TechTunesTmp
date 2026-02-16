@@ -1,9 +1,9 @@
 
 body {
       margin: 0;
-      background: linear-gradient(45deg, #0a0f0f, #4c1a80, #003d4d);
+      /*background: linear-gradient(45deg, #0a0f0f, #4c1a80, #003d4d);*/
       background-size: 200% 200%;
-      animation: gradientShift 10s ease infinite;
+      /*animation: gradientShift 10s ease infinite;*/
       min-height: 100vh;
       position: relative;
     }
@@ -17,7 +17,7 @@ body {
       background-image: url('assets/brick_wall.png');
       background-size: cover;
       background-position: center;
-      opacity: 0.3;
+      /*opacity: 0.3;*/
       z-index: 0;
     }
 

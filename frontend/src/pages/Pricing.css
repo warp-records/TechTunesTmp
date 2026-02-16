@@ -3,7 +3,7 @@ body {
   margin: 0;
   background: linear-gradient(135deg, var(--dark-bg), var(--dark-purple), var(--teal));
   background-size: 400% 400%;
-  animation: gradientShift 12s ease infinite;
+  /*animation: gradientShift 12s ease infinite;*/
   font-family: 'Poppins', sans-serif;
   color: var(--white);
   min-height: 100vh;
