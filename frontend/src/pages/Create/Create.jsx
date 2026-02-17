@@ -1,5 +1,6 @@
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
+import Draggable, {DraggableCore} from 'react-draggable'
 
 import './Create.css'
 import eyesBtn from '../../assets/DressingRoom/Dressing/Eyes Button.png'
@@ -11,7 +12,7 @@ const avatars = import.meta.glob('../../assets/Avatar/*.png', { eager: true, imp
 const eyes = import.meta.glob('../../assets/DressingRoom/Dressing/Eyes/*.png', { eager: true, import: 'default' })
 const mouths = import.meta.glob('../../assets/DressingRoom/Dressing/Mouths/*.png', { eager: true, import: 'default' })
 // const hands = import.meta.glob('../../assets/DressingRoom/Dressing/Hands/*.png', { eager: true, import: 'default' })
-const accessories = import.meta.glob('../../assets/DressingRoom/Dressing/Mouth/*.png', { eager: true, import: 'default' })
+const accessories = import.meta.glob('../../assets/DressingRoom/Dressing/Accessories/*.png', { eager: true, import: 'default' })
 
 export default function Create() {
   const [avatar, setAvatar] = useState(0)
@@ -20,7 +21,7 @@ export default function Create() {
   
   return (
     <>
-      <ChoiceFrame category={"mouth"} />
+      <ChoiceFrame category={"accessory"} />
       <div class="mirror"></div>
       <div class="light"></div>
       <div class="stand"></div>
@@ -56,6 +57,11 @@ export function Avatar({ variant, color, eyes, mouth, accessory }) {
 // category is a string
 export function ChoiceFrame({ category }) {
   
+  const testRef = useRef(0)
+  
+  const [activeIndex, setActiveIndex] = useState(null)
+  const [positions, setPositions] = useState({})
+  
   const categoryImages = {
     "eye": Object.values(eyes),
     "mouth": Object.values(mouths),
@@ -85,13 +91,27 @@ export function ChoiceFrame({ category }) {
           <div className="button-icon" style={{backgroundImage: `url(${accessoryBtn})`}}></div>
           <div className="button-icon" style={{backgroundImage: `url(${bodyBtn})`}}></div>
       </div>
+      
       <div class="choice-frame">
         <div className={`${category}-options`}>
           {rows.map((rowElems, rowIdx) => (
           <div key={rowIdx} className={`${category}-row`}>
-              {rowElems.map((imgSrc, idx) => (
-                <div key={idx} className={`${category}-option`} style={{ backgroundImage: `url(${imgSrc})`}}></div>
-              ))}
+              {rowElems.map((imgSrc, idx) => {
+                const globalIdx = rowIdx * perRow + idx
+                return (
+                  <Draggable
+                    nodeRef={testRef}
+                    position={activeIndex === globalIdx ? undefined : { x: 0, y: 0 }}
+                    onStart={() => {
+                      setActiveIndex(globalIdx)
+                      setPositions({})
+                    }}
+                    onStop={(e, data) => setPositions({ [globalIdx]: { x: data.x, y: data.y } })}
+                  >
+                    <div ref={testRef} className={`${category}-option`} style={{ backgroundImage: `url(${imgSrc})`}}></div>
+                </Draggable>
+                )
+              })}
           </div>
           ))}
         </div>
