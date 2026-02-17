@@ -441,18 +441,12 @@
     left: 0;
     width: 100%;
     height: 100%;
-    display: none;
+    display: flex;
     flex-direction: column;
     gap: 10px;
     justify-content: center;
     align-items: center;
     z-index: 45;
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out;
-}
-
-.eye-options.show {
-    opacity: 1;
 }
 
 .eye-row {
@@ -483,17 +477,12 @@
     left: 0;
     width: 100%;
     height: 100%;
-    display: none; /* Initially hidden */
-    flex-direction: column; /* For 2x3 grid */
+    display: flex;
+    flex-direction: column;
     gap: 10px;
     justify-content: center;
     align-items: center;
     z-index: 45;
-    opacity: 0; /* For smooth animation */
-    transition: opacity 0.3s ease-in-out; /* For smooth animation */
-}
-.mouth-options.show { /* For smooth animation */
-    opacity: 1;
 }
 .mouth-row { /* For 2x3 grid */
     display: flex;
@@ -521,17 +510,12 @@
     left: 0;
     width: 100%;
     height: 100%;
-    display: none; /* Initially hidden */
-    flex-direction: column; /* For 5-in-a-row layout */
+    display: flex;
+    flex-direction: column;
     gap: 8px;
     justify-content: center;
     align-items: center;
     z-index: 45;
-    opacity: 0; /* For smooth animation */
-    transition: opacity 0.3s ease-in-out; /* For smooth animation */
-}
-.accessory-options.show { /* For smooth animation */
-    opacity: 1;
 }
 .accessory-row { /* For 5-in-a-row layout */
     display: flex;

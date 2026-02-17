@@ -20,7 +20,7 @@ export default function Create() {
   
   return (
     <>
-      <ChoiceFrame category={"eyes"} />
+      <ChoiceFrame category={"mouth"} />
       <div class="mirror"></div>
       <div class="light"></div>
       <div class="stand"></div>
@@ -57,13 +57,13 @@ export function Avatar({ variant, color, eyes, mouth, accessory }) {
 export function ChoiceFrame({ category }) {
   
   const categoryImages = {
-    "eyes": Object.values(eyes),
+    "eye": Object.values(eyes),
     "mouth": Object.values(mouths),
     "accessory": Object.values(accessories),
   }
   
   const itemsPerRow = {
-    "eyes": 2,
+    "eye": 2,
     "mouth": 3,
     "accessory": 5,
   }
@@ -79,22 +79,23 @@ export function ChoiceFrame({ category }) {
   
   return (
     <>
-      <div className={`${category}-options`}>
-        {rows.map((rowElems, rowIdx) => (
-        <div key={rowIdx} className={`${category}-row`}>
-            {rowElems.map((imgSrc, idx) => (
-              <div key={idx} className={`${category}-option`} style={{ backgroundImage: `url(${imgSrc})`}}></div>
-            ))}
-        </div>
-        ))}
-      </div>
       <div className="button-row">
           <div className="button-icon" style={{backgroundImage: `url(${eyesBtn})`}}></div>
           <div className="button-icon" style={{backgroundImage: `url(${mouthBtn})`}}></div>
           <div className="button-icon" style={{backgroundImage: `url(${accessoryBtn})`}}></div>
           <div className="button-icon" style={{backgroundImage: `url(${bodyBtn})`}}></div>
       </div>
-      <div class="choice-frame"></div>
+      <div class="choice-frame">
+        <div className={`${category}-options`}>
+          {rows.map((rowElems, rowIdx) => (
+          <div key={rowIdx} className={`${category}-row`}>
+              {rowElems.map((imgSrc, idx) => (
+                <div key={idx} className={`${category}-option`} style={{ backgroundImage: `url(${imgSrc})`}}></div>
+              ))}
+          </div>
+          ))}
+        </div>
+      </div>
     </>
   )
 }
