@@ -9,7 +9,8 @@ import bodyBtn from '../../assets/DressingRoom/Dressing/Body Button.png'
 
 const avatars = import.meta.glob('../../assets/Avatar/*.png', { eager: true, import: 'default' })
 const eyes = import.meta.glob('../../assets/DressingRoom/Dressing/Eyes/*.png', { eager: true, import: 'default' })
-const hands = import.meta.glob('../../assets/DressingRoom/Dressing/Hands/*.png', { eager: true, import: 'default' })
+const mouths = import.meta.glob('../../assets/DressingRoom/Dressing/Mouths/*.png', { eager: true, import: 'default' })
+// const hands = import.meta.glob('../../assets/DressingRoom/Dressing/Hands/*.png', { eager: true, import: 'default' })
 const accessories = import.meta.glob('../../assets/DressingRoom/Dressing/Mouth/*.png', { eager: true, import: 'default' })
 
 export default function Create() {
@@ -19,14 +20,7 @@ export default function Create() {
   
   return (
     <>
-    
-      <div className="button-row">
-          <div className="button-icon" style={{backgroundImage: `url(${eyesBtn})`}}></div>
-          <div className="button-icon" style={{backgroundImage: `url(${mouthBtn})`}}></div>
-          <div className="button-icon" style={{backgroundImage: `url(${accessoryBtn})`}}></div>
-          <div className="button-icon" style={{backgroundImage: `url(${bodyBtn})`}}></div>
-      </div>
-      <div class="choice-frame"></div>
+      <ChoiceFrame category={"eyes"} />
       <div class="mirror"></div>
       <div class="light"></div>
       <div class="stand"></div>
@@ -56,5 +50,51 @@ export function Avatar({ variant, color, eyes, mouth, accessory }) {
       <div class="avatar-mouth"></div>
       <div class="avatar-accessory"></div>
   </div>
+  )
+}
+
+// category is a string
+export function ChoiceFrame({ category }) {
+  
+  const categoryImages = {
+    "eyes": Object.values(eyes),
+    "mouth": Object.values(mouths),
+    "accessory": Object.values(accessories),
+  }
+  
+  const itemsPerRow = {
+    "eyes": 2,
+    "mouth": 3,
+    "accessory": 5,
+  }
+  
+  const images = categoryImages[category] || [];
+  const perRow = itemsPerRow[category] || 0
+  
+  let rows = []
+  for (let i = 0; i < images.length; i += perRow) {
+    rows.push(images.slice(i, i + perRow))
+  }
+  
+  
+  return (
+    <>
+      <div className={`${category}-options`}>
+        {rows.map((rowElems, rowIdx) => (
+        <div key={rowIdx} className={`${category}-row`}>
+            {rowElems.map((imgSrc, idx) => (
+              <div key={idx} className={`${category}-option`} style={{ backgroundImage: `url(${imgSrc})`}}></div>
+            ))}
+        </div>
+        ))}
+      </div>
+      <div className="button-row">
+          <div className="button-icon" style={{backgroundImage: `url(${eyesBtn})`}}></div>
+          <div className="button-icon" style={{backgroundImage: `url(${mouthBtn})`}}></div>
+          <div className="button-icon" style={{backgroundImage: `url(${accessoryBtn})`}}></div>
+          <div className="button-icon" style={{backgroundImage: `url(${bodyBtn})`}}></div>
+      </div>
+      <div class="choice-frame"></div>
+    </>
   )
 }
