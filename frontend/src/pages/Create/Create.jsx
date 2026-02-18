@@ -114,14 +114,49 @@ export function Item({ category, img, onClick }) {
   return (<div className={`${category}-option`} style={{ backgroundImage: `url(${img})` }} onClick={onClick}></div>)
 }
 
+const WHEEL_COLORS = [
+  { name: 'yellow', hex: '#FFFF00', glowClass: 'glow-yellow' },
+  { name: 'teal', hex: '#008B8B', glowClass: 'glow-teal' },
+  { name: 'purple', hex: '#8A2BE2', glowClass: 'glow-purple' },
+  { name: 'white', hex: '#FFFFFF', glowClass: 'glow-white' },
+  { name: 'red', hex: '#FF0000', glowClass: 'glow-red' },
+  { name: 'green', hex: '#32CD32', glowClass: 'glow-green' },
+  { name: 'blue', hex: '#0000FF', glowClass: 'glow-blue' },
+  { name: 'orange', hex: '#FF8C00', glowClass: 'glow-orange' },
+]
+
 export function Spinner() {
+  const [spinning, setSpinning] = useState(false)
+  const [rotation, setRotation] = useState(0)
+  const [selectedColor, setSelectedColor] = useState(null)
+
+  function spin() {
+    if (spinning) return
+    setSpinning(true)
+
+    const randomRotation = rotation + Math.random() * 360 + (Math.random() * 2.75 + 0.25) * 360
+
+    setRotation(randomRotation)
+
+    setTimeout(() => {
+      const finalAngle = randomRotation % 360
+      const pointerAngle = (360 - finalAngle) % 360
+      const selectedSegment = Math.floor(pointerAngle / 45)
+      setSelectedColor(WHEEL_COLORS[selectedSegment])
+      setSpinning(false)
+    }, 1000)
+  }
+
   return (
     <div className="body-options">
       <div className="color-wheel-container">
-        <div className="color-wheel"></div>
-        <div className="wheel-pointer"></div>
+        <div className="color-wheel" style={{ transform: `rotate(${rotation}deg)` }}></div>
+        <div className={`wheel-pointer ${selectedColor ? selectedColor.glowClass : ''}`}
+             style={selectedColor ? { borderTopColor: selectedColor.hex } : {}}></div>
       </div>
-      <div className="spin-button">SPIN</div>
+      <div className={`spin-button ${spinning ? 'disabled' : ''}`} onClick={spin}>
+        {spinning ? 'SPINNING...' : 'SPIN'}
+      </div>
     </div>
   )
 }
