@@ -8,26 +8,40 @@ import mouthBtn from '../../assets/DressingRoom/Dressing/Mouth Button.png'
 import accessoryBtn from '../../assets/DressingRoom/Dressing/AccessoryButton.png'
 import bodyBtn from '../../assets/DressingRoom/Dressing/Body Button.png'
 
-const avatars = import.meta.glob('../../assets/Avatar/*.png', { eager: true, import: 'default' })
+const avatars = import.meta.glob('../../assets/Avatar/Avatar[0-9].png', { eager: true, import: 'default' })
+const avatarMasks = import.meta.glob('../../assets/Avatar/Avatar[0-9]Mask.png', { eager: true, import: 'default' })
 const eyeGlobs = import.meta.glob('../../assets/DressingRoom/Dressing/Eyes/*.png', { eager: true, import: 'default' })
 const mouthGlobs = import.meta.glob('../../assets/DressingRoom/Dressing/Mouths/*.png', { eager: true, import: 'default' })
 const accessoryGlobs = import.meta.glob('../../assets/DressingRoom/Dressing/Accessories/*.png', { eager: true, import: 'default' })
 
+
+const WHEEL_COLORS = [
+  { name: 'yellow', hex: '#FFFF00', glowClass: 'glow-yellow' },
+  { name: 'teal', hex: '#008B8B', glowClass: 'glow-teal' },
+  { name: 'purple', hex: '#8A2BE2', glowClass: 'glow-purple' },
+  { name: 'white', hex: '#FFFFFF', glowClass: 'glow-white' },
+  { name: 'red', hex: '#FF0000', glowClass: 'glow-red' },
+  { name: 'green', hex: '#32CD32', glowClass: 'glow-green' },
+  { name: 'blue', hex: '#0000FF', glowClass: 'glow-blue' },
+  { name: 'orange', hex: '#FF8C00', glowClass: 'glow-orange' },
+]
+
 export default function Create() {
   const [category, setCategory] = useState("")
   const [avatar, setAvatar] = useState(0)
+  const [bodyColor, setBodyColor] = useState()
   const [activeItems, setActiveItems] = useState({})
   
   return (
     <>
-      <ChoiceFrame category={category} setCategory={setCategory} activeItems={activeItems} setActiveItems={setActiveItems} />
+      <ChoiceFrame category={category} setCategory={setCategory} activeItems={activeItems} setActiveItems={setActiveItems} setBodyColor={setBodyColor} />
       <div class="mirror"></div>
       <div class="light"></div>
       <div class="stand"></div>
       <div class="arrow-back" onClick={() => { setAvatar((avatar - 1 + Object.keys(avatars).length) % Object.keys(avatars).length) }}></div>
       <div class="arrow-forward" onClick={() => { setAvatar((avatar + 1) % Object.keys(avatars).length) }}></div>
       <div class="avatar-container">
-        <Avatar variant={avatar} activeItems={activeItems} />
+        <Avatar variant={avatar} activeItems={activeItems} color={bodyColor} />
         <div class="avatar-slider">
         </div>
       </div>
@@ -39,14 +53,19 @@ export default function Create() {
 
 
 // variant is 0, 1, 2, 3, or 4
-export function Avatar({ variant, activeItems = {} }) {
+export function Avatar({ variant, activeItems = {}, color }) {
   const avatarList = Object.values(avatars)
+  const maskList = Object.values(avatarMasks)
   const accessoryRef = useRef(null)
   
   return (
   <div class="avatar-image">
       <div class="body-image" style={{backgroundImage: `url(${avatarList[variant]})`}}></div>
-      <div class="body-color-layer"></div>
+      <div class="body-color-layer" style={{
+        '--body-color': color || 'transparent',
+        WebkitMaskImage: `url(${maskList[variant]})`,
+        maskImage: `url(${maskList[variant]})`,
+      }}></div>
       <div class="avatar-eyes" style={{backgroundImage: activeItems.eye ? `url(${activeItems.eye})` : ''}}></div>
       <div class="avatar-mouth" style={{backgroundImage: activeItems.mouth ? `url(${activeItems.mouth})` : ''}}></div>
       {activeItems.accessory && (
@@ -59,7 +78,7 @@ export function Avatar({ variant, activeItems = {} }) {
 }
 
 // category is a string
-export function ChoiceFrame({ category, setCategory, activeItems, setActiveItems }) {
+export function ChoiceFrame({ category, setCategory, activeItems, setActiveItems, setBodyColor }) {
   
   const categoryImages = {
     "eye": Object.values(eyeGlobs),
@@ -92,7 +111,7 @@ export function ChoiceFrame({ category, setCategory, activeItems, setActiveItems
       
       <div class="choice-frame">
         {category === "body" ? (
-          <Spinner />
+          <Spinner setBodyColor={setBodyColor} />
         ) : (
           <div className={`${category}-options`}>
             {rows.map((rowElems, rowIdx) => (
@@ -114,18 +133,8 @@ export function Item({ category, img, onClick }) {
   return (<div className={`${category}-option`} style={{ backgroundImage: `url(${img})` }} onClick={onClick}></div>)
 }
 
-const WHEEL_COLORS = [
-  { name: 'yellow', hex: '#FFFF00', glowClass: 'glow-yellow' },
-  { name: 'teal', hex: '#008B8B', glowClass: 'glow-teal' },
-  { name: 'purple', hex: '#8A2BE2', glowClass: 'glow-purple' },
-  { name: 'white', hex: '#FFFFFF', glowClass: 'glow-white' },
-  { name: 'red', hex: '#FF0000', glowClass: 'glow-red' },
-  { name: 'green', hex: '#32CD32', glowClass: 'glow-green' },
-  { name: 'blue', hex: '#0000FF', glowClass: 'glow-blue' },
-  { name: 'orange', hex: '#FF8C00', glowClass: 'glow-orange' },
-]
 
-export function Spinner() {
+export function Spinner({ setBodyColor }) {
   const [spinning, setSpinning] = useState(false)
   const [rotation, setRotation] = useState(0)
   const [selectedColor, setSelectedColor] = useState(null)
@@ -142,7 +151,9 @@ export function Spinner() {
       const finalAngle = randomRotation % 360
       const pointerAngle = (360 - finalAngle) % 360
       const selectedSegment = Math.floor(pointerAngle / 45)
-      setSelectedColor(WHEEL_COLORS[selectedSegment])
+      const color = WHEEL_COLORS[selectedSegment]
+      setSelectedColor(color)
+      setBodyColor(color.hex)
       setSpinning(false)
     }, 1000)
   }
