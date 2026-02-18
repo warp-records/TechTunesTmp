@@ -9,27 +9,25 @@ import accessoryBtn from '../../assets/DressingRoom/Dressing/AccessoryButton.png
 import bodyBtn from '../../assets/DressingRoom/Dressing/Body Button.png'
 
 const avatars = import.meta.glob('../../assets/Avatar/*.png', { eager: true, import: 'default' })
-const eyes = import.meta.glob('../../assets/DressingRoom/Dressing/Eyes/*.png', { eager: true, import: 'default' })
-const mouths = import.meta.glob('../../assets/DressingRoom/Dressing/Mouths/*.png', { eager: true, import: 'default' })
-// const hands = import.meta.glob('../../assets/DressingRoom/Dressing/Hands/*.png', { eager: true, import: 'default' })
-const accessories = import.meta.glob('../../assets/DressingRoom/Dressing/Accessories/*.png', { eager: true, import: 'default' })
+const eyeGlobs = import.meta.glob('../../assets/DressingRoom/Dressing/Eyes/*.png', { eager: true, import: 'default' })
+const mouthGlobs = import.meta.glob('../../assets/DressingRoom/Dressing/Mouths/*.png', { eager: true, import: 'default' })
+const accessoryGlobs = import.meta.glob('../../assets/DressingRoom/Dressing/Accessories/*.png', { eager: true, import: 'default' })
 
 export default function Create() {
   const [category, setCategory] = useState("")
   const [avatar, setAvatar] = useState(0)
-  const [eyes, setEyes] = useState(0)
-  const [mouth, setMouth] = useState(0)
+  const [activeItems, setActiveItems] = useState({})
   
   return (
     <>
-      <ChoiceFrame category={category} setCategory={setCategory} />
+      <ChoiceFrame category={category} setCategory={setCategory} activeItems={activeItems} setActiveItems={setActiveItems} />
       <div class="mirror"></div>
       <div class="light"></div>
       <div class="stand"></div>
       <div class="arrow-back" onClick={() => { setAvatar((avatar - 1 + Object.keys(avatars).length) % Object.keys(avatars).length) }}></div>
       <div class="arrow-forward" onClick={() => { setAvatar((avatar + 1) % Object.keys(avatars).length) }}></div>
       <div class="avatar-container">
-        <Avatar variant={avatar}/>
+        <Avatar variant={avatar} activeItems={activeItems} />
         <div class="avatar-slider">
         </div>
       </div>
@@ -41,32 +39,32 @@ export default function Create() {
 
 
 // variant is 0, 1, 2, 3, or 4
-export function Avatar({ variant, color, eyes, mouth, accessory }) {
+export function Avatar({ variant, activeItems = {} }) {
   const avatarList = Object.values(avatars)
+  const accessoryRef = useRef(null)
   
   return (
   <div class="avatar-image">
       <div class="body-image" style={{backgroundImage: `url(${avatarList[variant]})`}}></div>
       <div class="body-color-layer"></div>
-      <div class="avatar-eyes"></div>
-      <div class="avatar-mouth"></div>
-      <div class="avatar-accessory"></div>
+      <div class="avatar-eyes" style={{backgroundImage: activeItems.eye ? `url(${activeItems.eye})` : ''}}></div>
+      <div class="avatar-mouth" style={{backgroundImage: activeItems.mouth ? `url(${activeItems.mouth})` : ''}}></div>
+      {activeItems.accessory && (
+        <Draggable nodeRef={accessoryRef}>
+          <div ref={accessoryRef} className="avatar-accessory" style={{backgroundImage: `url(${activeItems.accessory})`}}></div>
+        </Draggable>
+      )}
   </div>
   )
 }
 
 // category is a string
-export function ChoiceFrame({ category, setCategory }) {
-  
-  const testRef = useRef(0)
-  
-  const [activeIndex, setActiveIndex] = useState(null)
-  const [positions, setPositions] = useState({})
+export function ChoiceFrame({ category, setCategory, activeItems, setActiveItems }) {
   
   const categoryImages = {
-    "eye": Object.values(eyes),
-    "mouth": Object.values(mouths),
-    "accessory": Object.values(accessories),
+    "eye": Object.values(eyeGlobs),
+    "mouth": Object.values(mouthGlobs),
+    "accessory": Object.values(accessoryGlobs),
   }
   
   const itemsPerRow = {
@@ -83,7 +81,6 @@ export function ChoiceFrame({ category, setCategory }) {
     rows.push(images.slice(i, i + perRow))
   }
   
-  
   return (
     <>
       <div className="button-row">
@@ -97,31 +94,18 @@ export function ChoiceFrame({ category, setCategory }) {
         <div className={`${category}-options`}>
           {rows.map((rowElems, rowIdx) => (
           <div key={rowIdx} className={`${category}-row`}>
-              {rowElems.map((imgSrc, idx) => {
-                const globalIdx = rowIdx * perRow + idx
-                return (
-                  category === "accessory" ?
-                    (
-                      <Draggable
-                        nodeRef={testRef}
-                        position={activeIndex === globalIdx ? undefined : { x: 0, y: 0 }}
-                        onStart={() => {
-                          setActiveIndex(globalIdx)
-                          setPositions({})
-                        }}
-                        onStop={(e, data) => setPositions({ [globalIdx]: { x: data.x, y: data.y } })}
-                      >
-                        <div ref={testRef} className={`${category}-option ${activeIndex == globalIdx ? 'active' : ''}`} style={{ backgroundImage: `url(${imgSrc})` }}></div>
-                      </Draggable>
-                    )
-                    :
-                    (<div ref={testRef} className={`${category}-option`} style={{ backgroundImage: `url(${imgSrc})` }}></div>)
-                )
-              })}
+              {rowElems.map((imgSrc, idx) => (
+                <Item key={idx} category={category} img={imgSrc}
+                  onClick={() => setActiveItems(prev => ({ ...prev, [category]: imgSrc }))} />
+              ))}
           </div>
           ))}
         </div>
       </div>
     </>
   )
+}
+
+export function Item({ category, img, onClick }) {
+  return (<div className={`${category}-option`} style={{ backgroundImage: `url(${img})` }} onClick={onClick}></div>)
 }
