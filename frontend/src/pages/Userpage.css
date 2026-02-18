@@ -1,0 +1,348 @@
+:root {
+    --bg: #0a0f0f;
+    --primary: #4c1a80;
+    --accent: #d49efb;
+    --teal: #003d4d;
+    --white: #fff;
+    --muted: #b9b9c0;
+    --card: #101418;
+    --radius: 16px;
+    --gap: 20px;
+    --dark-bg: #0a0f0f;
+    --dark-purple: #4c1a80;
+}
+
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+/* Header */
+header#header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: saturate(1.2) blur(6px);
+    background: rgba(10, 15, 15, 0.6);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 24px;
+}
+.nav-left,
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.logo {
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    background: linear-gradient(90deg, var(--accent), #8bd4ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+.chip {
+    background: rgba(212, 158, 251, 0.12);
+    border: 1px solid rgba(212, 158, 251, 0.35);
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition:
+        transform 0.15s ease,
+        background 0.15s ease;
+}
+.chip:hover {
+    transform: translateY(-1px);
+    background: rgba(212, 158, 251, 0.18);
+}
+
+/* Settings dropdown */
+details.settings {
+    position: relative;
+}
+details.settings > summary {
+    list-style: none;
+}
+details.settings > summary::-webkit-details-marker {
+    display: none;
+}
+.menu {
+    position: absolute;
+    right: 0;
+    top: 150%;
+    min-width: 220px;
+    background: var(--card);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    padding: 8px;
+    display: grid;
+    gap: 6px;
+}
+.menu a {
+    padding: 10px 12px;
+    border-radius: 10px;
+    display: block;
+}
+.menu a:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+/* Sections */
+section {
+    margin-top: 28px;
+}
+.card {
+    background: var(--card);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+.section-title {
+    margin: 0 6px 12px;
+    padding: 0 4px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #eaeaf0;
+    text-align: center;
+}
+
+/* Avatar/Hero */
+#avatar .hero {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 16px;
+    padding: 18px;
+    align-items: center;
+}
+.avatar-img {
+    width: 120px;
+    height: 120px;
+    border-radius: 20px;
+    background: linear-gradient(
+        145deg,
+        rgba(76, 26, 128, 0.6),
+        rgba(0, 61, 77, 0.6)
+    );
+    display: grid;
+    place-items: center;
+    font-size: 2.2rem;
+    user-select: none;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+}
+.tiny {
+    font-size: 0.9rem;
+    color: var(--muted);
+}
+
+/* Lesson Island */
+#lessons .grid {
+    display: grid;
+    gap: var(--gap);
+    grid-template-columns: 1fr;
+    padding: 8px;
+}
+@media (min-width: 900px) {
+    #lessons .grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+.lesson-card {
+    padding: 16px;
+}
+.progress {
+    width: 100%;
+    height: 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+    margin: 10px 0 6px;
+}
+.progress > span {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #8bd4ff);
+    width: 0%;
+}
+
+/* Carousels */
+.row {
+    position: relative;
+}
+.row-track {
+    display: flex;
+    gap: 14px;
+    overflow: auto;
+    scroll-snap-type: x mandatory;
+    padding: 6px 8px 14px;
+    justify-content: center;
+}
+.row-track::-webkit-scrollbar {
+    height: 10px;
+}
+.row-track::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+}
+.tile {
+    min-width: 180px;
+    max-width: 180px;
+    aspect-ratio: 16/10;
+    scroll-snap-align: start;
+    background: linear-gradient(
+        145deg,
+        rgba(76, 26, 128, 0.35),
+        rgba(0, 61, 77, 0.35)
+    );
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease;
+}
+.tile:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
+}
+.meta {
+    font-size: 0.9rem;
+    color: #eaeaf0;
+}
+.sub {
+    font-size: 0.8rem;
+    color: var(--muted);
+}
+.stars {
+    font-size: 0.9rem;
+    margin-top: 4px;
+    letter-spacing: 1px;
+}
+.arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 64px;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    display: grid;
+    place-items: center;
+    font-size: 1.2rem;
+    cursor: pointer;
+    user-select: none;
+    backdrop-filter: blur(4px);
+}
+.arrow:hover {
+    background: rgba(0, 0, 0, 0.6);
+}
+.arrow.left {
+    left: -6px;
+}
+.arrow.right {
+    right: -6px;
+}
+
+/* Friends */
+#friends .friends-wrap {
+    display: flex;
+    gap: 14px;
+    overflow: auto;
+    padding: 8px;
+    justify-content: center;
+}
+.friend {
+    min-width: 110px;
+    padding: 12px;
+    border-radius: 14px;
+    background: var(--card);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    text-align: center;
+}
+.pfp {
+    width: 56px;
+    height: 56px;
+    border-radius: 999px;
+    margin: 0 auto 8px;
+    background: linear-gradient(
+        145deg,
+        rgba(76, 26, 128, 0.5),
+        rgba(0, 61, 77, 0.5)
+    );
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    overflow: hidden;
+}
+.friend .pfp img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: transparent;
+    display: block;
+}
+.status {
+    font-size: 0.75rem;
+    margin-top: 4px;
+    color: var(--muted);
+}
+.online {
+    color: #72ffb4;
+}
+.offline {
+    color: #ff9ea9;
+}
+
+/* Leaderboard */
+#leaderboard .grid {
+    display: grid;
+    gap: var(--gap);
+    grid-template-columns: 1fr;
+    padding: 8px;
+}
+@media (min-width: 800px) {
+    #leaderboard .grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+.lb {
+    padding: 16px;
+}
+
+.spacer {
+    height: 24px;
+}
+
+/* Lesson Island card gradient */
+.lesson-card.card {
+    background: linear-gradient(
+        145deg,
+        rgba(76, 26, 128, 0.7),
+        rgba(0, 61, 77, 0.7)
+    );
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.lesson-card .chip {
+    background: #9e46e685;
+    color: #fffefe;
+    font-weight: 600;
+}
+
+.lesson-card .chip:hover {
+    background: #f0f0f0;
+    transform: translateY(-1px);
+}

@@ -124,7 +124,7 @@
     z-index: 1000;
 }
 
-.chip {
+.create-home-chip {
     background: rgba(212,158,251,.12);
     border: 1px solid rgba(212,158,251,.35);
     padding: 8px 12px;
@@ -141,7 +141,7 @@
     z-index: 1000;
 }
 
-.chip:hover {
+.create-home-chip:hover {
     background-color: rgba(255, 255, 255, 0.2);
     transform: scale(1.1);
 }
