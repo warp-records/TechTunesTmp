@@ -87,20 +87,24 @@ export function ChoiceFrame({ category, setCategory, activeItems, setActiveItems
           <div className="button-icon" onClick={() => { setCategory("eye") }} style={{backgroundImage: `url(${eyesBtn})`}}></div>
           <div className="button-icon" onClick={() => { setCategory("mouth") }} style={{backgroundImage: `url(${mouthBtn})`}}></div>
           <div className="button-icon" onClick={() => { setCategory("accessory") }} style={{backgroundImage: `url(${accessoryBtn})`}}></div>
-          <div className="button-icon" style={{backgroundImage: `url(${bodyBtn})`}}></div>
+          <div className="button-icon" onClick={() => { setCategory("body") }} style={{backgroundImage: `url(${bodyBtn})`}}></div>
       </div>
       
       <div class="choice-frame">
-        <div className={`${category}-options`}>
-          {rows.map((rowElems, rowIdx) => (
-          <div key={rowIdx} className={`${category}-row`}>
-              {rowElems.map((imgSrc, idx) => (
-                <Item key={idx} category={category} img={imgSrc}
-                  onClick={() => setActiveItems(prev => ({ ...prev, [category]: imgSrc }))} />
-              ))}
+        {category === "body" ? (
+          <Spinner />
+        ) : (
+          <div className={`${category}-options`}>
+            {rows.map((rowElems, rowIdx) => (
+            <div key={rowIdx} className={`${category}-row`}>
+                {rowElems.map((imgSrc, idx) => (
+                  <Item key={idx} category={category} img={imgSrc}
+                    onClick={() => setActiveItems(prev => ({ ...prev, [category]: imgSrc }))} />
+                ))}
+            </div>
+            ))}
           </div>
-          ))}
-        </div>
+        )}
       </div>
     </>
   )
@@ -108,4 +112,16 @@ export function ChoiceFrame({ category, setCategory, activeItems, setActiveItems
 
 export function Item({ category, img, onClick }) {
   return (<div className={`${category}-option`} style={{ backgroundImage: `url(${img})` }} onClick={onClick}></div>)
+}
+
+export function Spinner() {
+  return (
+    <div className="body-options">
+      <div className="color-wheel-container">
+        <div className="color-wheel"></div>
+        <div className="wheel-pointer"></div>
+      </div>
+      <div className="spin-button">SPIN</div>
+    </div>
+  )
 }
