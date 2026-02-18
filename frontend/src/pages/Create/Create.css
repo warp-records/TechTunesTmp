@@ -401,7 +401,7 @@
     position: absolute;
     top: 5%;
     left: 50%;
-    transform: translateX(-50%);
+    /*transform: translateX(-50%);*/
     width: 80px;
     height: 60px;
     background-size: contain;
@@ -409,6 +409,8 @@
     background-repeat: no-repeat;
     z-index: 14;
 }
+
+
 
 .button-row {
     position: fixed;
@@ -534,6 +536,12 @@
     cursor: pointer;
     transition: transform 0.2s ease;
 }
+
+.active {
+    height: 90px;
+    width: 90px;
+}
+
 .accessory-option:hover { /* Added glow effect */
     transform: scale(1.1);
     filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.8));

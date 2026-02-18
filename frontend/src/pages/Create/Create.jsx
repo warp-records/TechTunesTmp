@@ -15,13 +15,14 @@ const mouths = import.meta.glob('../../assets/DressingRoom/Dressing/Mouths/*.png
 const accessories = import.meta.glob('../../assets/DressingRoom/Dressing/Accessories/*.png', { eager: true, import: 'default' })
 
 export default function Create() {
+  const [category, setCategory] = useState("")
   const [avatar, setAvatar] = useState(0)
   const [eyes, setEyes] = useState(0)
   const [mouth, setMouth] = useState(0)
   
   return (
     <>
-      <ChoiceFrame category={"accessory"} />
+      <ChoiceFrame category={category} setCategory={setCategory} />
       <div class="mirror"></div>
       <div class="light"></div>
       <div class="stand"></div>
@@ -55,7 +56,7 @@ export function Avatar({ variant, color, eyes, mouth, accessory }) {
 }
 
 // category is a string
-export function ChoiceFrame({ category }) {
+export function ChoiceFrame({ category, setCategory }) {
   
   const testRef = useRef(0)
   
@@ -86,9 +87,9 @@ export function ChoiceFrame({ category }) {
   return (
     <>
       <div className="button-row">
-          <div className="button-icon" style={{backgroundImage: `url(${eyesBtn})`}}></div>
-          <div className="button-icon" style={{backgroundImage: `url(${mouthBtn})`}}></div>
-          <div className="button-icon" style={{backgroundImage: `url(${accessoryBtn})`}}></div>
+          <div className="button-icon" onClick={() => { setCategory("eye") }} style={{backgroundImage: `url(${eyesBtn})`}}></div>
+          <div className="button-icon" onClick={() => { setCategory("mouth") }} style={{backgroundImage: `url(${mouthBtn})`}}></div>
+          <div className="button-icon" onClick={() => { setCategory("accessory") }} style={{backgroundImage: `url(${accessoryBtn})`}}></div>
           <div className="button-icon" style={{backgroundImage: `url(${bodyBtn})`}}></div>
       </div>
       
@@ -99,17 +100,22 @@ export function ChoiceFrame({ category }) {
               {rowElems.map((imgSrc, idx) => {
                 const globalIdx = rowIdx * perRow + idx
                 return (
-                  <Draggable
-                    nodeRef={testRef}
-                    position={activeIndex === globalIdx ? undefined : { x: 0, y: 0 }}
-                    onStart={() => {
-                      setActiveIndex(globalIdx)
-                      setPositions({})
-                    }}
-                    onStop={(e, data) => setPositions({ [globalIdx]: { x: data.x, y: data.y } })}
-                  >
-                    <div ref={testRef} className={`${category}-option`} style={{ backgroundImage: `url(${imgSrc})`}}></div>
-                </Draggable>
+                  category === "accessory" ?
+                    (
+                      <Draggable
+                        nodeRef={testRef}
+                        position={activeIndex === globalIdx ? undefined : { x: 0, y: 0 }}
+                        onStart={() => {
+                          setActiveIndex(globalIdx)
+                          setPositions({})
+                        }}
+                        onStop={(e, data) => setPositions({ [globalIdx]: { x: data.x, y: data.y } })}
+                      >
+                        <div ref={testRef} className={`${category}-option ${activeIndex == globalIdx ? 'active' : ''}`} style={{ backgroundImage: `url(${imgSrc})` }}></div>
+                      </Draggable>
+                    )
+                    :
+                    (<div ref={testRef} className={`${category}-option`} style={{ backgroundImage: `url(${imgSrc})` }}></div>)
                 )
               })}
           </div>
