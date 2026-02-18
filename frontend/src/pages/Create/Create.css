@@ -118,46 +118,6 @@
     height: 100%;
 }
 
-.avatar-image {
-    width: auto;
-    height: auto;
-    background-size: contain;
-    background-position: bottom center;
-    background-repeat: no-repeat;
-    flex-shrink: 0;
-    background-color: transparent;
-    min-width: 200px;
-    min-height: 300px;
-    position: relative;
-    isolation: isolate;
-}
-
-.body-image {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url('../../assets/Avatar/Avatar1.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: bottom center;
-    z-index: 10; /* base body */
-    pointer-events: none;
-}
-
-.body-color-layer{
-    position:absolute; inset:0;
-    width:100%; height:100%;
-    background: var(--body-color, transparent); /* wheel sets this */
-    z-index:11;                                  /* above base body, below eyes/mouth */
-    pointer-events:none;
-
-    /* show color ONLY inside the avatar shape */
-    -webkit-mask-size: contain;  mask-size: contain;
-    -webkit-mask-repeat: no-repeat;  mask-repeat: no-repeat;
-    -webkit-mask-position: bottom center;  mask-position: bottom center;
-}
-
 /* Action buttons styling */
 .action-buttons {
     position: fixed;
@@ -370,47 +330,6 @@
     transform: translateY(calc(-20% + 150px)) scale(0.95);
     box-shadow: 0 0 20px rgba(138, 43, 226, 0.8), 0 0 40px rgba(138, 43, 226, 0.6);
 }
-
-.avatar-eyes {
-    position: absolute;
-    top: 50%;
-    left: 57%;
-    transform: translateX(-50%);
-    width: 80px;
-    height: 40px;
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-    z-index: 13;
-}
-
-.avatar-mouth {
-    position: absolute;
-    top: 70%;
-    left: 50%;
-    transform: translateX(-25%);
-    width: 60px;
-    height: 30px;
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-    z-index: 13;
-}
-
-.avatar-accessory {
-    position: absolute;
-    top: 5%;
-    left: 50%;
-    /*transform: translateX(-50%);*/
-    width: 90px;
-    height: 90px;
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-    z-index: 14;
-}
-
-
 
 .button-row {
     position: fixed;

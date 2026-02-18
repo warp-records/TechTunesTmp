@@ -7,6 +7,7 @@ import Onboard from './pages/Onboard/Onboard'
 import Pricing from './pages/Pricing'
 import Create from './pages/Create/Create'
 import Username from './pages/Username'
+import Userpage from './pages/Userpage'
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/username" element={<Username />} />
         <Route path="/create" element={<Create />} />
+        <Route path="/userpage" element={<Userpage />} />
       </Routes>
     </BrowserRouter>
   )

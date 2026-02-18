@@ -1,15 +1,13 @@
 
-import { useState, useRef } from 'react'
-import Draggable, {DraggableCore} from 'react-draggable'
+import { Route, Link } from 'react-router-dom'
+import { useState } from 'react'
 
 import './Create.css'
+import Avatar, { avatarList } from '../../components/Avatar'
 import eyesBtn from '../../assets/DressingRoom/Dressing/Eyes Button.png'
 import mouthBtn from '../../assets/DressingRoom/Dressing/Mouth Button.png'
 import accessoryBtn from '../../assets/DressingRoom/Dressing/AccessoryButton.png'
 import bodyBtn from '../../assets/DressingRoom/Dressing/Body Button.png'
-
-const avatars = import.meta.glob('../../assets/Avatar/Avatar[0-9].png', { eager: true, import: 'default' })
-const avatarMasks = import.meta.glob('../../assets/Avatar/Avatar[0-9]Mask.png', { eager: true, import: 'default' })
 const eyeGlobs = import.meta.glob('../../assets/DressingRoom/Dressing/Eyes/*.png', { eager: true, import: 'default' })
 const mouthGlobs = import.meta.glob('../../assets/DressingRoom/Dressing/Mouths/*.png', { eager: true, import: 'default' })
 const accessoryGlobs = import.meta.glob('../../assets/DressingRoom/Dressing/Accessories/*.png', { eager: true, import: 'default' })
@@ -38,8 +36,14 @@ export default function Create() {
       <div class="mirror"></div>
       <div class="light"></div>
       <div class="stand"></div>
-      <div class="arrow-back" onClick={() => { setAvatar((avatar - 1 + Object.keys(avatars).length) % Object.keys(avatars).length) }}></div>
-      <div class="arrow-forward" onClick={() => { setAvatar((avatar + 1) % Object.keys(avatars).length) }}></div>
+      <div class="action-buttons">
+        <Link to="/userpage">
+          <button class="save-button">Save</button>
+        </Link>
+        <button class="reset-button">Reset</button>
+      </div>
+      <div class="arrow-back" onClick={() => { setAvatar((avatar - 1 + avatarList.length) % avatarList.length) }}></div>
+      <div class="arrow-forward" onClick={() => { setAvatar((avatar + 1) % avatarList.length) }}></div>
       <div class="avatar-container">
         <Avatar variant={avatar} activeItems={activeItems} color={bodyColor} />
         <div class="avatar-slider">
@@ -51,55 +55,6 @@ export default function Create() {
   )
 }
 
-
-const EYE_POSITIONS = [
-  { top: '50%', left: '57%', width: '90px', height: '45px' },
-  { top: '50%', left: '57%', width: '80px', height: '40px' },
-  { top: '45%', left: '52%', width: '90px', height: '45px' },
-  { top: '55%', left: '50%', width: '80px', height: '40px' },
-  { top: '55%', left: '52%', width: '80px', height: '40px' },
-]
-
-const MOUTH_POSITIONS = [
-  { top: '70%', left: 'calc(50%)', width: '60px', height: '30px' },
-  { top: '70%', left: 'calc(50%)', width: '50px', height: '25px' },
-  { top: '65%', left: 'calc(50% - 10px)', width: '60px', height: '30px' },
-  { top: '75%', left: 'calc(50% - 10px)', width: '45px', height: '22px' },
-  { top: '75%', left: 'calc(50% - 10px)', width: '45px', height: '22px' },
-]
-
-// variant is 0, 1, 2, 3, or 4
-export function Avatar({ variant, activeItems = {}, color }) {
-  const avatarList = Object.values(avatars)
-  const maskList = Object.values(avatarMasks)
-  const accessoryRef = useRef(null)
-  const eyePos = EYE_POSITIONS[variant] || EYE_POSITIONS[0]
-  const mouthPos = MOUTH_POSITIONS[variant] || MOUTH_POSITIONS[0]
-  
-  return (
-  <div class="avatar-image">
-      <div class="body-image" style={{backgroundImage: `url(${avatarList[variant]})`}}></div>
-      <div class="body-color-layer" style={{
-        '--body-color': color || 'transparent',
-        WebkitMaskImage: `url(${maskList[variant]})`,
-        maskImage: `url(${maskList[variant]})`,
-      }}></div>
-      <div class="avatar-eyes" style={{
-        backgroundImage: activeItems.eye ? `url(${activeItems.eye})` : '',
-        top: eyePos.top, left: eyePos.left, width: eyePos.width, height: eyePos.height,
-      }}></div>
-      <div class="avatar-mouth" style={{
-        backgroundImage: activeItems.mouth ? `url(${activeItems.mouth})` : '',
-        top: mouthPos.top, left: mouthPos.left, width: mouthPos.width, height: mouthPos.height,
-      }}></div>
-      {activeItems.accessory && (
-        <Draggable nodeRef={accessoryRef}>
-          <div ref={accessoryRef} className="avatar-accessory" style={{backgroundImage: `url(${activeItems.accessory})`}}></div>
-        </Draggable>
-      )}
-  </div>
-  )
-}
 
 // category is a string
 export function ChoiceFrame({ category, setCategory, activeItems, setActiveItems, setBodyColor }) {
