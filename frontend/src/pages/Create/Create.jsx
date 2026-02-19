@@ -41,11 +41,6 @@ export default function Create() {
         <button class="reset-button" onClick={() => { setActiveItems({}); setForm(0); setBodyColor(); } }>
           Reset
         </button>
-        <button class="reset-button" onClick={() => {
-          console.log(serializeAvatar({ form, bodyColor, activeItems }))
-        }}>
-          Serialize Avatar
-        </button>
       </div>
       <div class="arrow-back" onClick={() => { setForm((form - 1 + avatarList.length) % avatarList.length) }}></div>
       <div class="arrow-forward" onClick={() => { setForm((form + 1) % avatarList.length) }}></div>
