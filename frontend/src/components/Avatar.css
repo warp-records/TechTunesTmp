@@ -1,13 +1,12 @@
 .avatar-image {
-    width: auto;
-    height: auto;
+    width: 200px;
+    height: 300px;
+    margin: 0 auto;
     background-size: contain;
     background-position: bottom center;
     background-repeat: no-repeat;
     flex-shrink: 0;
     background-color: transparent;
-    min-width: 200px;
-    min-height: 300px;
     position: relative;
     isolation: isolate;
 }

@@ -326,6 +326,42 @@ section {
     height: 24px;
 }
 
+#userpage-avatar .avatar-image {
+    transform: scale(1.25);
+    transform-origin: bottom center;
+}
+
+.avatar-welcome {
+    padding: 10px;
+    text-align: center;
+}
+
+#pickbot-speech-bubble {
+    background: rgba(212, 158, 251, 0.2);
+    color: var(--white);
+    border: 2.5px solid rgba(212, 158, 251, 0.5);
+    border-radius: 25px;
+    padding: 1rem 1.5rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    position: relative;
+    margin: 1rem auto 0.5rem;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    line-height: 1.4;
+    backdrop-filter: blur(10px);
+}
+
+.avatar-welcome-title {
+    margin: 0 0 1rem;
+    font-size: 2rem;
+    background: linear-gradient(90deg, var(--accent), #8bd4ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
 /* Lesson Island card gradient */
 .lesson-card.card {
     background: linear-gradient(

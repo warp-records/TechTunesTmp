@@ -38,6 +38,8 @@ const genres = [
 
 export default function Userpage() {
   
+  const username = "Kyri";
+  
   const friends = [
     { "name": "Alexa", "online": true, },
     { "name": "Alex", "online": false, },
@@ -51,12 +53,34 @@ export default function Userpage() {
     { "name": "Max", "song": "I'm The Problem", score: 700 },
   ]
   
+  const avatarJson = {
+    "form": 0,
+    "color": "#8A2BE2",
+    "activeItems": {
+      "eye": "Eyeliner Eyes",
+      "mouth": "Lips Mouth",
+      "accessory": { "name": "Bow", "x": -27, "y": 45 }
+    }
+  };
+  
   return (
   <>
     
-    <Avatar />
     
   <main class="container">
+    <section id="avatar" aria-labelledby="avatar-title">
+        <div class="avatar-welcome">
+          <h2 id="avatar-title" class="avatar-welcome-title">Welcome to TuneVerse</h2>
+          <div id="pickbot-speech-bubble">
+              Hello, <span id="username-display">{username}</span>!
+                </div>
+                
+              <div id="userpage-avatar">
+                <Avatar form={avatarJson["form"]} activeItems={avatarJson["activeItems"]} color={avatarJson["color"]} />
+              </div>
+        </div>
+      </section>
+        
     <section id="lessons" aria-labelledby="lessons-title">
       <h3 class="section-title">Lesson Island</h3>
       <div class="grid">
