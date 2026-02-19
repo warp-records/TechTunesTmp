@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import Draggable from 'react-draggable'
 
 import './Avatar.css'
+import { assetRegistry } from '../assetRegistry'
 
 const avatars = import.meta.glob('../assets/Avatar/Avatar[0-9].png', { eager: true, import: 'default' })
 const avatarMasks = import.meta.glob('../assets/Avatar/Avatar[0-9]Mask.png', { eager: true, import: 'default' })
@@ -24,33 +25,48 @@ const MOUTH_POSITIONS = [
 
 export const avatarList = Object.values(avatars)
 
-export default function Avatar({ variant, activeItems = {}, color }) {
+export default function Avatar({ form, activeItems = {}, color, onAccessoryDrag }) {
   const maskList = Object.values(avatarMasks)
   const accessoryRef = useRef(null)
-  const eyePos = EYE_POSITIONS[variant] || EYE_POSITIONS[0]
-  const mouthPos = MOUTH_POSITIONS[variant] || MOUTH_POSITIONS[0]
+  const eyePos = EYE_POSITIONS[form] || EYE_POSITIONS[0]
+  const mouthPos = MOUTH_POSITIONS[form] || MOUTH_POSITIONS[0]
+
+  const eyeUrl = activeItems.eye ? assetRegistry.eye[activeItems.eye] : null
+  const mouthUrl = activeItems.mouth ? assetRegistry.mouth[activeItems.mouth] : null
+  const accessoryName = activeItems.accessory?.name
+  const accessoryUrl = accessoryName ? assetRegistry.accessory[accessoryName] : null
+  const accessoryPos = { x: activeItems.accessory?.x ?? 0, y: activeItems.accessory?.y ?? 0 }
   
   return (
   <div class="avatar-image">
-      <div class="body-image" style={{backgroundImage: `url(${avatarList[variant]})`}}></div>
+      <div class="body-image" style={{backgroundImage: `url(${avatarList[form]})`}}></div>
       <div class="body-color-layer" style={{
         '--body-color': color || 'transparent',
-        WebkitMaskImage: `url(${maskList[variant]})`,
-        maskImage: `url(${maskList[variant]})`,
+        WebkitMaskImage: `url(${maskList[form]})`,
+        maskImage: `url(${maskList[form]})`,
       }}></div>
       <div class="avatar-eyes" style={{
-        backgroundImage: activeItems.eye ? `url(${activeItems.eye})` : '',
+        backgroundImage: eyeUrl ? `url(${eyeUrl})` : '',
         top: eyePos.top, left: eyePos.left, width: eyePos.width, height: eyePos.height,
       }}></div>
       <div class="avatar-mouth" style={{
-        backgroundImage: activeItems.mouth ? `url(${activeItems.mouth})` : '',
+        backgroundImage: mouthUrl ? `url(${mouthUrl})` : '',
         top: mouthPos.top, left: mouthPos.left, width: mouthPos.width, height: mouthPos.height,
       }}></div>
-      {activeItems.accessory && (
-        <Draggable nodeRef={accessoryRef}>
-          <div ref={accessoryRef} className="avatar-accessory" style={{backgroundImage: `url(${activeItems.accessory})`}}></div>
+      {accessoryUrl && (
+        <Draggable nodeRef={accessoryRef} position={accessoryPos}
+          onStop={(e, data) => onAccessoryDrag?.(data.x, data.y)}>
+          <div ref={accessoryRef} className="avatar-accessory" style={{backgroundImage: `url(${accessoryUrl})`}}></div>
         </Draggable>
       )}
   </div>
   )
+}
+
+export function serializeAvatar({ form, bodyColor, activeItems }) {
+  return JSON.stringify({ form, bodyColor, activeItems })
+}
+
+export function deserializeAvatar(json) {
+  return JSON.parse(json)
 }

@@ -3,17 +3,15 @@ import { Route, Link } from 'react-router-dom'
 import { useState } from 'react'
 
 import './Create.css'
-import Avatar, { avatarList } from '../../components/Avatar'
+import Avatar, { avatarList, serializeAvatar } from '../../components/Avatar'
+import { eyeAssets, mouthAssets, accessoryAssets } from '../../assetRegistry'
 import eyesBtn from '../../assets/DressingRoom/Dressing/Eyes Button.png'
 import mouthBtn from '../../assets/DressingRoom/Dressing/Mouth Button.png'
 import accessoryBtn from '../../assets/DressingRoom/Dressing/AccessoryButton.png'
 import bodyBtn from '../../assets/DressingRoom/Dressing/Body Button.png'
-const eyeGlobs = import.meta.glob('../../assets/DressingRoom/Dressing/Eyes/*.png', { eager: true, import: 'default' })
-const mouthGlobs = import.meta.glob('../../assets/DressingRoom/Dressing/Mouths/*.png', { eager: true, import: 'default' })
-const accessoryGlobs = import.meta.glob('../../assets/DressingRoom/Dressing/Accessories/*.png', { eager: true, import: 'default' })
 
 
-const WHEEL_COLORS = [
+const TORSO_COLORS = [
   { name: 'yellow', hex: '#FFFF00', glowClass: 'glow-yellow' },
   { name: 'teal', hex: '#008B8B', glowClass: 'glow-teal' },
   { name: 'purple', hex: '#8A2BE2', glowClass: 'glow-purple' },
@@ -26,7 +24,7 @@ const WHEEL_COLORS = [
 
 export default function Create() {
   const [category, setCategory] = useState("")
-  const [avatar, setAvatar] = useState(0)
+  const [form, setForm] = useState(0)
   const [bodyColor, setBodyColor] = useState()
   const [activeItems, setActiveItems] = useState({})
   
@@ -40,14 +38,22 @@ export default function Create() {
         <Link to="/userpage">
           <button class="save-button">Save</button>
         </Link>
-        <button class="reset-button" onClick={() => { setActiveItems({}); setAvatar(0); setBodyColor(); } }>
+        <button class="reset-button" onClick={() => { setActiveItems({}); setForm(0); setBodyColor(); } }>
           Reset
         </button>
+        <button class="reset-button" onClick={() => {
+          console.log(serializeAvatar({ form, bodyColor, activeItems }))
+        }}>
+          Serialize Avatar
+        </button>
       </div>
-      <div class="arrow-back" onClick={() => { setAvatar((avatar - 1 + avatarList.length) % avatarList.length) }}></div>
-      <div class="arrow-forward" onClick={() => { setAvatar((avatar + 1) % avatarList.length) }}></div>
+      <div class="arrow-back" onClick={() => { setForm((form - 1 + avatarList.length) % avatarList.length) }}></div>
+      <div class="arrow-forward" onClick={() => { setForm((form + 1) % avatarList.length) }}></div>
       <div class="avatar-container">
-        <Avatar variant={avatar} activeItems={activeItems} color={bodyColor} />
+        <Avatar form={form} activeItems={activeItems} color={bodyColor}
+          onAccessoryDrag={(x, y) => setActiveItems(prev => ({
+            ...prev, accessory: { ...prev.accessory, x, y },
+          }))} />
         <div class="avatar-slider">
         </div>
       </div>
@@ -61,10 +67,10 @@ export default function Create() {
 // category is a string
 export function ChoiceFrame({ category, setCategory, activeItems, setActiveItems, setBodyColor }) {
   
-  const categoryImages = {
-    "eye": Object.values(eyeGlobs),
-    "mouth": Object.values(mouthGlobs),
-    "accessory": Object.values(accessoryGlobs),
+  const categoryAssets = {
+    "eye": Object.entries(eyeAssets),
+    "mouth": Object.entries(mouthAssets),
+    "accessory": Object.entries(accessoryAssets),
   }
   
   const itemsPerRow = {
@@ -73,12 +79,12 @@ export function ChoiceFrame({ category, setCategory, activeItems, setActiveItems
     "accessory": 5,
   }
   
-  const images = categoryImages[category] || [];
+  const entries = categoryAssets[category] || [];
   const perRow = itemsPerRow[category] || 0
   
   let rows = []
-  for (let i = 0; i < images.length; i += perRow) {
-    rows.push(images.slice(i, i + perRow))
+  for (let i = 0; i < entries.length; i += perRow) {
+    rows.push(entries.slice(i, i + perRow))
   }
   
   return (
@@ -97,9 +103,14 @@ export function ChoiceFrame({ category, setCategory, activeItems, setActiveItems
           <div className={`${category}-options`}>
             {rows.map((rowElems, rowIdx) => (
             <div key={rowIdx} className={`${category}-row`}>
-                {rowElems.map((imgSrc, idx) => (
-                  <Item key={idx} category={category} img={imgSrc}
-                    onClick={() => setActiveItems(prev => ({ ...prev, [category]: imgSrc }))} />
+                {rowElems.map(([name, url], idx) => (
+                  <Item key={idx} category={category} img={url}
+                    onClick={() => setActiveItems(prev => ({
+                      ...prev,
+                      [category]: category === 'accessory'
+                        ? { name, x: 0, y: 0 }
+                        : name,
+                    }))} />
                 ))}
             </div>
             ))}
@@ -132,7 +143,7 @@ export function Spinner({ setBodyColor }) {
       const finalAngle = randomRotation % 360
       const pointerAngle = (360 - finalAngle) % 360
       const selectedSegment = Math.floor(pointerAngle / 45)
-      const color = WHEEL_COLORS[selectedSegment]
+      const color = TORSO_COLORS[selectedSegment]
       setSelectedColor(color)
       setBodyColor(color.hex)
       setSpinning(false)
