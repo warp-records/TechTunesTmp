@@ -42,7 +42,13 @@ export default function Userpage() {
     { "name": "Alexa", "online": true, },
     { "name": "Alex", "online": false, },
     { "name": "Ethan", "online": true, },
-    { "name": "Barney", "online": false, }
+    { "name": "Max", "online": false, }
+  ]
+  
+  const leaderboard = [
+    { "name": "Alexa", "song": "Sweet Child O' Mine", score: 1000 },
+    { "name": "Ethan", "song": "Mean Mr Mustard", score: 850 },
+    { "name": "Max", "song": "I'm The Problem", score: 700 },
   ]
   
   return (
@@ -95,6 +101,17 @@ export default function Userpage() {
               </div>
             </div>
             
+        </section>
+        
+        <section id="leaderboard" aria-labelledby="leaderboard-title">
+          <h3 class="section-title" id="leaderboard-title">Leaderboard</h3>
+          <div class="grid">
+            {
+              leaderboard.map((entry, index) => {
+                return <LeaderBoardCard friend={entry["name"]} song={entry["song"]} score={entry["score"]} />
+              })
+            }
+          </div>
         </section>
         
         <SongRow title={"Songs from Spotify"} songs={spotifySongs} />
@@ -169,5 +186,17 @@ export function Friend({ name, isOnline }) {
         <div className={`status ${ isOnline ? 'online' : 'offline'} `}>{ isOnline ? 'Online' : 'Offline'}</div>
       </div>
     </>
+  )
+}
+
+export function LeaderBoardCard({ friend, song, score }) {
+  return (
+    <div class="lb card">
+      <strong>{friend}</strong> —
+      <span class="tiny">{song}</span>
+      <div style={{ "marginTop": "8px" }}>
+        Score: <strong>{score}</strong>
+      </div>
+    </div>
   )
 }
