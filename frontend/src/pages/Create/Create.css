@@ -456,11 +456,6 @@
     transition: transform 0.2s ease;
 }
 
-.active {
-    height: 90px;
-    width: 90px;
-}
-
 .accessory-option:hover { /* Added glow effect */
     transform: scale(1.1);
     filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.8));

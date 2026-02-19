@@ -40,7 +40,9 @@ export default function Create() {
         <Link to="/userpage">
           <button class="save-button">Save</button>
         </Link>
-        <button class="reset-button">Reset</button>
+        <button class="reset-button" onClick={() => { setActiveItems({}); setAvatar(0); setBodyColor(); } }>
+          Reset
+        </button>
       </div>
       <div class="arrow-back" onClick={() => { setAvatar((avatar - 1 + avatarList.length) % avatarList.length) }}></div>
       <div class="arrow-forward" onClick={() => { setAvatar((avatar + 1) % avatarList.length) }}></div>

@@ -1,4 +1,5 @@
 
+import Avatar from "../components/Avatar"
 import "./Userpage.css"
 
 const suggestedSongs = [
@@ -34,11 +35,10 @@ const genres = [
   { title: "Avante-garde", subtitle: "", stars: 4, },
 ]
 export default function Userpage() {
-  
-  
   return (
   <>
     
+    <Avatar />
     
   <main class="container">
     <section id="lessons" aria-labelledby="lessons-title">
