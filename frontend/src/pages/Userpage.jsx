@@ -34,7 +34,17 @@ const genres = [
   { title: "Dariacore", subtitle: "", stars: 3, },
   { title: "Avante-garde", subtitle: "", stars: 4, },
 ]
+
+
 export default function Userpage() {
+  
+  const friends = [
+    { "name": "Alexa", "online": true, },
+    { "name": "Alex", "online": false, },
+    { "name": "Ethan", "online": true, },
+    { "name": "Barney", "online": false, }
+  ]
+  
   return (
   <>
     
@@ -69,6 +79,24 @@ export default function Userpage() {
     
         <SongRow title={"Suggested Songs (by Skill Level)"} songs={suggestedSongs} />
         <SongRow title={"SongBook"} songs={songBook} />
+        
+        <section id="friends">
+          <h3 class="section-title" id="friends-title">Friends</h3>
+          <div class="friends-wrap">
+            {
+              friends.map((friend, index) => {
+                return <Friend key={index} name={friend["name"]} isOnline={friend["online"]} />
+              })
+          }
+          
+            <div class="friend">
+              <div class="pfp" aria-hidden="true">+</div>
+                <div>More Friends</div>
+              </div>
+            </div>
+            
+        </section>
+        
         <SongRow title={"Songs from Spotify"} songs={spotifySongs} />
         <SongRow title={"Pick Your Genre"} songs={genres} />
         
@@ -129,5 +157,17 @@ export function SongTile({ title, subtitle, stars }) {
         ))}
       </div>
     </div>
+  )
+}
+
+export function Friend({ name, isOnline }) {
+  return (
+    <>
+      <div class="friend">
+        <div class="pfp">{name[0].toUpperCase()}</div>
+        <div>{name}</div>
+        <div className={`status ${ isOnline ? 'online' : 'offline'} `}>{ isOnline ? 'Online' : 'Offline'}</div>
+      </div>
+    </>
   )
 }
