@@ -8,6 +8,7 @@ import Pricing from './pages/Pricing'
 import Create from './pages/Create/Create'
 import Username from './pages/Username'
 import Userpage from './pages/Userpage'
+import Homepage from './pages/Homepage'
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/username" element={<Username />} />
         <Route path="/create" element={<Create />} />
         <Route path="/userpage" element={<Userpage />} />
+        <Route path="/homepage" element={<Homepage />} />
       </Routes>
     </BrowserRouter>
   )
