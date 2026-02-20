@@ -1,4 +1,6 @@
 
+import { Route, Link } from 'react-router-dom'
+
 import Avatar from "../components/Avatar"
 import "./Userpage.css"
 
@@ -68,7 +70,9 @@ export default function Userpage() {
     <header id="header">
         <nav class="nav container" aria-label="Top Navigation">
           <div class="nav-left">
-            <a class="chip" title="Go to Home">🏠</a>
+            <Link to={'/homepage'}>
+              <div class="chip" title="Go to Home">🏠</div>
+            </Link>
           </div>
           <div class="logo">🎧 TuneVerse 🎶</div>
           <div class="nav-right">

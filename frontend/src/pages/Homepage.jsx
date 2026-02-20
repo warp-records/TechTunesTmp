@@ -1,3 +1,6 @@
+
+import { Route, Link } from 'react-router-dom'
+
 import './Homepage.css'
 import LessonIslandImg from '../assets/Homepage/LessonIsland.png'
 import TuneStationImg from '../assets/Homepage/TuneStation.png'
@@ -22,9 +25,11 @@ export default function Homepage() {
         </a>
 
         <div class="profile-container">
-          <a href="userpage.html" class="profile" aria-label="Profile">
+          <Link to={'/userpage'}>
+          <div class="profile" aria-label="Profile">
             <img src={ProfileImg} alt="Profile" />
-          </a>
+          </div>
+          </Link>
         </div>
 
         <a href="impact.html" class="impact" aria-label="Impact">

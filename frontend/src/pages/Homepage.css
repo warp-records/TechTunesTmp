@@ -91,8 +91,8 @@
 .tune-station {
   position: absolute;
   bottom: 5%;
-  left: 5%;
-  width: 500px;
+  left: 9%;
+  width: 200px;
   height: 200px;
   z-index: 15;
 }
