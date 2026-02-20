@@ -23,7 +23,6 @@ header#header {
     position: sticky;
     top: 0;
     z-index: 50;
-    backdrop-filter: saturate(1.2) blur(6px);
     background: rgba(10, 15, 15, 0.6);
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
@@ -31,7 +30,10 @@ header#header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 14px 24px;
+    padding: 12px 24px;
+    backdrop-filter: saturate(1.2) blur(6px);
+    background: rgba(10, 15, 15, 0.6);
+    height: 70px;
 }
 .nav-left,
 .nav-right {
@@ -46,6 +48,8 @@ header#header {
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+    display: flex;
+    align-items: center;
 }
 .chip {
     background: rgba(212, 158, 251, 0.12);
@@ -93,6 +97,11 @@ details.settings > summary::-webkit-details-marker {
 }
 .menu a:hover {
     background: rgba(255, 255, 255, 0.06);
+}
+
+/* Main content */
+main.container {
+    padding-top: 48px;
 }
 
 /* Sections */

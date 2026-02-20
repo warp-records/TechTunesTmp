@@ -65,9 +65,29 @@ export default function Userpage() {
   
   return (
   <>
-    
-    
-  <main class="container">
+    <header id="header">
+        <nav class="nav container" aria-label="Top Navigation">
+          <div class="nav-left">
+            <a class="chip" title="Go to Home">🏠</a>
+          </div>
+          <div class="logo">🎧 TuneVerse 🎶</div>
+          <div class="nav-right">
+            <details class="settings">
+              <summary class="chip" role="button" aria-haspopup="menu">☰ Settings ▾</summary>
+              <div class="menu" role="menu">
+                <a role="menuitem">Add Friends</a>
+                <a role="menuitem">Edit PickBot</a>
+                <a role="menuitem">Privacy Settings</a>
+                <a role="menuitem">Add Spotify</a>
+                <a role="menuitem">Add Apple Music</a>
+                <a role="menuitem">SongBook</a>
+              </div>
+            </details>
+          </div>
+        </nav>
+      </header> 
+      
+    <main class="container">
     <section id="avatar" aria-labelledby="avatar-title">
         <div class="avatar-welcome">
           <h2 id="avatar-title" class="avatar-welcome-title">Welcome to TuneVerse</h2>
