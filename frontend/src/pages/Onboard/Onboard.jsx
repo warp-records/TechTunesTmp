@@ -170,11 +170,18 @@ function QuestionTitle({ text }) {
 
 function ListSelect({ options, multiSelect }) {
   const items = options.map((option, idx) =>
-    <div class="skill-option">
-      <div className="skill-label">
-        <input type={`${ multiSelect ? 'checkbox' : 'radio' }`} name="skillLevel" key={idx} />
-        <label>{option}</label>
-      </div>
+    <div class="skill-option" key={idx}>
+      <input type={multiSelect ? 'checkbox' : 'radio'} name="skillLevel" id={`skill-${idx}`} />
+      <label htmlFor={`skill-${idx}`} className={`skill-label${multiSelect ? ' has-checkbox' : ''}`}>
+        {multiSelect && (
+          <div className="custom-checkbox">
+            <svg className="checkmark" viewBox="0 0 24 24">
+              <polyline points="20,6 9,17 4,12"></polyline>
+            </svg>
+          </div>
+        )}
+        <div>{option}</div>
+      </label>
     </div>
   );
   
@@ -187,9 +194,9 @@ function ListSelect({ options, multiSelect }) {
 
 function RectSelect({ options, emojis, descriptions }) {
   const items = options.map((option, idx) =>
-    <div class="guitar-option">
-      <input type="radio" name="guitarType" value="acoustic" id="acoustic"/>
-      <label for="acoustic" class="guitar-label">
+    <div class="guitar-option" key={idx}>
+      <input type="radio" name="rectSelect" id={`rect-${idx}`} value={option} />
+      <label htmlFor={`rect-${idx}`} class="guitar-label">
         <div class="guitar-icon">{emojis[idx]}</div>
         <div>{option}</div>
         <div class="genre-desc">{descriptions[idx]}</div>
