@@ -5,11 +5,46 @@ import Pickbot, { Dialogue } from '../../components/Pickbot.jsx'
 import './Onboard.css'
 import './Select.css'
 import './RectSelect.css'
+import { useEffect } from 'react';
 
 const numPages = 6;
 
 export default function Onboard() {
   const [progIdx, setProgIdx] = useState(0);
+  
+  const [onboardData, setOnboardData] = useState(() => {
+    const saved = localStorage.getItem("onboardData");
+    return saved ? JSON.parse(saved) : {
+      "skill": null,
+      "guitarType": null,
+      "useCase": [],
+      "genres": [],
+    }
+  });
+  
+  useEffect(() => {
+    localStorage.setItem("onboardData", JSON.stringify(onboardData));
+  }, [onboardData])
+  
+  function handleClick(formName, option, multiSelect) {
+    setOnboardData(prev => {
+      const next = { ...prev };
+      if (multiSelect) {
+        const arr = [...(prev[formName] || [])];
+        const idx = arr.indexOf(option);
+        if (idx === -1) {
+          arr.push(option);
+        } else {
+          arr.splice(idx, 1);
+        }
+        next[formName] = arr;
+      } else {
+        next[formName] = prev[formName] !== option ? option : null;
+      }
+      console.log(next);
+      return next;
+    });
+  }
   
   function handleContinue() {
     
@@ -128,10 +163,10 @@ export default function Onboard() {
             <QuestionTitle text={questTitle[progIdx]} />
           </div>
           
-          {progIdx === 2 && <ListSelect options={skillOptions} multiSelect={false} />}
-          {progIdx === 3 && <RectSelect options={guitarTypes} emojis={guitarEmojis} descriptions={[]} />}
-          {progIdx === 4 && <ListSelect options={useCases} multiSelect={true} />}
-          {progIdx === 5 && <RectSelect options={genres} emojis={genreEmojis} descriptions={genreDescs} />}
+          {progIdx === 2 && <ListSelect formName={"skill"} options={skillOptions} multiSelect={false} handleClick={handleClick} />}
+          {progIdx === 3 && <RectSelect formName={"guitarType"} options={guitarTypes} emojis={guitarEmojis} descriptions={[]} handleClick={handleClick} />}
+          {progIdx === 4 && <ListSelect formName={"useCase"} options={useCases} multiSelect={true} handleClick={handleClick} />}
+          {progIdx === 5 && <RectSelect formName={"genres"} options={genres} emojis={genreEmojis} descriptions={genreDescs} handleClick={handleClick} />}
           
           <ProgressDots pos={progIdx} />
           <div class="continue-section">
@@ -168,10 +203,10 @@ function QuestionTitle({ text }) {
   return (<h2 class="question-title">{text}</h2>)
 }
 
-function ListSelect({ options, multiSelect }) {
+function ListSelect({ formName, options, multiSelect, handleClick }) {
   const items = options.map((option, idx) =>
     <div class="skill-option" key={idx}>
-      <input type={multiSelect ? 'checkbox' : 'radio'} name="skillLevel" id={`skill-${idx}`} />
+      <input type={multiSelect ? 'checkbox' : 'radio'} name="skillLevel" id={`skill-${idx}`} onChange={() => handleClick(formName, idx, multiSelect)} />
       <label htmlFor={`skill-${idx}`} className={`skill-label${multiSelect ? ' has-checkbox' : ''}`}>
         {multiSelect && (
           <div className="custom-checkbox">
@@ -192,10 +227,10 @@ function ListSelect({ options, multiSelect }) {
   )
 }
 
-function RectSelect({ options, emojis, descriptions }) {
+function RectSelect({ formName, options, emojis, descriptions, handleClick }) {
   const items = options.map((option, idx) =>
     <div class="guitar-option" key={idx}>
-      <input type="radio" name="rectSelect" id={`rect-${idx}`} value={option} />
+      <input type="radio" name="rectSelect" id={`rect-${idx}`} value={option} onChange={() => handleClick(formName, idx, false)} />
       <label htmlFor={`rect-${idx}`} class="guitar-label">
         <div class="guitar-icon">{emojis[idx]}</div>
         <div>{option}</div>
