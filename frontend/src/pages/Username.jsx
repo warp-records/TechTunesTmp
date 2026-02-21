@@ -3,11 +3,26 @@ import { Route, Link } from 'react-router-dom'
 import './Username.css'
 import { useEffect } from 'react';
 
-const defaultSuggestions = ['MusicMaster', 'GuitarHero', 'PickBotFan', 'RockStar', 'MelodyMaker']
+const allSuggestions = [
+  "RhythmQuest", "MelodyMaster", "TempoTrainer", "HarmonyHero", "NoteNinja", "ScaleSprint",
+  "ChordChampion", "BeatBuilder", "PitchPilot", "SonicScholar", "TrebleTrials", "BassBoss",
+  "KeyKingdom", "IntervalIsland", "RhythmRanger", "MelodyMaze", "TempoTactician", "HarmonyHaven",
+  "NoteNavigator", "ScaleSaga", "ChordCrafter", "BeatBattles", "PitchPioneer", "SonicSprint",
+  "TrebleTrainer", "BassBattalion", "KeyCraze", "IntervalImpact", "RhythmRealm", "MelodyMission",
+  "TempoTower", "HarmonyHub", "NoteQuest", "ScaleStorm", "ChordCastle", "BeatBlitz",
+  "PitchPath", "SonicSymphony", "TrebleTrek", "BassBridge", "KeyKnights", "IntervalInfinity",
+  "RhythmRise", "MelodyMatrix", "TempoTrail", "MusicMaster", "GuitarHero", "PickBotFan", "RockStar",
+  "MelodyMaker"
+];
 
-export default function Username({ suggestions = defaultSuggestions }) {
+// const defaultSuggestions = ["MusicMaster", "GuitarHero", "PickBotFan", "RockStar", "MelodyMaker"]
+
+export default function Username() {
   const [username, setUsername] = useState("");
   const validName = username.length >= 3;
+ 
+  let suggestions = [...allSuggestions].sort(() => 0.5 - Math.random());
+  suggestions = suggestions.slice(0, 5);
   
   function handleInput(e) {
     setUsername(e.target.value);
@@ -41,7 +56,7 @@ export default function Username({ suggestions = defaultSuggestions }) {
 
         <div className="username-suggestions">
           {suggestions.map((name) => (
-            <button key={name} className="suggestion-btn">{name}</button>
+            <button key={name} className="suggestion-btn" onClick={() => setUsername(name)}>{name}</button>
           ))}
         </div>
 
