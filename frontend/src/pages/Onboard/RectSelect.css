@@ -16,7 +16,8 @@
 .guitar-option:nth-child(3) { animation-delay: 1.2s; }
 .guitar-option:nth-child(4) { animation-delay: 1.3s; }*/
 
-.guitar-option input[type="radio"] {
+.guitar-option input[type="radio"],
+.guitar-option input[type="checkbox"] {
   position: absolute;
   opacity: 0;
   width: 0;
@@ -75,14 +76,16 @@
   opacity: 1;
 }
 
-.guitar-option input[type="radio"]:checked + .guitar-label {
+.guitar-option input[type="radio"]:checked + .guitar-label,
+.guitar-option input[type="checkbox"]:checked + .guitar-label {
   background: linear-gradient(135deg, var(--accent-yellow), #fff3a0);
   border-color: #2d1b3d;
   transform: translateY(-5px);
   box-shadow: 0 10px 30px var(--shadow-dark);
 }
 
-.guitar-option input[type="radio"]:checked + .guitar-label::before {
+.guitar-option input[type="radio"]:checked + .guitar-label::before,
+.guitar-option input[type="checkbox"]:checked + .guitar-label::before {
   opacity: 0;
 }
 

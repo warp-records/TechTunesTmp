@@ -26,6 +26,7 @@ export default function Onboard() {
     localStorage.setItem("onboardData", JSON.stringify(onboardData));
   }, [onboardData])
   
+  // some reason this triggers twice but I don't feel like fixin git
   function handleClick(formName, option, multiSelect) {
     setOnboardData(prev => {
       const next = { ...prev };
@@ -41,7 +42,7 @@ export default function Onboard() {
       } else {
         next[formName] = prev[formName] !== option ? option : null;
       }
-      console.log(next);
+      
       return next;
     });
   }
@@ -164,9 +165,9 @@ export default function Onboard() {
           </div>
           
           {progIdx === 2 && <ListSelect formName={"skill"} options={skillOptions} multiSelect={false} handleClick={handleClick} />}
-          {progIdx === 3 && <RectSelect formName={"guitarType"} options={guitarTypes} emojis={guitarEmojis} descriptions={[]} handleClick={handleClick} />}
+          {progIdx === 3 && <RectSelect formName={"guitarType"} options={guitarTypes} emojis={guitarEmojis} descriptions={[]} multiSelect={false} handleClick={handleClick} />}
           {progIdx === 4 && <ListSelect formName={"useCase"} options={useCases} multiSelect={true} handleClick={handleClick} />}
-          {progIdx === 5 && <RectSelect formName={"genres"} options={genres} emojis={genreEmojis} descriptions={genreDescs} handleClick={handleClick} />}
+          {progIdx === 5 && <RectSelect formName={"genres"} options={genres} emojis={genreEmojis} descriptions={genreDescs} multiSelect={true} handleClick={handleClick} />}
           
           <ProgressDots pos={progIdx} />
           <div class="continue-section">
@@ -227,11 +228,11 @@ function ListSelect({ formName, options, multiSelect, handleClick }) {
   )
 }
 
-function RectSelect({ formName, options, emojis, descriptions, handleClick }) {
+function RectSelect({ formName, options, emojis, descriptions, multiSelect, handleClick }) {
   const items = options.map((option, idx) =>
     <div class="guitar-option" key={idx}>
-      <input type="radio" name="rectSelect" id={`rect-${idx}`} value={option} onChange={() => handleClick(formName, idx, false)} />
-      <label htmlFor={`rect-${idx}`} class="guitar-label">
+      <input type={multiSelect ? 'checkbox' : 'radio'} name="rectSelect" id={`rect-${idx}`} value={option} />
+      <label htmlFor={`rect-${idx}`} class="guitar-label" onClick={() => handleClick(formName, idx, multiSelect)}>
         <div class="guitar-icon">{emojis[idx]}</div>
         <div>{option}</div>
         <div class="genre-desc">{descriptions[idx]}</div>
