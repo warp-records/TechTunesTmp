@@ -55,15 +55,16 @@ export default function Userpage() {
     { "name": "Max", "song": "I'm The Problem", score: 700 },
   ]
   
-  const avatarJson = {
-    "form": 0,
-    "color": "#8A2BE2",
-    "activeItems": {
-      "eye": "Eyeliner Eyes",
-      "mouth": "Lips Mouth",
-      "accessory": { "name": "Bow", "x": -27, "y": 45 }
-    }
-  };
+  // const cuteAvatar = {
+  //   "form": 0,
+  //   "color": "#8A2BE2",
+  //   "activeItems": {
+  //     "eye": "Eyeliner Eyes",
+  //     "mouth": "Lips Mouth",
+  //     "accessory": { "name": "Bow", "x": -27, "y": 45 }
+  //   }
+  // };
+  const avatarJson = JSON.parse(localStorage.getItem("avatar"));
   
   return (
   <>
@@ -100,7 +101,7 @@ export default function Userpage() {
                 </div>
                 
               <div id="userpage-avatar">
-                <Avatar form={avatarJson["form"]} activeItems={avatarJson["activeItems"]} color={avatarJson["color"]} />
+                <Avatar form={avatarJson["form"]} activeItems={avatarJson["activeItems"]} color={avatarJson["bodyColor"]} />
               </div>
         </div>
       </section>

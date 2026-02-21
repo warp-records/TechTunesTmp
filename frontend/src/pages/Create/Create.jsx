@@ -1,5 +1,5 @@
 
-import { Route, Link } from 'react-router-dom'
+import { Route, Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 
 import './Create.css'
@@ -28,6 +28,8 @@ export default function Create() {
   const [bodyColor, setBodyColor] = useState()
   const [activeItems, setActiveItems] = useState({})
   
+  const navigate = useNavigate();
+  
   return (
     <>
       <ChoiceFrame category={category} setCategory={setCategory} activeItems={activeItems} setActiveItems={setActiveItems} setBodyColor={setBodyColor} />
@@ -35,9 +37,10 @@ export default function Create() {
       <div class="light"></div>
       <div class="stand"></div>
       <div class="action-buttons">
-        <Link to="/userpage">
-          <button class="save-button">Save</button>
-        </Link>
+          <button class="save-button" onClick={() => {
+            localStorage.setItem("avatar", JSON.stringify({ form, bodyColor, activeItems }));
+            navigate('/userpage');
+          }}>Save</button>
         <button class="reset-button" onClick={() => { setActiveItems({}); setForm(0); setBodyColor(); } }>
           Reset
         </button>

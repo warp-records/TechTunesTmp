@@ -65,6 +65,11 @@
     background: rgba(255, 255, 255, 0.15);
 }
 
+.bad-input:focus {
+    border-color: #ff4444;
+    box-shadow: 0 0 20px rgba(255, 65, 65, 0.3);
+}
+
 .username-input::placeholder {
     color: rgba(255, 255, 255, 0.6);
 }
@@ -133,4 +138,16 @@
     .username-subtitle {
         font-size: 1rem;
     }
+}
+
+.error-message {
+    color: #ff6b6b;
+    font-size: 0.9rem;
+    margin-top: 10px;
+}
+
+.success-message {
+    color: #00ff88;
+    font-size: 0.9rem;
+    margin-top: 10px;
 }
