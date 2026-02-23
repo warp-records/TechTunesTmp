@@ -16,25 +16,27 @@ export default function GuitarTuner() {
   ]
   
   return (
-    <div className="guitar-container">
+    <div class="tuner-container">
       <SoundMeter activeNote={activeNote} />
-      <div className="guitar-headstock">
-        <div className="headstock-image"></div>
-        <div className="guitar-strings">
-          {stringLetters.map((note, idx) => ( 
-            <GuitarString note={note} activeNote={activeNote} key={idx} />
-           ))}
+        <div className="guitar-container">
+          <div className="guitar-headstock">
+            <div className="headstock-image"></div>
+            <div className="guitar-strings">
+              {stringLetters.map((note, idx) => ( 
+                <GuitarString note={note} activeNote={activeNote} key={idx} />
+               ))}
+            </div>
+            <div className="string-letters">
+              {stringLetters.map((note, idx) => ( 
+                <StringLetter note={note}
+                  activeNote={activeNote}
+                  key={idx}
+                  handleClick={() => setActiveNote(note)}
+                />
+               ))}
+            </div>
+          </div>
         </div>
-        <div className="string-letters">
-          {stringLetters.map((note, idx) => ( 
-            <StringLetter note={note}
-              activeNote={activeNote}
-              key={idx}
-              handleClick={() => setActiveNote(note)}
-            />
-           ))}
-        </div>
-      </div>
     </div>
   )
 }
