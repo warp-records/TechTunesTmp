@@ -9,6 +9,7 @@ import Create from './pages/Create/Create'
 import Username from './pages/Username'
 import Userpage from './pages/Userpage'
 import Homepage from './pages/Homepage'
+import GuitarTuner from './pages/GuitarTuner'
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/create" element={<Create />} />
         <Route path="/userpage" element={<Userpage />} />
         <Route path="/homepage" element={<Homepage />} />
+        <Route path="/guitar_tuner" element={<GuitarTuner />} />
       </Routes>
     </BrowserRouter>
   )
