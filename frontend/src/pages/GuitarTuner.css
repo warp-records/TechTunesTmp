@@ -115,34 +115,43 @@ body {
 .headstock-image {
   position: absolute; top: 0; left: 0;
   width: 100%; height: 100%;
-  object-fit: contain; z-index: 1;
+  background: url('../assets/Tuner/Buttons/Base Guitar Head.png') no-repeat center;
+  background-size: contain; z-index: 1;
 }
 .guitar-strings { position: absolute; top: 0; left: 0; width:100%; height:100%; z-index:2; }
 
 .guitar-string {
-  position: absolute;
+  position: absolute; top: 0; left: 0;
+  width:100%; height:100%;
   opacity:0; transition: opacity .4s ease;
-  object-fit: contain;
+  background-size:contain; background-position:center;
+  background-repeat: no-repeat;
 }
 .guitar-string.active { opacity:1; }
 
 /* each string highlight */
 .string-e-low {
+  background-image: url('../assets/Tuner/Strings/E Left String Clicked.png');
   top:350px; right:50px; left:95px; width:94px; height:280px;
 }
 .string-a {
+  background-image: url('../assets/Tuner/Strings/A String Clicked.png');
   top:260px; right:50px; left:120px; width:94px; height:350px;
 }
 .string-d {
+  background-image: url('../assets/Tuner/Strings/D String Clicked.png');
   top:93px; right:50px; left:135px; width:100px; height:550px;
 }
 .string-g {
+  background-image: url('../assets/Tuner/Strings/G String Clicked.png');
   top:140px; right:-10px; left:214px; width:100px; height:460px;
 }
 .string-b {
+  background-image: url('../assets/Tuner/Strings/B String Clicked.png');
   top:156px; right:-220px; left:235px; width:90px; height:550px;
 }
 .string-e-high {
+  background-image: url('../assets/Tuner/Strings/E Right String Clicked.png');
   top:363px; right:-250px; left:260px; width:90px; height:250px;
 }
 
