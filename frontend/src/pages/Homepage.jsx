@@ -16,9 +16,11 @@ export default function Homepage() {
           <img src={LessonIslandImg} alt="Lesson Island" />
         </a>
 
-        <a href="guitar_tuner.html" class="tune-station" aria-label="Tune Station">
-          <img src={TuneStationImg} alt="Tune Station" />
-        </a>
+        <Link to={'/guitar_tuner'}>
+          <a class="tune-station" aria-label="Tune Station">
+            <img src={TuneStationImg} alt="Tune Station" />
+          </a>
+        </Link>
 
         <a href="music.html" class="song-search" aria-label="Song Search">
           <img src={SongSearchImg} alt="Song Search" />
