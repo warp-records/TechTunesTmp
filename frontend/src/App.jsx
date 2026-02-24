@@ -10,6 +10,7 @@ import Username from './pages/Username'
 import Userpage from './pages/Userpage'
 import Homepage from './pages/Homepage'
 import GuitarTuner from './pages/GuitarTuner'
+import Impact from './pages/Impact'
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route path="/userpage" element={<Userpage />} />
         <Route path="/homepage" element={<Homepage />} />
         <Route path="/guitar_tuner" element={<GuitarTuner />} />
+        <Route path="/impact" element={<Impact />} />
       </Routes>
     </BrowserRouter>
   )
