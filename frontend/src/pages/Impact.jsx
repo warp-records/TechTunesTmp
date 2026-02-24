@@ -36,9 +36,15 @@ export default function Impact() {
           don't have access to music education, to provide them with the tools and resources they 
           need to succeed. Let's change that!"
           buttons={[
-            ["Donate Instruments", "https://www.musicopia.net/instrument-donation-form"],
+            [
+              "Donate Instruments",
+              "https://www.musicopia.net/instrument-donation-form",
+            ],
             ["Volunteer", "https://www.musicopia.net/volunteer"],
-            ["Donate Money", "https://secure.givelively.org/donate/musicopia-inc"],
+            [
+              "Donate Money",
+              "https://secure.givelively.org/donate/musicopia-inc",
+            ],
             ["How much we raised so far", null],
           ]}
         />
@@ -71,10 +77,35 @@ export default function Impact() {
           buttons={[
             ["Learn More", "https://playonphilly.org/"],
             ["Donate", "https://playonphilly.org/get-involved/donate/"],
-            ["Donate Instruments", "https://playonphilly.org/get-involved/instrument-donations/"],
+            [
+              "Donate Instruments",
+              "https://playonphilly.org/get-involved/instrument-donations/",
+            ],
             ["How much we raised so far", null],
           ]}
         />
+
+        <div class="region-select">
+          <button
+            class="region-btn disabled"
+            type="button"
+            aria-disabled="true"
+            title="Coming soon"
+          >
+            <span>New Jersey</span>
+            <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M6 9l6 6 6-6"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              ></path>
+            </svg>
+          </button>
+        </div>
+        
+       <p class="coming-soon-note">Coming soon!</p> 
       </main>
     </>
   );
@@ -97,9 +128,7 @@ export function ProgramCard({ title, desc, buttons }) {
 
           return (
             <a href={link} target="_blank">
-            <button class="action-btn">
-                {text}
-            </button>
+              <button class="action-btn">{text}</button>
             </a>
           );
         })}
