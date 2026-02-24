@@ -88,6 +88,8 @@ body {
 
 /* ───── meters ─────────────────────────────────────────────── */
 .sound-meter {
+  position: absolute; top: 100px; left: 50%;
+  transform: translateX(-50%);
   width: 450px; height: 140px;
   display: flex; align-items: center; justify-content: center;
 }

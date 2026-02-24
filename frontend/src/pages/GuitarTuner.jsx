@@ -3,6 +3,7 @@ import { useState } from 'react'
 import './GuitarTuner.css'
 
 const meterImages = import.meta.glob('../assets/Tuner/Sound Meter/*.png', { eager: true, import: 'default' })
+const noteAudio = import.meta.glob('../assets/Tuner/Notes/*.flac', { eager: true, import: 'default' })
 
 export default function GuitarTuner() {
   let [activeNote, setActiveNote] = useState("string-a");
@@ -14,6 +15,13 @@ export default function GuitarTuner() {
     "b",
     "e-high",
   ]
+  
+  function handleNoteSelect({ note }) {
+    setActiveNote(note);
+    const file_name = note.replace('-', '_') + ".flac";
+    const audio = new Audio(noteAudio[`../assets/Tuner/Notes/${file_name}`]);
+    audio.play();
+  }
   
   return (
     <div class="tuner-container">
@@ -31,7 +39,7 @@ export default function GuitarTuner() {
                 <StringLetter note={note}
                   activeNote={activeNote}
                   key={idx}
-                  handleClick={() => setActiveNote(note)}
+                  handleClick={() => handleNoteSelect({ note })}
                 />
                ))}
             </div>
