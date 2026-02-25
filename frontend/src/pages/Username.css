@@ -140,6 +140,35 @@
     }
 }
 
+.input-container {
+    position: relative;
+}
+
+.input-container .field-input {
+    padding-right: 50px;
+}
+
+.toggle-password-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    transition: color 0.3s ease;
+}
+
+.toggle-password-btn:hover {
+    color: rgba(255, 255, 255, 0.9);
+}
+
 .error-message {
     color: #ff6b6b;
     font-size: 0.9rem;

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Route, Link } from 'react-router-dom'
 import './Username.css'
 import { useEffect } from 'react';
+import { FaEye, FaEyeSlash } from 'react-icons/fa'
 
 const allSuggestions = [
   "RhythmQuest", "MelodyMaster", "TempoTrainer", "HarmonyHero", "NoteNinja", "ScaleSprint",
@@ -20,6 +21,7 @@ const allSuggestions = [
 export default function Username() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const validName = username.length >= 3;
  
   let suggestions = [...allSuggestions].sort(() => 0.5 - Math.random());
@@ -81,16 +83,22 @@ export default function Username() {
         </div>
 
         <br></br>
+        
         <p className="username-subtitle">Password</p>
         <div className={`input-container`}>
           <input
             class={`field-input ${password && !isGoodPassword() ? 'bad-input' : ''}`}
             placeholder="Enter your password"
-            type="password"
+            type={showPassword ? "text" : "password"}
             autoComplete="off"
             value={password}
             onChange={handlePassInput}
           ></input>
+          <button
+            type="button"
+            className="toggle-password-btn"
+            onClick={() => setShowPassword(!showPassword)}
+          >{showPassword ? <FaEyeSlash /> : <FaEye />}</button>
           {password && !isGoodPassword() ?
             (<div class="error-message">Password needs 10+ characters, uppercase, lowercase, and 2 numbers or 1 special character</div>) : (<></>)
           }
