@@ -9,9 +9,15 @@ import { useEffect } from 'react';
 
 const numPages = 6;
 
+/**
+ * Multi-step onboarding route.
+ *
+ * @returns {JSX.Element}
+ */
 export default function Onboard() {
   const [progIdx, setProgIdx] = useState(0);
   
+  /** @type {[OnboardData, import('react').Dispatch<import('react').SetStateAction<OnboardData>>]} */
   const [onboardData, setOnboardData] = useState(() => {
     const saved = localStorage.getItem("onboardData");
     return saved ? JSON.parse(saved) : {
@@ -26,7 +32,14 @@ export default function Onboard() {
     localStorage.setItem("onboardData", JSON.stringify(onboardData));
   }, [onboardData])
   
-  // some reason this triggers twice but I don't feel like fixin git
+  /**
+   * Applies selection updates for either single or multi select forms.
+   *
+   * @param {'skill'|'guitarType'|'useCase'|'genres'} formName
+   * @param {number} option Option index.
+   * @param {boolean} multiSelect Whether the field allows multiple values.
+   * @returns {void}
+   */
   function handleClick(formName, option, multiSelect) {
     setOnboardData(prev => {
       const next = { ...prev };
@@ -47,6 +60,11 @@ export default function Onboard() {
     });
   }
   
+  /**
+   * Advances to next onboarding step or navigates to pricing on completion.
+   *
+   * @returns {void}
+   */
   function handleContinue() {
     
     if (progIdx == numPages-1) {
@@ -156,37 +174,51 @@ export default function Onboard() {
   
   return (
     <>
-      <main class="main-container">
-        <div class="registration-card">
-          <div class="character-section">
+      <div className="onboard-root">
+        <main className="main-container">
+          <div class="registration-card">
+            <div class="character-section">
             <Pickbot />
             <Dialogue text={pickBotDialogue[progIdx]} />
             <QuestionTitle text={questTitle[progIdx]} />
-          </div>
+            </div>
           
-          {progIdx === 2 && <ListSelect formName={"skill"} options={skillOptions} multiSelect={false} handleClick={handleClick} />}
-          {progIdx === 3 && <RectSelect formName={"guitarType"} options={guitarTypes} emojis={guitarEmojis} descriptions={[]} multiSelect={false} handleClick={handleClick} />}
-          {progIdx === 4 && <ListSelect formName={"useCase"} options={useCases} multiSelect={true} handleClick={handleClick} />}
-          {progIdx === 5 && <RectSelect formName={"genres"} options={genres} emojis={genreEmojis} descriptions={genreDescs} multiSelect={true} handleClick={handleClick} />}
+            {progIdx === 2 && <ListSelect formName={"skill"} options={skillOptions} multiSelect={false} handleClick={handleClick} />}
+            {progIdx === 3 && <RectSelect formName={"guitarType"} options={guitarTypes} emojis={guitarEmojis} descriptions={[]} multiSelect={false} handleClick={handleClick} />}
+            {progIdx === 4 && <ListSelect formName={"useCase"} options={useCases} multiSelect={true} handleClick={handleClick} />}
+            {progIdx === 5 && <RectSelect formName={"genres"} options={genres} emojis={genreEmojis} descriptions={genreDescs} multiSelect={true} handleClick={handleClick} />}
           
-          <ProgressDots pos={progIdx} />
-          <div class="continue-section">
+            <ProgressDots pos={progIdx} />
+            <div class="continue-section">
             
-            <ContinueBtn text={continueBtnText} onContinue={handleContinue} />
+              <ContinueBtn text={continueBtnText} onContinue={handleContinue} />
+            </div>
           </div>
-        </div>
-      </main>
+        </main>
+      </div>
     </>
   )
 }
 
-function ContinueBtn({ text, enabled, onContinue }) {
+/**
+ * Continue button for onboarding progression.
+ *
+ * @returns {JSX.Element}
+ */
+function ContinueBtn({ text, onContinue }) {
   return (
     <button class="continue-btn" id="continue-btn" onClick={onContinue}>{text}</button>
   )
 }
 
 
+/**
+ * Renders progress dots for each onboarding page.
+ *
+ * @param {Object} props
+ * @param {number} props.pos Active page index.
+ * @returns {JSX.Element}
+ */
 function ProgressDots({ pos }) {
   let dots = []
   for (let i = 0; i < numPages; i++) {
@@ -200,10 +232,22 @@ function ProgressDots({ pos }) {
   )
 }
 
+/**
+ * Displays current onboarding question title.
+ *
+ * @param {Object} props
+ * @param {string} props.text Title text.
+ * @returns {JSX.Element}
+ */
 function QuestionTitle({ text }) {
   return (<h2 class="question-title">{text}</h2>)
 }
 
+/**
+ * Vertical list selector for single/multi select questions.
+ * 
+ * @returns {JSX.Element}
+ */
 function ListSelect({ formName, options, multiSelect, handleClick }) {
   const items = options.map((option, idx) =>
     <div class="skill-option" key={idx}>
@@ -228,6 +272,11 @@ function ListSelect({ formName, options, multiSelect, handleClick }) {
   )
 }
 
+/**
+ * Grid selector used for guitar type and genre questions.
+ *
+ * @returns {JSX.Element}
+ */
 function RectSelect({ formName, options, emojis, descriptions, multiSelect, handleClick }) {
   const items = options.map((option, idx) =>
     <div class="guitar-option" key={idx}>

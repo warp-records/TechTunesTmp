@@ -1,6 +1,6 @@
 
-import { Route, Link, useNavigate } from 'react-router-dom'
-import { useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import './Create.css'
 import Avatar, { avatarList, serializeAvatar } from '../../components/Avatar'
@@ -10,7 +10,14 @@ import mouthBtn from '../../assets/DressingRoom/Dressing/Mouth Button.png'
 import accessoryBtn from '../../assets/DressingRoom/Dressing/AccessoryButton.png'
 import bodyBtn from '../../assets/DressingRoom/Dressing/Body Button.png'
 
+/**
+ * @typedef {Object} TorsoColor
+ * @property {string} name Label for the color segment.
+ * @property {string} hex Hex color used for avatar body tint.
+ * @property {string} glowClass CSS class used for pointer glow effects.
+ */
 
+/** @type {TorsoColor[]} */
 const TORSO_COLORS = [
   { name: 'yellow', hex: '#FFFF00', glowClass: 'glow-yellow' },
   { name: 'teal', hex: '#008B8B', glowClass: 'glow-teal' },
@@ -22,6 +29,11 @@ const TORSO_COLORS = [
   { name: 'orange', hex: '#FF8C00', glowClass: 'glow-orange' },
 ]
 
+/**
+ * Avatar creation page.
+ *
+ * @returns {JSX.Element}
+ */
 export default function Create() {
   const [category, setCategory] = useState("")
   const [form, setForm] = useState(0)
@@ -62,7 +74,17 @@ export default function Create() {
 }
 
 
-// category is a string
+/**
+ * Choice frame for avatar part categories and body color controls.
+ *
+ * @param {Object} props
+ * @param {string} props.category Selected part category.
+ * @param {(category: string) => void} props.setCategory Category setter.
+ * @param {Record<string, unknown>} props.activeItems Active avatar part state.
+ * @param {(next: Object|((prev: Object) => Object)) => void} props.setActiveItems Active item setter.
+ * @param {(color: string|undefined) => void} props.setBodyColor Body color setter.
+ * @returns {JSX.Element}
+ */
 export function ChoiceFrame({ category, setCategory, activeItems, setActiveItems, setBodyColor }) {
   
   const categoryAssets = {
@@ -119,39 +141,218 @@ export function ChoiceFrame({ category, setCategory, activeItems, setActiveItems
   )
 }
 
+/**
+ * Generic selectable item tile inside the choice frame.
+ *
+ * @param {Object} props
+ * @param {string} props.category Category for class naming.
+ * @param {string} props.img Asset URL used as background image.
+ * @param {() => void} props.onClick Click handler.
+ * @returns {JSX.Element}
+ */
 export function Item({ category, img, onClick }) {
   return (<div className={`${category}-option`} style={{ backgroundImage: `url(${img})` }} onClick={onClick}></div>)
 }
 
 
+/**
+ * Body color selector with spin and drag interactions.
+ *
+ * @param {Object} props
+ * @param {(color: string) => void} props.setBodyColor Body color setter.
+ * @returns {JSX.Element}
+ */
 export function Spinner({ setBodyColor }) {
   const [spinning, setSpinning] = useState(false)
   const [rotation, setRotation] = useState(0)
   const [selectedColor, setSelectedColor] = useState(null)
+  const [isDragging, setIsDragging] = useState(false)
 
+  const wheelRef = useRef(null)
+  const spinTimeoutRef = useRef(null)
+  const dragStartAngleRef = useRef(null)
+  const dragStartRotationRef = useRef(0)
+
+  const segmentAngle = 360 / TORSO_COLORS.length
+
+  /**
+   * Normalizes any angle to the [0, 360) range.
+   *
+   * @param {number} angle
+   * @returns {number}
+   */
+  const normalizeAngle = useCallback((angle) => {
+    return ((angle % 360) + 360) % 360
+  }, [])
+
+  /**
+   * Maps wheel rotation to the color under the fixed pointer.
+   *
+   * @param {number} rotationValue
+   * @returns {TorsoColor}
+   */
+  const getColorForRotation = useCallback(
+    (rotationValue) => {
+      const finalAngle = normalizeAngle(rotationValue)
+      const pointerAngle = normalizeAngle(360 - finalAngle)
+      const selectedSegment = Math.floor(pointerAngle / segmentAngle) % TORSO_COLORS.length
+      return TORSO_COLORS[selectedSegment]
+    },
+    [normalizeAngle, segmentAngle]
+  )
+
+  /**
+   * Applies selected color and emits body color update.
+   *
+   * @param {number} rotationValue
+   * @returns {void}
+   */
+  const applyColorForRotation = useCallback(
+    (rotationValue) => {
+      const color = getColorForRotation(rotationValue)
+      setSelectedColor(color)
+      setBodyColor(color.hex)
+    },
+    [getColorForRotation, setBodyColor]
+  )
+
+  /**
+   * Converts pointer coordinates into an angle relative to wheel center.
+   *
+   * @param {number} clientX
+   * @param {number} clientY
+   * @returns {number|null}
+   */
+  const getPointerAngle = useCallback((clientX, clientY) => {
+    if (!wheelRef.current) {
+      return null
+    }
+
+    const rect = wheelRef.current.getBoundingClientRect()
+    const centerX = rect.left + rect.width / 2
+    const centerY = rect.top + rect.height / 2
+    const dx = clientX - centerX
+    const dy = clientY - centerY
+
+    return normalizeAngle((Math.atan2(dy, dx) * 180) / Math.PI + 90)
+  }, [normalizeAngle])
+
+  /**
+   * Keeps deltas in the shortest circular direction to avoid jumps
+   * around the 0/360 boundary while dragging.
+   *
+   * @param {number} delta
+   * @returns {number}
+   */
+  const normalizeDelta = useCallback((delta) => {
+    if (delta > 180) {
+      return delta - 360
+    }
+    if (delta < -180) {
+      return delta + 360
+    }
+    return delta
+  }, [])
+
+  useEffect(() => {
+    return () => {
+      if (spinTimeoutRef.current) {
+        window.clearTimeout(spinTimeoutRef.current)
+      }
+    }
+  }, [])
+
+  /**
+   * Spins the wheel with inertia-style random rotation and commits the
+   * resulting body color when animation completes.
+   *
+   * @returns {void}
+   */
   function spin() {
-    if (spinning) return
+    if (spinning || isDragging) return
     setSpinning(true)
 
     const randomRotation = rotation + Math.random() * 360 + (Math.random() * 2.75 + 0.25) * 360
 
     setRotation(randomRotation)
 
-    setTimeout(() => {
-      const finalAngle = randomRotation % 360
-      const pointerAngle = (360 - finalAngle) % 360
-      const selectedSegment = Math.floor(pointerAngle / 45)
-      const color = TORSO_COLORS[selectedSegment]
-      setSelectedColor(color)
-      setBodyColor(color.hex)
+    if (spinTimeoutRef.current) {
+      window.clearTimeout(spinTimeoutRef.current)
+    }
+
+    spinTimeoutRef.current = window.setTimeout(() => {
+      applyColorForRotation(randomRotation)
       setSpinning(false)
     }, 1000)
+  }
+
+  /**
+   * Starts drag selection by capturing pointer and storing baseline angle.
+   *
+   * @param {import('react').PointerEvent<HTMLDivElement>} event
+   * @returns {void}
+   */
+  function handlePointerDown(event) {
+    if (spinning) return
+
+    const startAngle = getPointerAngle(event.clientX, event.clientY)
+    if (startAngle === null) return
+
+    setIsDragging(true)
+    dragStartAngleRef.current = startAngle
+    dragStartRotationRef.current = rotation
+    event.currentTarget.setPointerCapture(event.pointerId)
+    event.preventDefault()
+  }
+
+  /**
+   * Updates wheel rotation and selected color while dragging.
+   *
+   * @param {import('react').PointerEvent<HTMLDivElement>} event
+   * @returns {void}
+   */
+  function handlePointerMove(event) {
+    if (!isDragging || dragStartAngleRef.current === null) return
+
+    const currentAngle = getPointerAngle(event.clientX, event.clientY)
+    if (currentAngle === null) return
+
+    const delta = normalizeDelta(currentAngle - dragStartAngleRef.current)
+    const nextRotation = dragStartRotationRef.current + delta
+
+    setRotation(nextRotation)
+    applyColorForRotation(nextRotation)
+  }
+
+  /**
+   * Ends drag selection and releases pointer capture.
+   *
+   * @param {import('react').PointerEvent<HTMLDivElement>} event
+   * @returns {void}
+   */
+  function handlePointerUp(event) {
+    if (!isDragging) return
+
+    setIsDragging(false)
+    dragStartAngleRef.current = null
+
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId)
+    }
   }
 
   return (
     <div className="body-options">
       <div className="color-wheel-container">
-        <div className="color-wheel" style={{ transform: `rotate(${rotation}deg)` }}></div>
+        <div
+          ref={wheelRef}
+          className={`color-wheel ${isDragging ? 'dragging' : ''}`}
+          style={{ transform: `rotate(${rotation}deg)` }}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerUp}
+        ></div>
         <div className={`wheel-pointer ${selectedColor ? selectedColor.glowClass : ''}`}
              style={selectedColor ? { borderTopColor: selectedColor.hex } : {}}></div>
       </div>

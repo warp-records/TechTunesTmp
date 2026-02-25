@@ -507,6 +507,14 @@
     #FF8C00 315deg 360deg
     );
     transition: transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+}
+
+.color-wheel.dragging {
+    transition: none;
+    cursor: grabbing;
 }
 
 .wheel-pointer {
@@ -555,4 +563,9 @@
 
 .spin-button:active {
     transform: scale(0.95);
+}
+
+.spin-button.disabled {
+    opacity: 0.7;
+    pointer-events: none;
 }
