@@ -106,10 +106,10 @@ export default function Username() {
             className="toggle-password-btn"
             onClick={() => setShowPassword(!showPassword)}
           >{showPassword ? <FaEyeSlash /> : <FaEye />}</button>
-          {password && !isGoodPassword() ?
-            (<div class="error-message">Password needs 10+ characters, uppercase, lowercase, and 2 numbers or 1 special character</div>) : (<></>)
-          }
         </div>
+        {password && !isGoodPassword() ?
+          (<div class="error-message">Password needs 10+ characters, uppercase, lowercase, and 2 numbers or 1 special character</div>) : (<></>)
+        }
         
         <Link to="/create">
           <button className="username-continue-btn" disabled={!validName || !isGoodPassword()}>
