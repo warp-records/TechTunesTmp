@@ -16,7 +16,7 @@ class User(BaseModel):
 @app.post("/api/register")
 def register(user: User):
     if user.username in users:
-        raise HTTPException(status_code=409, detail="Username already taken")
+        raise HTTPException(status_code=409, detail="UsernameTaken")
     
     users[user.username] = user.password
     token = str(uuid.uuid4())
@@ -28,6 +28,10 @@ def register(user: User):
         "username": user.username,
         "token": token,
     }
+
+@app.get("/api/check-username/{username}")
+def check_username(username: str):
+    return { "taken": username in  users }
 
 # @app.get("/api/profile")
 # def profileData(token: str):

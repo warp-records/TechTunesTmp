@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Route, Link } from 'react-router-dom'
+import { Route, Link, useNavigate } from 'react-router-dom'
 import './Username.css'
 import { useEffect } from 'react';
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
@@ -24,7 +24,23 @@ export default function Username() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [suggestions, setSuggestions] = useState(randSuggestions());
+  const [usernameTaken, setUsernameTaken] = useState(false);
+  
   const validName = username.length >= 3;
+  
+  useEffect(() => {
+    if (!validName) return;
+    
+    const timer = setTimeout(async () => {
+      const res = await fetch(`/api/check-username/${username}`);
+      const data = await res.json();
+      
+      setUsernameTaken(data.taken);
+    }, 300);
+    
+    return () => clearTimeout(timer);
+  }, [username]);
+  
   
   function randSuggestions() {
     let suggestions = [...allSuggestions].sort(() => 0.5 - Math.random());
@@ -53,6 +69,23 @@ export default function Username() {
     return true;
   }
   
+  const navigate = useNavigate();
+  
+  async function register() {
+    const response = await fetch('/api/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+      }
+    )
+    
+    const data = await response.json();
+    if (response.ok) {
+      navigate('/create');
+    }
+  }
+  
+  
   useEffect(() => {
     localStorage.setItem("username", username);
   }, [username]);
@@ -67,15 +100,18 @@ export default function Username() {
         <div className={`field-input-container`}>
           <input
             type="text"
-            class={`field-input ${username && !validName ? 'bad-input' : ''}`}
+            class={`field-input ${username && (!validName || usernameTaken) ? 'bad-input' : ''}`}
             placeholder="Enter your username..."
             maxLength="20"
             autoComplete="off"
             value={username}
             onChange={handleInput}
           />
-          {username && !validName ?
-            (<div class="error-message">Username must be at least 3 characters long</div>) : (<></>)
+          {username && !validName &&
+            <div class="error-message">Username must be at least 3 characters long</div>
+          }
+          {username && validName && usernameTaken &&
+            <div class="error-message">Username is taken</div>
           }
         </div>
         
@@ -111,11 +147,11 @@ export default function Username() {
           (<div class="error-message">Password needs 10+ characters, uppercase, lowercase, and 2 numbers or 1 special character</div>) : (<></>)
         }
         
-        <Link to="/create">
-          <button className="username-continue-btn" disabled={!validName || !isGoodPassword()}>
+        {/* <Link to="/create">*/}
+          <button onClick={register} className="username-continue-btn" disabled={!validName || !isGoodPassword() || usernameTaken}>
             Continue to PickBot Creation
           </button>
-        </Link>
+        {/* </Link>*/}
       </div>
     </main>
   )
