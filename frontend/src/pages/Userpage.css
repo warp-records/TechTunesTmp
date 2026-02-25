@@ -18,9 +18,30 @@
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
+    position: relative;
+    isolation: isolate;
     background: linear-gradient(135deg, var(--dark-bg), var(--dark-purple), var(--teal));
     background-size: 400% 400%;
     color: var(--white);
+}
+
+.userpage-root::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image: url('../assets/brick_wall.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.22;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.userpage-root > header,
+.userpage-root > main {
+    position: relative;
+    z-index: 1;
 }
 
 .container {
