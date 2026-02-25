@@ -41,11 +41,6 @@ export default function Avatar({ form, activeItems = {}, color, onAccessoryDrag 
   const accessoryUrl = accessoryName ? assetRegistry.accessory[accessoryName] : null
   const accessoryPos = { x: activeItems.accessory?.x ?? 0, y: activeItems.accessory?.y ?? 0 }
 
-  /**
-   * Returns true when the accessory is fully contained by the avatar frame.
-   *
-   * @returns {boolean}
-   */
   const isAccessoryWithinBounds = () => {
     if (!avatarRef.current || !accessoryRef.current) {
       return true
@@ -53,21 +48,17 @@ export default function Avatar({ form, activeItems = {}, color, onAccessoryDrag 
 
     const avatarRect = avatarRef.current.getBoundingClientRect()
     const accessoryRect = accessoryRef.current.getBoundingClientRect()
+    const halfW = accessoryRect.width / 2
+    const halfH = accessoryRect.height / 2
 
     return (
-      accessoryRect.left >= avatarRect.left &&
-      accessoryRect.top >= avatarRect.top &&
-      accessoryRect.right <= avatarRect.right &&
-      accessoryRect.bottom <= avatarRect.bottom
+      accessoryRect.right - halfW >= avatarRect.left &&
+      accessoryRect.left + halfW <= avatarRect.right &&
+      accessoryRect.bottom - halfH >= avatarRect.top &&
+      accessoryRect.top + halfH <= avatarRect.bottom
     )
   }
 
-  /**
-   * Commits accessory position only when drop is in bounds. Otherwise, reverts
-   * to the last persisted coordinates.
-   *
-   * @returns {void}
-   */
   const handleAccessoryStop = (_event, data) => {
     if (isAccessoryWithinBounds()) {
       onAccessoryDrag?.(data.x, data.y)
