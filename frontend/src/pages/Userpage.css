@@ -12,6 +12,17 @@
     --dark-purple: #4c1a80;
 }
 
+.userpage-root {
+    min-height: 100vh;
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    background: linear-gradient(135deg, var(--dark-bg), var(--dark-purple), var(--teal));
+    background-size: 400% 400%;
+    color: var(--white);
+}
+
 .container {
     max-width: 1280px;
     margin: 0 auto;
