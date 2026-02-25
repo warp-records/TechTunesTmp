@@ -34,10 +34,12 @@ export default function Homepage() {
           </Link>
         </div>
 
-        <a href="impact.html" class="impact" aria-label="Impact">
-          <img src={ImpactImg} alt="Impact" />
-        </a>
-
+        <Link to={'/impact'}>
+          <a class="impact" aria-label="Impact">
+            <img src={ImpactImg} alt="Impact" />
+          </a>
+        </Link>
+  
         <div id="floating-symbols" class="floating-symbols"></div>
       </div>
       <div class="floor"></div>
