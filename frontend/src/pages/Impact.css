@@ -24,6 +24,7 @@
   font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   color: var(--text);
   min-height: 100vh;
+  height: 100vh;
 
   /* animated gradient from userpage.html */
   background: linear-gradient(135deg, var(--dark-bg), var(--dark-purple), var(--teal));
