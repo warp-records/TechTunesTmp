@@ -9,12 +9,6 @@ import ProfileImg from '../assets/Homepage/Profile.png'
 import ImpactImg from '../assets/Homepage/Impact.png'
 import HomepageTitleBgImg from '../assets/Homepage/Brick With Title.png'
 
-/**
- * Homepage route with a guarded background reveal to avoid first-paint
- * flicker while the heavy title layer image loads.
- *
- * @returns {JSX.Element}
- */
 export default function Homepage() {
   const [isBackgroundReady, setIsBackgroundReady] = useState(false)
 
@@ -27,11 +21,6 @@ export default function Homepage() {
       }
     }, 1500)
 
-    /**
-     * Marks the homepage background as ready once preload succeeds/fails.
-     *
-     * @returns {void}
-     */
     const markReady = () => {
       if (!cancelled) {
         window.clearTimeout(fallbackTimer)

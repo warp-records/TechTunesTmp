@@ -9,15 +9,9 @@ import { useEffect } from 'react';
 
 const numPages = 6;
 
-/**
- * Multi-step onboarding route.
- *
- * @returns {JSX.Element}
- */
 export default function Onboard() {
   const [progIdx, setProgIdx] = useState(0);
   
-  /** @type {[OnboardData, import('react').Dispatch<import('react').SetStateAction<OnboardData>>]} */
   const [onboardData, setOnboardData] = useState(() => {
     const saved = localStorage.getItem("onboardData");
     return saved ? JSON.parse(saved) : {
@@ -32,14 +26,6 @@ export default function Onboard() {
     localStorage.setItem("onboardData", JSON.stringify(onboardData));
   }, [onboardData])
   
-  /**
-   * Applies selection updates for either single or multi select forms.
-   *
-   * @param {'skill'|'guitarType'|'useCase'|'genres'} formName
-   * @param {number} option Option index.
-   * @param {boolean} multiSelect Whether the field allows multiple values.
-   * @returns {void}
-   */
   function handleClick(formName, option, multiSelect) {
     setOnboardData(prev => {
       const next = { ...prev };
@@ -60,11 +46,6 @@ export default function Onboard() {
     });
   }
   
-  /**
-   * Advances to next onboarding step or navigates to pricing on completion.
-   *
-   * @returns {void}
-   */
   function handleContinue() {
     
     if (progIdx == numPages-1) {
@@ -200,11 +181,6 @@ export default function Onboard() {
   )
 }
 
-/**
- * Continue button for onboarding progression.
- *
- * @returns {JSX.Element}
- */
 function ContinueBtn({ text, onContinue }) {
   return (
     <button class="continue-btn" id="continue-btn" onClick={onContinue}>{text}</button>
@@ -212,13 +188,6 @@ function ContinueBtn({ text, onContinue }) {
 }
 
 
-/**
- * Renders progress dots for each onboarding page.
- *
- * @param {Object} props
- * @param {number} props.pos Active page index.
- * @returns {JSX.Element}
- */
 function ProgressDots({ pos }) {
   let dots = []
   for (let i = 0; i < numPages; i++) {
@@ -232,22 +201,10 @@ function ProgressDots({ pos }) {
   )
 }
 
-/**
- * Displays current onboarding question title.
- *
- * @param {Object} props
- * @param {string} props.text Title text.
- * @returns {JSX.Element}
- */
 function QuestionTitle({ text }) {
   return (<h2 class="question-title">{text}</h2>)
 }
 
-/**
- * Vertical list selector for single/multi select questions.
- * 
- * @returns {JSX.Element}
- */
 function ListSelect({ formName, options, multiSelect, handleClick }) {
   const items = options.map((option, idx) =>
     <div class="skill-option" key={idx}>
@@ -272,11 +229,6 @@ function ListSelect({ formName, options, multiSelect, handleClick }) {
   )
 }
 
-/**
- * Grid selector used for guitar type and genre questions.
- *
- * @returns {JSX.Element}
- */
 function RectSelect({ formName, options, emojis, descriptions, multiSelect, handleClick }) {
   const items = options.map((option, idx) =>
     <div class="guitar-option" key={idx}>

@@ -11,14 +11,7 @@ import mouthBtn from '../../assets/DressingRoom/Dressing/Mouth Button.png'
 import accessoryBtn from '../../assets/DressingRoom/Dressing/AccessoryButton.png'
 import bodyBtn from '../../assets/DressingRoom/Dressing/Body Button.png'
 
-/**
- * @typedef {Object} TorsoColor
- * @property {string} name Label for the color segment.
- * @property {string} hex Hex color used for avatar body tint.
- * @property {string} glowClass CSS class used for pointer glow effects.
- */
 
-/** @type {TorsoColor[]} */
 const TORSO_COLORS = [
   { name: 'yellow', hex: '#FFFF00', glowClass: 'glow-yellow' },
   { name: 'teal', hex: '#008B8B', glowClass: 'glow-teal' },
@@ -30,11 +23,6 @@ const TORSO_COLORS = [
   { name: 'orange', hex: '#FF8C00', glowClass: 'glow-orange' },
 ]
 
-/**
- * Avatar creation page.
- *
- * @returns {JSX.Element}
- */
 export default function Create() {
   const [category, setCategory] = useState("")
   const [form, setForm] = useState(0)
@@ -175,22 +163,10 @@ export function Spinner({ setBodyColor }) {
 
   const segmentAngle = 360 / TORSO_COLORS.length
 
-  /**
-   * Normalizes any angle to the [0, 360) range.
-   *
-   * @param {number} angle
-   * @returns {number}
-   */
   const normalizeAngle = useCallback((angle) => {
     return ((angle % 360) + 360) % 360
   }, [])
 
-  /**
-   * Maps wheel rotation to the color under the fixed pointer.
-   *
-   * @param {number} rotationValue
-   * @returns {TorsoColor}
-   */
   const getColorForRotation = useCallback(
     (rotationValue) => {
       const finalAngle = normalizeAngle(rotationValue)
@@ -201,12 +177,6 @@ export function Spinner({ setBodyColor }) {
     [normalizeAngle, segmentAngle]
   )
 
-  /**
-   * Applies selected color and emits body color update.
-   *
-   * @param {number} rotationValue
-   * @returns {void}
-   */
   const applyColorForRotation = useCallback(
     (rotationValue) => {
       const color = getColorForRotation(rotationValue)
@@ -216,13 +186,6 @@ export function Spinner({ setBodyColor }) {
     [getColorForRotation, setBodyColor]
   )
 
-  /**
-   * Converts pointer coordinates into an angle relative to wheel center.
-   *
-   * @param {number} clientX
-   * @param {number} clientY
-   * @returns {number|null}
-   */
   const getPointerAngle = useCallback((clientX, clientY) => {
     if (!wheelRef.current) {
       return null
@@ -241,8 +204,6 @@ export function Spinner({ setBodyColor }) {
    * Keeps deltas in the shortest circular direction to avoid jumps
    * around the 0/360 boundary while dragging.
    *
-   * @param {number} delta
-   * @returns {number}
    */
   const normalizeDelta = useCallback((delta) => {
     if (delta > 180) {
@@ -265,8 +226,6 @@ export function Spinner({ setBodyColor }) {
   /**
    * Spins the wheel with inertia-style random rotation and commits the
    * resulting body color when animation completes.
-   *
-   * @returns {void}
    */
   function spin() {
     if (spinning || isDragging) return
@@ -288,9 +247,6 @@ export function Spinner({ setBodyColor }) {
 
   /**
    * Starts drag selection by capturing pointer and storing baseline angle.
-   *
-   * @param {import('react').PointerEvent<HTMLDivElement>} event
-   * @returns {void}
    */
   function handlePointerDown(event) {
     if (spinning) return
@@ -307,9 +263,6 @@ export function Spinner({ setBodyColor }) {
 
   /**
    * Updates wheel rotation and selected color while dragging.
-   *
-   * @param {import('react').PointerEvent<HTMLDivElement>} event
-   * @returns {void}
    */
   function handlePointerMove(event) {
     if (!isDragging || dragStartAngleRef.current === null) return
@@ -326,9 +279,6 @@ export function Spinner({ setBodyColor }) {
 
   /**
    * Ends drag selection and releases pointer capture.
-   *
-   * @param {import('react').PointerEvent<HTMLDivElement>} event
-   * @returns {void}
    */
   function handlePointerUp(event) {
     if (!isDragging) return
