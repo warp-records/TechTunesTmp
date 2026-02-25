@@ -3,7 +3,8 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import './Create.css'
-import Avatar, { avatarList, serializeAvatar } from '../../components/Avatar'
+import Avatar from '../../components/Avatar'
+import { avatarList } from '../../components/avatarData'
 import { eyeAssets, mouthAssets, accessoryAssets } from '../../assetRegistry'
 import eyesBtn from '../../assets/DressingRoom/Dressing/Eyes Button.png'
 import mouthBtn from '../../assets/DressingRoom/Dressing/Mouth Button.png'
@@ -44,7 +45,7 @@ export default function Create() {
   
   return (
     <>
-      <ChoiceFrame category={category} setCategory={setCategory} activeItems={activeItems} setActiveItems={setActiveItems} setBodyColor={setBodyColor} />
+      <ChoiceFrame category={category} setCategory={setCategory} setActiveItems={setActiveItems} setBodyColor={setBodyColor} />
       <div class="mirror"></div>
       <div class="light"></div>
       <div class="stand"></div>
@@ -80,12 +81,11 @@ export default function Create() {
  * @param {Object} props
  * @param {string} props.category Selected part category.
  * @param {(category: string) => void} props.setCategory Category setter.
- * @param {Record<string, unknown>} props.activeItems Active avatar part state.
  * @param {(next: Object|((prev: Object) => Object)) => void} props.setActiveItems Active item setter.
  * @param {(color: string|undefined) => void} props.setBodyColor Body color setter.
  * @returns {JSX.Element}
  */
-export function ChoiceFrame({ category, setCategory, activeItems, setActiveItems, setBodyColor }) {
+export function ChoiceFrame({ category, setCategory, setActiveItems, setBodyColor }) {
   
   const categoryAssets = {
     "eye": Object.entries(eyeAssets),

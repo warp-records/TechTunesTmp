@@ -3,8 +3,8 @@ import Draggable from 'react-draggable'
 
 import './Avatar.css'
 import { assetRegistry } from '../assetRegistry'
+import { avatarList } from './avatarData'
 
-const avatars = import.meta.glob('../assets/Avatar/Avatar[0-9].png', { eager: true, import: 'default' })
 const avatarMasks = import.meta.glob('../assets/Avatar/Avatar[0-9]Mask.png', { eager: true, import: 'default' })
 
 const EYE_POSITIONS = [
@@ -23,9 +23,13 @@ const MOUTH_POSITIONS = [
   { top: '75%', left: 'calc(50% - 12px)', width: '45px', height: '22px' },
 ]
 
-export const avatarList = Object.values(avatars)
-
+/**
+ * Avatar preview renderer with draggable accessory support.
+ *
+ * @returns {JSX.Element}
+ */
 export default function Avatar({ form, activeItems = {}, color, onAccessoryDrag }) {
+  const avatarRef = useRef(null)
   const maskList = Object.values(avatarMasks)
   const accessoryRef = useRef(null)
   const eyePos = EYE_POSITIONS[form] || EYE_POSITIONS[0]
@@ -36,9 +40,45 @@ export default function Avatar({ form, activeItems = {}, color, onAccessoryDrag 
   const accessoryName = activeItems.accessory?.name
   const accessoryUrl = accessoryName ? assetRegistry.accessory[accessoryName] : null
   const accessoryPos = { x: activeItems.accessory?.x ?? 0, y: activeItems.accessory?.y ?? 0 }
+
+  /**
+   * Returns true when the accessory is fully contained by the avatar frame.
+   *
+   * @returns {boolean}
+   */
+  const isAccessoryWithinBounds = () => {
+    if (!avatarRef.current || !accessoryRef.current) {
+      return true
+    }
+
+    const avatarRect = avatarRef.current.getBoundingClientRect()
+    const accessoryRect = accessoryRef.current.getBoundingClientRect()
+
+    return (
+      accessoryRect.left >= avatarRect.left &&
+      accessoryRect.top >= avatarRect.top &&
+      accessoryRect.right <= avatarRect.right &&
+      accessoryRect.bottom <= avatarRect.bottom
+    )
+  }
+
+  /**
+   * Commits accessory position only when drop is in bounds. Otherwise, reverts
+   * to the last persisted coordinates.
+   *
+   * @returns {void}
+   */
+  const handleAccessoryStop = (_event, data) => {
+    if (isAccessoryWithinBounds()) {
+      onAccessoryDrag?.(data.x, data.y)
+      return
+    }
+
+    onAccessoryDrag?.(accessoryPos.x, accessoryPos.y)
+  }
   
   return (
-  <div class="avatar-image">
+  <div ref={avatarRef} class="avatar-image">
       <div class="body-image" style={{backgroundImage: `url(${avatarList[form]})`}}></div>
       <div class="body-color-layer" style={{
         '--body-color': color || 'transparent',
@@ -55,18 +95,10 @@ export default function Avatar({ form, activeItems = {}, color, onAccessoryDrag 
       }}></div>
       {accessoryUrl && (
         <Draggable nodeRef={accessoryRef} position={accessoryPos}
-          onStop={(e, data) => onAccessoryDrag?.(data.x, data.y)}>
+          onStop={handleAccessoryStop}>
           <div ref={accessoryRef} className="avatar-accessory" style={{backgroundImage: `url(${accessoryUrl})`}}></div>
         </Draggable>
       )}
   </div>
   )
-}
-
-export function serializeAvatar({ form, bodyColor, activeItems }) {
-  return JSON.stringify({ form, bodyColor, activeItems })
-}
-
-export function deserializeAvatar(json) {
-  return JSON.parse(json)
 }
