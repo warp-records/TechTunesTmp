@@ -16,16 +16,20 @@ const allSuggestions = [
   "MelodyMaker"
 ];
 
+
 // const defaultSuggestions = ["MusicMaster", "GuitarHero", "PickBotFan", "RockStar", "MelodyMaker"]
 
 export default function Username() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [suggestions, setSuggestions] = useState(randSuggestions());
   const validName = username.length >= 3;
- 
-  let suggestions = [...allSuggestions].sort(() => 0.5 - Math.random());
-  suggestions = suggestions.slice(0, 5);
+  
+  function randSuggestions() {
+    let suggestions = [...allSuggestions].sort(() => 0.5 - Math.random());
+    return suggestions.slice(0, 5);
+  }
   
   function handleInput(e) {
     setUsername(e.target.value);
@@ -78,7 +82,10 @@ export default function Username() {
   
         <div className="username-suggestions">
           {suggestions.map((name) => (
-            <button key={name} className="suggestion-btn" onClick={() => setUsername(name)}>{name}</button>
+            <button key={name} className="suggestion-btn" onClick={() => {
+              setUsername(name);
+              setSuggestions(randSuggestions());
+            }}>{name}</button>
           ))}
         </div>
 
