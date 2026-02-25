@@ -7,14 +7,36 @@
   height: 100vh;
   width: 100vw;
   overflow: hidden;
+  isolation: isolate;
   background-image:
-    url('../assets/Homepage/Brick With Title.png'),
-    url('../assets/brick_wall.png');
-  background-size: cover, cover;
-  background-position: center -50px, center -50px;
+    url('../assets/brick_wall.png'),
+    url('../assets/DressingRoom/Light.png');
+  background-size: cover, 100% auto;
+  background-position: center -50px, top left;
   background-repeat: no-repeat, no-repeat;
   background-attachment: fixed, fixed;
+  transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transform-origin: 50% 78%;
   z-index: 0;
+}
+
+.homepage::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url('../assets/Homepage/Brick With Title.png');
+  background-size: cover;
+  background-position: center -50px;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  opacity: 0;
+  transition: opacity 0.25s ease-in;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.homepage.bg-ready::before {
+  opacity: 1;
 }
 
 .floor {
@@ -91,9 +113,10 @@
 .tune-station {
   position: absolute;
   bottom: 5%;
-  left: 9%;
-  width: 200px;
+  left: 5%;
+  width: 500px;
   height: 200px;
+  background-position: left;
   z-index: 15;
 }
 .song-search {
@@ -248,13 +271,14 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999;
+  z-index: 40;
   transition: opacity 0.8s ease-out, visibility 0.8s ease-out;
 }
 
 .loading-screen.hidden {
   opacity: 0;
   visibility: hidden;
+  pointer-events: none;
 }
 
 .loading-content {
@@ -314,21 +338,19 @@
 }
 
 .main-content {
+  position: absolute;
+  inset: 0;
+  z-index: 15;
   opacity: 0;
   transition: opacity 0.8s ease-in;
+  pointer-events: none;
 }
 
 .main-content.visible {
   opacity: 1;
-}
-
-/* Zoom-in effect for lesson island click */
-.homepage {
-  transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  transform-origin: 50% 78%;
+  pointer-events: auto;
 }
 
 .homepage.zoom-to-lesson {
   transform: scale(4);
 }
-

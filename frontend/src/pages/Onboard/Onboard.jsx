@@ -26,7 +26,6 @@ export default function Onboard() {
     localStorage.setItem("onboardData", JSON.stringify(onboardData));
   }, [onboardData])
   
-  // some reason this triggers twice but I don't feel like fixin git
   function handleClick(formName, option, multiSelect) {
     setOnboardData(prev => {
       const next = { ...prev };
@@ -156,31 +155,33 @@ export default function Onboard() {
   
   return (
     <>
-      <main class="main-container">
-        <div class="registration-card">
-          <div class="character-section">
+      <div className="onboard-root">
+        <main className="main-container">
+          <div class="registration-card">
+            <div class="character-section">
             <Pickbot />
             <Dialogue text={pickBotDialogue[progIdx]} />
             <QuestionTitle text={questTitle[progIdx]} />
-          </div>
+            </div>
           
-          {progIdx === 2 && <ListSelect formName={"skill"} options={skillOptions} multiSelect={false} handleClick={handleClick} />}
-          {progIdx === 3 && <RectSelect formName={"guitarType"} options={guitarTypes} emojis={guitarEmojis} descriptions={[]} multiSelect={false} handleClick={handleClick} />}
-          {progIdx === 4 && <ListSelect formName={"useCase"} options={useCases} multiSelect={true} handleClick={handleClick} />}
-          {progIdx === 5 && <RectSelect formName={"genres"} options={genres} emojis={genreEmojis} descriptions={genreDescs} multiSelect={true} handleClick={handleClick} />}
+            {progIdx === 2 && <ListSelect formName={"skill"} options={skillOptions} multiSelect={false} handleClick={handleClick} />}
+            {progIdx === 3 && <RectSelect formName={"guitarType"} options={guitarTypes} emojis={guitarEmojis} descriptions={[]} multiSelect={false} handleClick={handleClick} />}
+            {progIdx === 4 && <ListSelect formName={"useCase"} options={useCases} multiSelect={true} handleClick={handleClick} />}
+            {progIdx === 5 && <RectSelect formName={"genres"} options={genres} emojis={genreEmojis} descriptions={genreDescs} multiSelect={true} handleClick={handleClick} />}
           
-          <ProgressDots pos={progIdx} />
-          <div class="continue-section">
+            <ProgressDots pos={progIdx} />
+            <div class="continue-section">
             
-            <ContinueBtn text={continueBtnText} onContinue={handleContinue} />
+              <ContinueBtn text={continueBtnText} onContinue={handleContinue} />
+            </div>
           </div>
-        </div>
-      </main>
+        </main>
+      </div>
     </>
   )
 }
 
-function ContinueBtn({ text, enabled, onContinue }) {
+function ContinueBtn({ text, onContinue }) {
   return (
     <button class="continue-btn" id="continue-btn" onClick={onContinue}>{text}</button>
   )

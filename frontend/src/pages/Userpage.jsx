@@ -67,7 +67,7 @@ export default function Userpage() {
   const avatarJson = JSON.parse(localStorage.getItem("avatar"));
   
   return (
-  <>
+  <div className="userpage-root">
     <header id="header">
         <nav class="nav container" aria-label="Top Navigation">
           <div class="nav-left">
@@ -156,7 +156,7 @@ export default function Userpage() {
           <h3 class="section-title" id="leaderboard-title">Leaderboard</h3>
           <div class="grid">
             {
-              leaderboard.map((entry, index) => {
+              leaderboard.map((entry) => {
                 return <LeaderBoardCard friend={entry["name"]} song={entry["song"]} score={entry["score"]} />
               })
             }
@@ -167,7 +167,7 @@ export default function Userpage() {
         <SongRow title={"Pick Your Genre"} songs={genres} />
         
   </main>
-  </>
+  </div>
   )
 }
 
