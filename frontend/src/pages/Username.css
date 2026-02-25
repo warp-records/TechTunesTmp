@@ -40,12 +40,12 @@
     line-height: 1.6;
 }
 
-.username-input-container {
+.field-input-container {
     position: relative;
     margin: 2rem 0;
 }
 
-.username-input {
+.field-input {
     width: 100%;
     padding: 15px 20px;
     font-size: 1.2rem;
@@ -58,7 +58,7 @@
     transition: all 0.3s ease;
 }
 
-.username-input:focus {
+.field-input:focus {
     outline: none;
     border-color: #00ff88;
     box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
@@ -70,7 +70,7 @@
     box-shadow: 0 0 20px rgba(255, 65, 65, 0.3);
 }
 
-.username-input::placeholder {
+.field-input::placeholder {
     color: rgba(255, 255, 255, 0.6);
 }
 
