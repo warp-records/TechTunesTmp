@@ -1,4 +1,5 @@
 
+import { useState, useEffect } from 'react'
 import { Route, Link } from 'react-router-dom'
 
 import Avatar from "../components/Avatar"
@@ -55,16 +56,26 @@ export default function Userpage() {
     { "name": "Max", "song": "I'm The Problem", score: 700 },
   ]
   
-  // const cuteAvatar = {
-  //   "form": 0,
-  //   "color": "#8A2BE2",
-  //   "activeItems": {
-  //     "eye": "Eyeliner Eyes",
-  //     "mouth": "Lips Mouth",
-  //     "accessory": { "name": "Bow", "x": -27, "y": 45 }
-  //   }
-  // };
-  const avatarJson = JSON.parse(localStorage.getItem("avatar"));
+  const [avatarData, setAvatarData] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    async function getAvatar() {
+      const res = await fetch('/api/get-avatar/', {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setAvatarData(data.avatar);
+      }
+    }
+    getAvatar();
+  }, []);
   
   return (
   <div className="userpage-root">
@@ -101,7 +112,7 @@ export default function Userpage() {
                 </div>
                 
               <div id="userpage-avatar">
-                <Avatar form={avatarJson["form"]} activeItems={avatarJson["activeItems"]} color={avatarJson["bodyColor"]} />
+                {avatarData && <Avatar form={avatarData["form"]} activeItems={avatarData["activeItems"]} color={avatarData["bodyColor"]} />}
               </div>
         </div>
       </section>
