@@ -39,33 +39,38 @@ class Avatar(BaseModel):
     form: int
     bodyColor: str
     activeItems: dict
-    eye: str
     
-    @field_validator('bodyColor')
-    @classmethod
-    def valid_hex(cls, v):
-        if not v.startswith('#') or len(v) not in (4, 7):
-            raise ValueError('Must be a hex color like #FFF or #FF00FF')
-        return v
+    # @field_validator('bodyColor')
+    # @classmethod
+    # def valid_hex(cls, v):
+    #     if not v.startswith('#') or len(v) not in (4, 7):
+    #         raise ValueError('Must be a hex color like #FFF or #FF00FF')
+    #     return v
             
         
 
 @app.post("/api/save-avatar/", tags=["avatar"])
 def save_avatar(request: Request, avatar: Avatar):
     auth = request.headers.get("Authorization")
-    if not auth or not auth.startswith("Bearer" ) or auth not in sessions:
+    if not auth or not auth.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    token = auth.replace("Bearer ", "")
+    if token not in sessions:
         raise HTTPException(status_code=401, detail="Unauthorized")
     
-    user = sessions[auth]
+    user = sessions[token]
     avatars[user] = avatar
     
 @app.get("/api/get-avatar/", tags=["avatar"])
 def get_avatar(request: Request):
     auth = request.headers.get("Authorization")
-    if not auth or not auth.startswith("Bearer" ) or auth not in sessions:
+    if not auth or not auth.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    token = auth.replace("Bearer ", "")
+    if token not in sessions:
         raise HTTPException(status_code=401, detail="Unauthorized")
     
-    user = sessions[auth]
+    user = sessions[token]
     return { "avatar": avatars[user] }
     
 

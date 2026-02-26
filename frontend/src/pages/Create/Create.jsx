@@ -26,23 +26,23 @@ const TORSO_COLORS = [
 export default function Create() {
   const [category, setCategory] = useState("")
   const [form, setForm] = useState(0)
-  const [bodyColor, setBodyColor] = useState()
+  const [bodyColor, setBodyColor] = useState("#FFFFFF")
   const [activeItems, setActiveItems] = useState({})
   
   const navigate = useNavigate();
   
   function saveAvatar() {
-    auth = localStorage.getItem("token")
+    const token = localStorage.getItem("token")
     fetch('/api/save-avatar/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorizatin': 'Bearer ' + token
+        'Authorization': 'Bearer ' + token
       },
-      body: serializeAvatar(JSON.stringify({ form, bodyColor, activeItems }))
-    });
+      body: serializeAvatar({ form, bodyColor, activeItems })
+    })
     
-    navigate('/userpage');
+    navigate('/userpage')
   }
   
   return (
