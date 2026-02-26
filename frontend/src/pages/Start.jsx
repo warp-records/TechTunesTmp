@@ -18,8 +18,10 @@ export default function Start() {
               <AccountTypeButton action="create" icon="✨" title="Create Account"
                 description="New to TechTunes? Sign up and start your musical journey!" />
             </Link>
-            <AccountTypeButton action="freemium" icon="🎵" title="Try for Free"
-              description="Explore TechTunes without creating an account!" />
+            <Link to="/create">
+              <AccountTypeButton action="freemium" icon="🎵" title="Try for Free"
+                description="Explore TechTunes without creating an account!" />
+            </Link>
             <AccountTypeButton action="login" icon="🔑" title="Login to Account"
               description="Already have an account? Sign in to continue your journey!" />
           </div>
