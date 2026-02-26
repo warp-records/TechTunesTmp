@@ -106,9 +106,9 @@ export function ChoiceFrame({ category, setCategory, setActiveItems, setBodyColo
       
       <div class="choice-frame">
         {category === "body" ? (
-          <Spinner setBodyColor={setBodyColor} />
+          <Spinner key="body" setBodyColor={setBodyColor} />
         ) : (
-          <div className={`${category}-options`}>
+          <div key={category} className={`${category}-options`}>
             {rows.map((rowElems, rowIdx) => (
             <div key={rowIdx} className={`${category}-row`}>
                 {rowElems.map(([name, url], idx) => (

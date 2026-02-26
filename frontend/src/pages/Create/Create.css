@@ -357,6 +357,11 @@
     filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.8));
 }
 
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
 .eye-options {
     position: absolute;
     top: 0;
@@ -369,6 +374,7 @@
     justify-content: center;
     align-items: center;
     z-index: 45;
+    animation: fadeIn 0.4s ease;
 }
 
 .eye-row {
@@ -405,6 +411,7 @@
     justify-content: center;
     align-items: center;
     z-index: 45;
+    animation: fadeIn 0.4s ease;
 }
 .mouth-row { /* For 2x3 grid */
     display: flex;
@@ -438,6 +445,7 @@
     justify-content: center;
     align-items: center;
     z-index: 45;
+    animation: fadeIn 0.4s ease;
 }
 .accessory-row { /* For 5-in-a-row layout */
     display: flex;
@@ -478,6 +486,7 @@
     justify-content: center;
     align-items: center;
     z-index: 45;
+    animation: fadeIn 0.4s ease;
 }
 
 .body-options.show {
