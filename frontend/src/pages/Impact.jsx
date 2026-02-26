@@ -1,30 +1,30 @@
-import "./Impact.css";
+import './Impact.css'
 
 export default function Impact() {
   return (
-    <>
-      <header class="impact-header">
-        <h1 class="impact-title">IMPACT PAGE</h1>
+    <div className="impact-root">
+      <header className="impact-header">
+        <h1 className="impact-title">IMPACT PAGE</h1>
       </header>
 
-      <main class="impact-page" aria-labelledby="page-title">
-        <div class="region-select">
+      <main className="impact-page" aria-labelledby="page-title">
+        <div className="region-select">
           <button
             id="philly-btn"
-            class="region-btn"
+            className="region-btn"
             type="button"
             aria-haspopup="listbox"
             aria-expanded="false"
             aria-controls="philly-menu"
           >
             <span>Philadelphia</span>
-            <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true">
+            <svg className="chevron" viewBox="0 0 24 24" aria-hidden="true">
               <path
                 d="M6 9l6 6 6-6"
                 fill="none"
                 stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
+                strokeWidth="2"
+                strokeLinecap="round"
               />
             </svg>
           </button>
@@ -85,54 +85,61 @@ export default function Impact() {
           ]}
         />
 
-        <div class="region-select">
+        <div className="region-select">
           <button
-            class="region-btn disabled"
+            className="region-btn disabled"
             type="button"
             aria-disabled="true"
             title="Coming soon"
           >
             <span>New Jersey</span>
-            <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true">
+            <svg className="chevron" viewBox="0 0 24 24" aria-hidden="true">
               <path
                 d="M6 9l6 6 6-6"
                 fill="none"
                 stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
+                strokeWidth="2"
+                strokeLinecap="round"
               ></path>
             </svg>
           </button>
         </div>
-        
-       <p class="coming-soon-note">Coming soon!</p> 
+
+        <p className="coming-soon-note">Coming soon!</p>
       </main>
-    </>
-  );
+    </div>
+  )
 }
 
 // buttons are held in a 2d array
 // [["text", "link"], ..]
 export function ProgramCard({ title, desc, buttons }) {
   return (
-    <section class="program-card">
-      <header class="program-header">
+    <section className="program-card">
+      <header className="program-header">
         <h2 id="musicopia-title">{title}</h2>
-        <p class="program-subtitle">{desc}</p>
+        <p className="program-subtitle">{desc}</p>
       </header>
 
-      <div class="action-grid">
-        {buttons.map((data) => {
-          const text = data[0];
-          const link = data[1];
+      <div className="action-grid">
+        {buttons.map(([text, link]) => {
+          if (!link) {
+            return (
+              <button key={text} className="action-btn" type="button" disabled>
+                {text}
+              </button>
+            )
+          }
 
           return (
-            <a href={link} target="_blank">
-              <button class="action-btn">{text}</button>
+            <a key={text} href={link} target="_blank" rel="noreferrer">
+              <button className="action-btn" type="button">
+                {text}
+              </button>
             </a>
-          );
+          )
         })}
       </div>
     </section>
-  );
+  )
 }

@@ -1,5 +1,4 @@
-
-body {
+.pricing-root {
   margin: 0;
   background: linear-gradient(135deg, var(--dark-bg), var(--dark-purple), var(--teal));
   background-size: 400% 400%;
@@ -7,11 +6,15 @@ body {
   font-family: 'Poppins', sans-serif;
   color: var(--white);
   min-height: 100vh;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
   display: flex;
   flex-direction: column;
 }
 
-.main-container {
+.pricing-root .main-container {
   flex: 1;
   display: flex;
   align-items: center;
@@ -19,7 +22,7 @@ body {
   padding: 10rem 2rem 2rem;
 }
 
-.pricing-card {
+.pricing-root .pricing-card {
   background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(20px);
   border: 2px solid rgba(255, 255, 255, 0.2);
@@ -34,18 +37,18 @@ body {
   gap: 2rem;
 }
 
-.plans-container {
+.pricing-root .plans-container {
   display: flex;
   gap: 2rem;
   width: 100%;
 }
 
-.header-section {
+.pricing-root .header-section {
   text-align: center;
   margin-bottom: 3rem;
 }
 
-.pickbot-image {
+.pricing-root .pickbot-image {
   max-width: 160px;
   height: auto;
   margin: 0 auto 2rem auto;
@@ -54,7 +57,7 @@ body {
   animation: pickbotGlow 3s ease-in-out infinite, pickbotFloat 4s ease-in-out infinite;
 }
 
-.speech-bubble {
+.pricing-root .speech-bubble {
   background: linear-gradient(135deg, var(--primary-purple), #e8c5ff);
   color: #2d1b3d;
   border: var(--border-width) solid #2d1b3d;
@@ -71,7 +74,7 @@ body {
   line-height: 1.4;
 }
 
-.speech-bubble::after {
+.pricing-root .speech-bubble::after {
   content: '';
   position: absolute;
   bottom: -15px;
@@ -84,12 +87,17 @@ body {
   filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.2));
 }
 
-.pricing-options {
+.pricing-root .dialogue-bubble {
+  font-size: 1.3rem;
+  max-width: 600px;
+}
+
+.pricing-root .pricing-options {
   flex: 1;
   margin-bottom: 3rem;
 }
 
-.plan-card {
+.pricing-root .plan-card {
   flex: 1;
   background: linear-gradient(135deg, rgba(212, 158, 251, 0.9), rgba(212, 158, 251, 0.7));
   color: #2d1b3d;
@@ -108,14 +116,14 @@ body {
 /*.plan-card:nth-child(1) { animation-delay: 1.0s; }
 .plan-card:nth-child(2) { animation-delay: 1.2s; }*/
 
-.premium-card {
+.pricing-root .premium-card {
   background: linear-gradient(135deg, var(--accent-yellow), #fff3a0);
   border: var(--border-width) solid var(--dark-purple);
   position: relative;
   overflow: hidden;
 }
 
-.premium-card::before {
+.pricing-root .premium-card::before {
   content: '⭐ RECOMMENDED';
   position: absolute;
   top: 35px;
@@ -129,33 +137,33 @@ body {
   box-shadow: 0 2px 10px var(--shadow-dark);
 }
 
-.plan-title {
+.pricing-root .plan-title {
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 1rem;
 }
 
-.plan-description {
+.pricing-root .plan-description {
   font-size: 1.1rem;
   margin-bottom: 2rem;
   line-height: 1.5;
   font-weight: 500;
 }
 
-.plan-features {
+.pricing-root .plan-features {
   list-style: none;
   padding: 0;
   margin: 0 0 2rem 0;
 }
 
-.plan-features li {
+.pricing-root .plan-features li {
   padding: 0.5rem 0;
   font-size: 1rem;
   font-weight: 500;
   position: relative;
 }
 
-.plan-features li::before {
+.pricing-root .plan-features li::before {
   content: '✓';
   color: #2d1b3d;
   font-weight: bold;
@@ -163,7 +171,7 @@ body {
   font-size: 1.2rem;
 }
 
-.plan-button {
+.pricing-root .plan-button {
   background: linear-gradient(135deg, var(--dark-purple), var(--primary-purple));
   color: var(--white);
   border: none;
@@ -179,7 +187,7 @@ body {
   overflow: hidden;
 }
 
-.plan-button::before {
+.pricing-root .plan-button::before {
   content: '';
   position: absolute;
   top: 0;
@@ -190,15 +198,21 @@ body {
   transition: left 0.5s ease;
 }
 
-.plan-button:hover::before {
+.pricing-root .plan-button:hover::before {
   left: 100%;
 }
 
-.plan-card:hover {
+.pricing-root .plan-card:hover {
   transform: translateY(-10px);
   box-shadow: 0 15px 40px var(--shadow-dark);
 }
 
-.plan-card:hover .plan-button {
+.pricing-root .plan-card:hover .plan-button {
   transform: scale(1.05);
+}
+
+@media (max-width: 900px) {
+  .pricing-root .plans-container {
+    flex-direction: column;
+  }
 }
