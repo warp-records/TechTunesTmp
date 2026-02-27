@@ -40,8 +40,7 @@ const genres = [
 
 
 export default function Userpage() {
-  
-  const username = "Kyri";
+  let [username, setUsername] = useState("");
   
   const friends = [
     { "name": "Alexa", "online": true, },
@@ -75,6 +74,8 @@ export default function Userpage() {
       }
     }
     getAvatar();
+    
+    setUsername(localStorage.getItem("username"));
   }, []);
   
   return (
