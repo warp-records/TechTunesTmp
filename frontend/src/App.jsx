@@ -13,6 +13,7 @@ import GuitarTuner from './pages/GuitarTuner'
 import Impact from './pages/Impact'
 import Login from './pages/Login'
 import IslandSelect from './pages/IslandSelect'
+import GuitarIsland from './pages/Islands/GuitarIsland'
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
         <Route path="/impact" element={<Impact />} />
         <Route path="/login" element={<Login />} />
         <Route path="/island_select" element={<IslandSelect />} />
+        <Route path="/guitar_island" element={<GuitarIsland />} />
       </Routes>
     </BrowserRouter>
   )

@@ -1,0 +1,135 @@
+/* ─── Main Container ─── */
+.lesson-island-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #000;
+  background-size: 120% 120%;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+/* Green overlay to cover blue water area */
+.lesson-island-container::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30%;
+  background: linear-gradient(to top,
+    rgba(76, 175, 80, 0.85) 0%,
+    rgba(76, 175, 80, 0.7) 30%,
+    rgba(76, 175, 80, 0.4) 60%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: multiply;
+}
+
+/* ─── Guitar Sign (Center) ─── */
+.guitar-sign {
+  position: absolute;
+  top: 58%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(20vw, 252px);
+  height: min(23vw, 321px);
+  object-fit: contain;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 5;
+}
+
+/* ─── Difficulty Signs ─── */
+.difficulty-sign {
+  position: absolute;
+  object-fit: contain;
+  cursor: pointer;
+  z-index: 6;
+}
+
+.beginner-sign {
+  top: 15%;
+  left: 30%;
+  width: min(8vw, 120px);
+  height: min(8vw, 120px);
+}
+
+.medium-sign {
+  top: 15%;
+  right: 25%;
+  width: min(6vw, 90px);
+  height: min(6vw, 90px);
+}
+
+.expert-sign {
+  bottom: 15%;
+  right: 4%;
+  width: min(7vw, 105px);
+  height: min(7vw, 105px);
+}
+
+.hard-sign {
+  bottom: 15%;
+  left: 4%;
+  width: min(6vw, 90px);
+  height: min(6vw, 90px);
+}
+
+/* ─── Override global img max-width ─── */
+.lesson-island-container img {
+  max-width: none;
+}
+
+/* ─── Paths ─── */
+.beginner-path {
+  position: absolute;
+  left: -33vw;
+  top: 30%;
+  transform: translateY(-50%) rotate(-10deg);
+  width: 55vw;
+  height: auto;
+  cursor: pointer;
+  z-index: 3;
+}
+
+.medium-path {
+  position: absolute;
+  right: -33vw;
+  top: 30%;
+  transform: translateY(-50%) rotate(10deg);
+  width: 55vw;
+  height: auto;
+  cursor: not-allowed;
+  z-index: 3;
+  filter: grayscale(100%) brightness(0.5);
+}
+
+.expert-path {
+  position: absolute;
+  right: -35vw;
+  bottom: -5%;
+  transform: translateY(40%) rotate(-9deg);
+  width: 58vw;
+  height: auto;
+  cursor: not-allowed;
+  z-index: 3;
+  filter: grayscale(100%) brightness(0.5);
+}
+
+.hard-path {
+  position: absolute;
+  left: -35vw;
+  bottom: -5%;
+  transform: translateY(40%) rotate(9deg);
+  width: 58vw;
+  height: auto;
+  cursor: not-allowed;
+  z-index: 3;
+  filter: grayscale(100%) brightness(0.5);
+}
