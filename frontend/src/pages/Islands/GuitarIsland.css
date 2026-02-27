@@ -37,12 +37,17 @@
   top: 58%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: min(20vw, 252px);
-  height: min(23vw, 321px);
+  width: 20vw;
+  height: 23vw;
   object-fit: contain;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   z-index: 5;
+}
+
+.guitar-sign:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+  filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8));
 }
 
 /* ─── Difficulty Signs ─── */
@@ -54,31 +59,31 @@
 }
 
 .beginner-sign {
-  top: 15%;
-  left: 30%;
-  width: min(8vw, 120px);
-  height: min(8vw, 120px);
+  top: 25%;
+  left: 20vw;
+  width: 16vw;
+  height: 16vw;
 }
 
 .medium-sign {
-  top: 15%;
-  right: 25%;
-  width: min(6vw, 90px);
-  height: min(6vw, 90px);
+  top: 25%;
+  right: 20vw;
+  width: 12vw;
+  height: 12vw;
 }
 
 .expert-sign {
-  bottom: 15%;
-  right: 4%;
-  width: min(7vw, 105px);
-  height: min(7vw, 105px);
+  bottom: 20%;
+  right: 20vw;
+  width: 14vw;
+  height: 14vw;
 }
 
 .hard-sign {
-  bottom: 15%;
-  left: 4%;
-  width: min(6vw, 90px);
-  height: min(6vw, 90px);
+  bottom: 20%;
+  left: 20vw;
+  width: 12vw;
+  height: 12vw;
 }
 
 /* ─── Override global img max-width ─── */
@@ -108,6 +113,146 @@
   cursor: not-allowed;
   z-index: 3;
   filter: grayscale(100%) brightness(0.5);
+}
+
+/* ─── Modal ─── */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.difficulty-modal {
+  background: white;
+  border-radius: 16px;
+  padding: 0;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  color: white;
+  padding: 20px;
+  border-radius: 16px 16px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.3s ease;
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.modal-content {
+  padding: 20px;
+}
+
+.description {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.skills-section,
+.lessons-section {
+  margin-bottom: 20px;
+}
+
+.skills-section h3,
+.lessons-section h3 {
+  color: #333;
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+
+.skills-section ul,
+.lessons-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.skills-section li,
+.lessons-section li {
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+  position: relative;
+  padding-left: 20px;
+}
+
+.skills-section li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: #4CAF50;
+  font-weight: bold;
+}
+
+.lessons-section li::before {
+  content: '♪';
+  position: absolute;
+  left: 0;
+  color: #7c3aed;
+  font-weight: bold;
+}
+
+.modal-actions {
+  padding: 20px;
+  border-top: 1px solid #eee;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(124, 58, 237, 0.3);
 }
 
 .expert-path {
