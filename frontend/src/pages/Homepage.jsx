@@ -87,9 +87,9 @@ export default function Homepage() {
           <img src={TuneStationImg} alt="Tune Station" />
         </Link>
 
-        <a href="music.html" className="song-search" aria-label="Song Search">
+        <Link to="/song_search" className="song-search" aria-label="Song Search">
           <img src={SongSearchImg} alt="Song Search" />
-        </a>
+        </Link>
 
         <div className="profile-container">
           <Link to="/userpage" className="profile" aria-label="Profile">
