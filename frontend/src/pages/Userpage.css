@@ -25,6 +25,10 @@
     color: var(--white);
 }
 
+.logout {
+    color: #ff4444;
+}
+
 .userpage-root::before {
     content: "";
     position: fixed;

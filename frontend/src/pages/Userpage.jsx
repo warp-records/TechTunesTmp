@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react'
-import { Route, Link } from 'react-router-dom'
+import { Route, Link, useNavigate } from 'react-router-dom'
 
 import Avatar from "../components/Avatar"
 import "./Userpage.css"
@@ -56,6 +56,12 @@ export default function Userpage() {
   ]
   
   const [avatarData, setAvatarData] = useState(null);
+  const navigate = useNavigate();
+  
+  function logout() {
+    localStorage.clear();
+    navigate('/login');
+  }
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -98,6 +104,7 @@ export default function Userpage() {
                 <a role="menuitem">Add Spotify</a>
                 <a role="menuitem">Add Apple Music</a>
                 <a role="menuitem">SongBook</a>
+                <a role="menuitem" class="logout" onClick={logout}>Log out</a>
               </div>
             </details>
           </div>
