@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 
 import './Create.css'
 import Avatar from '../../components/Avatar'
-import { avatarList } from '../../components/avatarData'
+import { avatarList, serializeAvatar } from '../../components/avatarData'
 import { eyeAssets, mouthAssets, accessoryAssets } from '../../assetRegistry'
 import eyesBtn from '../../assets/DressingRoom/Dressing/Eyes Button.png'
 import mouthBtn from '../../assets/DressingRoom/Dressing/Mouth Button.png'
@@ -26,10 +26,24 @@ const TORSO_COLORS = [
 export default function Create() {
   const [category, setCategory] = useState("")
   const [form, setForm] = useState(0)
-  const [bodyColor, setBodyColor] = useState()
+  const [bodyColor, setBodyColor] = useState("#FFFFFF")
   const [activeItems, setActiveItems] = useState({})
   
   const navigate = useNavigate();
+  
+  function saveAvatar() {
+    const token = localStorage.getItem("token")
+    fetch('/api/save-avatar/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+      body: serializeAvatar({ form, bodyColor, activeItems })
+    })
+    
+    navigate('/userpage')
+  }
   
   return (
     <>
@@ -38,10 +52,7 @@ export default function Create() {
       <div class="light"></div>
       <div class="stand"></div>
       <div class="action-buttons">
-          <button class="save-button" onClick={() => {
-            localStorage.setItem("avatar", JSON.stringify({ form, bodyColor, activeItems }));
-            navigate('/userpage');
-          }}>Save</button>
+          <button class="save-button" onClick={saveAvatar}>Save</button>
         <button class="reset-button" onClick={() => { setActiveItems({}); setForm(0); setBodyColor(); } }>
           Reset
         </button>
