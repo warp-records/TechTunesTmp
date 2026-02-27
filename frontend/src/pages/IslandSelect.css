@@ -1,0 +1,22 @@
+.lesson-island-page {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.jukebox-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: scale(4);
+  transform-origin: center bottom;
+}
+
+.jukebox-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+}

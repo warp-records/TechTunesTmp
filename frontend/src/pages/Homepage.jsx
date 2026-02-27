@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useState, useRef } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 
 import './Homepage.css'
 import LessonIslandImg from '../assets/Homepage/LessonIsland.png'
@@ -11,6 +11,26 @@ import HomepageTitleBgImg from '../assets/Homepage/Brick With Title.png'
 
 export default function Homepage() {
   const [isBackgroundReady, setIsBackgroundReady] = useState(false)
+  const navigate = useNavigate()
+  const homepageRef = useRef(null)
+  const lessonIslandRef = useRef(null)
+
+  function handleLessonIslandClick() {
+    const island = lessonIslandRef.current
+    const homepage = homepageRef.current
+    if (!island || !homepage) return
+
+    const rect = island.getBoundingClientRect()
+    const centerX = ((rect.left + rect.width / 2) / window.innerWidth) * 100
+    const centerY = ((rect.top + rect.height / 2) / window.innerHeight) * 100
+
+    homepage.style.transformOrigin = `${centerX}% ${centerY}%`
+    homepage.classList.add('zoom-to-lesson')
+
+    setTimeout(() => {
+      navigate('/island_select')
+    }, 800)
+  }
 
   useEffect(() => {
     let cancelled = false
@@ -46,7 +66,7 @@ export default function Homepage() {
   }, [])
 
   return (
-    <div className={`homepage ${isBackgroundReady ? 'bg-ready' : 'bg-loading'}`}>
+    <div ref={homepageRef} className={`homepage ${isBackgroundReady ? 'bg-ready' : 'bg-loading'}`}>
       <div className={`loading-screen ${isBackgroundReady ? 'hidden' : ''}`}>
         <div className="loading-content">
           <div className="music-note-container">
@@ -59,9 +79,9 @@ export default function Homepage() {
       </div>
 
       <div id="main-content" className={`main-content ${isBackgroundReady ? 'visible' : ''}`}>
-        <a href="lesson_island.html" className="lesson-island" aria-label="Lesson Island">
+        <div ref={lessonIslandRef} className="lesson-island" aria-label="Lesson Island" onClick={handleLessonIslandClick}>
           <img src={LessonIslandImg} alt="Lesson Island" />
-        </a>
+        </div>
 
         <Link to="/guitar_tuner" className="tune-station" aria-label="Tune Station">
           <img src={TuneStationImg} alt="Tune Station" />

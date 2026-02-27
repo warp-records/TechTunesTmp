@@ -11,6 +11,8 @@ import Userpage from './pages/Userpage'
 import Homepage from './pages/Homepage'
 import GuitarTuner from './pages/GuitarTuner'
 import Impact from './pages/Impact'
+import Login from './pages/Login'
+import IslandSelect from './pages/IslandSelect'
 
 function App() {
   return (
@@ -27,6 +29,8 @@ function App() {
         <Route path="/homepage" element={<Homepage />} />
         <Route path="/guitar_tuner" element={<GuitarTuner />} />
         <Route path="/impact" element={<Impact />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/island_select" element={<IslandSelect />} />
       </Routes>
     </BrowserRouter>
   )
