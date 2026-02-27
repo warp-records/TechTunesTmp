@@ -1,11 +1,26 @@
 import './IslandSelect.css'
-import JukeboxImg from '../assets/Homepage/LessonIsland/Final_Jukebox_Transparent.png'
+import JukeboxImg from '../assets/IslandSelect/Final_Jukebox_Transparent.png'
+import GuitarIslandImg from '../assets/IslandSelect/Guitar Island.png'
+import PianoIslandImg from '../assets/IslandSelect/Piano Island.png'
 
 export default function IslandSelect() {
   return (
     <div className="lesson-island-page">
     <div className="jukebox-container">
       <img src={JukeboxImg} alt="Jukebox" className="jukebox-image" />
+      <div className="screen-overlay">
+        <div className="islands-container">
+          <div className="island-option guitar-island active" id="guitarOption">
+            <img src={GuitarIslandImg} alt="Guitar" className="island-icon" />
+            <div className="island-text">GUITAR<br />ISLAND</div>
+          </div>
+          <div className="island-option piano-island" id="pianoOption">
+            <img src={PianoIslandImg} alt="Piano" className="island-icon" />
+            <div className="island-text">PIANO<br />ISLAND</div>
+            <div className="coming-soon">COMING SOON</div>
+          </div>
+        </div>
+      </div>
     </div>
     </div>
   )
