@@ -1,8 +1,10 @@
 import './Impact.css'
+import HomeButton from '../components/HomeButton'
 
 export default function Impact() {
   return (
     <div className="impact-root">
+      <HomeButton />
       <header className="impact-header">
         <h1 className="impact-title">IMPACT PAGE</h1>
       </header>

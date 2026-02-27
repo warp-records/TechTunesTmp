@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 import './GuitarTuner.css'
+import HomeButton from '../components/HomeButton'
 
 const meterImages = import.meta.glob('../assets/Tuner/Sound Meter/*.png', { eager: true, import: 'default' })
 const noteAudio = import.meta.glob('../assets/Tuner/Notes/*.flac', { eager: true, import: 'default' })
@@ -25,6 +26,7 @@ export default function GuitarTuner() {
   
   return (
     <div class="tuner-container">
+      <HomeButton />
       <SoundMeter activeNote={activeNote} />
         <div className="guitar-container">
           <div className="guitar-headstock">
