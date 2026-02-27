@@ -85,10 +85,14 @@ export default function Avatar({ form, activeItems = {}, color, onAccessoryDrag 
         top: mouthPos.top, left: mouthPos.left, width: mouthPos.width, height: mouthPos.height,
       }}></div>
       {accessoryUrl && (
-        <Draggable nodeRef={accessoryRef} position={accessoryPos}
-          onStop={handleAccessoryStop}>
-          <div ref={accessoryRef} className="avatar-accessory" style={{backgroundImage: `url(${accessoryUrl})`}}></div>
-        </Draggable>
+        onAccessoryDrag ? (
+          <Draggable nodeRef={accessoryRef} position={accessoryPos}
+            onStop={handleAccessoryStop}>
+            <div ref={accessoryRef} className="avatar-accessory" style={{backgroundImage: `url(${accessoryUrl})`}}></div>
+          </Draggable>
+        ) : (
+          <div className="avatar-accessory" style={{backgroundImage: `url(${accessoryUrl})`, transform: `translate(${accessoryPos.x}px, ${accessoryPos.y}px)`}}></div>
+        )
       )}
   </div>
   )
