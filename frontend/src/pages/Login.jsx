@@ -1,25 +1,52 @@
 
+import { useState } from 'react'
+import { useNavigate, Link } from 'react-router-dom';
 import './Login.css'
 
 export default function Login() {
+  const [badLogin, setBadLogin] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  
+  const navigate = useNavigate();
+  
+  async function login() {
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    })
+    
+    if (!res.ok) {
+      setBadLogin(true)
+      alert("invalid username or password")
+    } else {
+      const data = await res.json();
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('username', data.username);
+      navigate('/userpage');
+    }
+    
+  }
+  
   return (
     
     <div className="login-container">
       <div className="login-card">
-        <form id="login-form">
+        <form id="login-form" onSubmit={e => { e.preventDefault(); login(); }}>
           <div className="form-header">
             <h3 id="form-title">Login</h3>
           </div>
           
           <div className="form-group">
             <label htmlFor="login-username">Username</label>
-            <input id="login-username" placeholder="Enter your username" required />
+            <input id="login-username" placeholder="Enter your username" required value={username} onChange={e => setUsername(e.target.value)} />
           </div>
           
           <div className="form-group">
             <label htmlFor="login-password">Password</label>
             <div className="password-group">
-              <input type="password" id="login-password" placeholder="Enter your password" required />
+              <input type="password" id="login-password" placeholder="Enter your password" required value={password} onChange={e => setPassword(e.target.value)} />
               <button type="button" className="password-toggle" id="password-toggle">
                 <span className="eye-icon">👁️</span>
               </button>
@@ -34,14 +61,18 @@ export default function Login() {
             <a href="password-reset.html" className="forgot-password">Forgot password?</a>
           </div>
           
-          <button type="submit" className="btn btn-primary" id="login-btn">Sign In</button>
+          <button className="btn btn-primary" id="login-btn">Sign In</button>
           
           <div className="divider">
             <span>or</span>
           </div>
           
           <div className="signup-link">
-            <p>Don't have an account? <a href="#" id="show-register">Sign up</a></p>
+            <p>Don't have an account?
+              <Link to="/signup">
+                <a id="show-register"> Sign up</a>
+              </Link>
+            </p>
           </div>
         </form>    
       </div>

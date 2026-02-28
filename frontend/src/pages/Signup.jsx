@@ -21,7 +21,9 @@ function MainContainer() {
         <div className="subheading">Learn to play while making a difference in your community</div>
         <div className="button-group">
           <Link to="/start" className="button">Get Started</Link>
-          <a className="button secondary">Already have an account?</a>
+          <Link to="/login">
+            <a className="button secondary">Already have an account?</a>
+          </Link>
         </div>
       </div>
     </main>

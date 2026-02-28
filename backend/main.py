@@ -47,6 +47,19 @@ class Avatar(BaseModel):
     #         raise ValueError('Must be a hex color like #FFF or #FF00FF')
     #     return v
             
+@app.post("/api/login", tags=["auth"])
+def login(user: User):
+    if user.username in users and users[user.username] == user.password:
+        token = str(uuid.uuid4())
+        sessions[token] = user.username
+        
+        return { 
+            "message": "Logged in",
+            "username": user.username,
+            "token": token,
+        }
+    else:
+        raise HTTPException(status_code=401, detail="Bad login")
         
 
 @app.post("/api/save-avatar/", tags=["avatar"])
