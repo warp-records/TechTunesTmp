@@ -19,7 +19,6 @@ export default function Login() {
     
     if (!res.ok) {
       setBadLogin(true)
-      alert("invalid username or password")
     } else {
       const data = await res.json();
       localStorage.setItem('token', data.token);
@@ -53,19 +52,26 @@ export default function Login() {
             </div>
           </div>
           
+          {badLogin ? 
+            (<p id="bad-login">
+                Invalid username or password
+              </p>) : (<></>)
+          }
+          
           <div className="form-options">
             <label className="remember-me">
               <input type="checkbox" id="remember-me" />
               Remember me
             </label>
-            <a href="password-reset.html" className="forgot-password">Forgot password?</a>
+            <a className="forgot-password">Forgot password?</a>
           </div>
+          
           
           <button className="btn btn-primary" id="login-btn">Sign In</button>
           
-          <div className="divider">
+          {/* <div className="divider">
             <span>or</span>
-          </div>
+          </div>*/}
           
           <div className="signup-link">
             <p>Don't have an account?
