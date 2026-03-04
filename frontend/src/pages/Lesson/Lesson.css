@@ -180,8 +180,8 @@ background-attachment: fixed;
 }
 
 .layer-board {
-  width: 56.85vh;
-  height: 56.85vh;
+  width: 100vh;
+  height: 100vh;
   z-index: 1;
   filter: drop-shadow(0 0 30px rgba(147, 51, 234, 0.8)) 
           drop-shadow(0 0 60px rgba(138, 43, 226, 0.6))
@@ -189,15 +189,15 @@ background-attachment: fixed;
 }
 
 .layer-frame {
-  width: 56.85vh;
-  height: 56.85vh;
+  width: 100vh;
+  height: 100vh;
   z-index: 3;
   pointer-events: none;
 }
 
 .layer-strings {
-  width: 43.34vh;
-  height: 57.22vh;
+  width: 80%;
+  height: 100.65vh;
   z-index: 15;
   pointer-events: none;
   transform: translateY(-10%);
@@ -205,8 +205,8 @@ background-attachment: fixed;
 
 /* String Names */
 .layer-string-names {
-  width: 53vh;
-  height: 12.04vh;
+  width: 100%;
+  height: auto;
   z-index: 15;
   pointer-events: none;
   align-self: end;
