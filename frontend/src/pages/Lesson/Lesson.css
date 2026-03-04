@@ -1,0 +1,220 @@
+:root {
+  --primary-purple: #9300fc;
+  --dark-purple: #4c1a80;
+  --teal: #003d4d;
+  --dark-bg: #0a0f0f;
+  --white: #fff;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.lesson-page {
+  font-family: 'Arial', sans-serif;
+  background: linear-gradient(45deg, var(--dark-bg), var(--dark-purple), var(--teal));
+  background-size: 200% 200%;
+  background-image: url('images/Brick_Wall.png');
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+  overflow-x: hidden;
+}
+
+/* Fixed Background */
+.fixed-background {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+z-index: -1;
+background-image: url('images/Brick_Wall.png');
+background-size: cover;
+background-position: center;
+background-repeat: no-repeat;
+background-attachment: fixed;
+}
+
+
+/* Action buttons */
+.action-buttons {
+  position: fixed;
+  z-index: 1000;
+}
+
+.chip {
+  background: rgba(212,158,251,.12);
+  border: 1px solid rgba(212,158,251,.35);
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: .9rem;
+  cursor: pointer;
+  transition: transform .15s ease, background .15s ease;
+  text-decoration: none;
+  color: inherit;
+  display: inline-block;
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+}
+
+.chip:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+/* Pause Button */
+.pause-button {
+  position: fixed;
+  top: 70px;
+  left: 20px;
+  width: 50px;
+  height: 50px;
+  background-image: url('Lesson_Page_Assets/Pause_Button@4x.png');
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  z-index: 1000;
+  transition: transform 0.2s ease;
+}
+
+.pause-button:hover {
+  transform: scale(1.1);
+}
+
+/* Pause Box Pop-up */
+.pause-box-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  height: 375px;
+  background-image: url('Lesson_Page_Assets/Pause_Box@4x.png');
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 2000;
+  display: none;
+  pointer-events: none;
+  animation: pauseBoxGlow 2s ease-in-out infinite;
+}
+
+.pause-box-popup.show {
+  display: block;
+  pointer-events: auto;
+}
+
+@keyframes pauseBoxGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 10px rgba(147, 51, 234, 0.6)) 
+            drop-shadow(0 0 20px rgba(147, 51, 234, 0.4));
+  }
+  50% {
+    filter: drop-shadow(0 0 20px rgba(147, 51, 234, 0.9)) 
+            drop-shadow(0 0 40px rgba(147, 51, 234, 0.7))
+            drop-shadow(0 0 60px rgba(147, 51, 234, 0.5));
+  }
+}
+
+/* Pause Box Buttons */
+.pause-box-buttons {
+  position: absolute;
+  bottom: 5cqi;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 2001;
+  pointer-events: auto;
+}
+
+.pause-box-button {
+  width: 300px;
+  height: 90px;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.pause-box-button:hover {
+  transform: scale(1.05);
+}
+
+.back-to-home-button {
+  background-image: url('Lesson_Page_Assets/Back to Home Button@4x.png');
+}
+
+.battle-friend-button {
+  background-image: url('Lesson_Page_Assets/Battle Friend Button@4x.png');
+  position: absolute;
+  bottom: 55px;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Stage — centered container, layers stacked via grid */
+.lesson-stage {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+}
+
+.lesson-stage img {
+  grid-area: 1 / 1;
+  max-width: none;
+}
+
+.layer-board {
+  width: 56.85vh;
+  height: 56.85vh;
+  z-index: 1;
+  filter: drop-shadow(0 0 30px rgba(147, 51, 234, 0.8)) 
+          drop-shadow(0 0 60px rgba(138, 43, 226, 0.6))
+          drop-shadow(0 0 90px rgba(147, 51, 234, 0.4));
+}
+
+.layer-frame {
+  width: 56.85vh;
+  height: 56.85vh;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.layer-strings {
+  width: 43.34vh;
+  height: 57.22vh;
+  z-index: 15;
+  pointer-events: none;
+  transform: translateY(-10%);
+}
+
+/* String Names */
+.string-names {
+  position: fixed;
+  top: calc(42% + 228px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 780px;
+  min-height: 130px;
+  background-image: url('Lesson_Page_Assets/String Names@4x.png');
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 15;
+  pointer-events: none;
+}

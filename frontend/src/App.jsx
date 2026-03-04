@@ -15,6 +15,7 @@ import Login from './pages/Login'
 import IslandSelect from './pages/IslandSelect'
 import GuitarIsland from './pages/Islands/GuitarIsland'
 import SongSearch from './pages/SongSearch'
+import Lesson from './pages/Lesson/Lesson'
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
         <Route path="/island_select" element={<IslandSelect />} />
         <Route path="/guitar_island" element={<GuitarIsland />} />
         <Route path="/song_search" element={<SongSearch />} />
+        <Route path="/lesson" element={<Lesson />} />
       </Routes>
     </BrowserRouter>
   )
