@@ -204,17 +204,11 @@ background-attachment: fixed;
 }
 
 /* String Names */
-.string-names {
-  position: fixed;
-  top: calc(42% + 228px);
-  left: 50%;
-  transform: translateX(-50%);
-  width: 780px;
-  min-height: 130px;
-  background-image: url('Lesson_Page_Assets/String Names@4x.png');
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
+.layer-string-names {
+  width: 53vh;
+  height: 12.04vh;
   z-index: 15;
   pointer-events: none;
+  align-self: end;
+  transform: translateY(5%);
 }
