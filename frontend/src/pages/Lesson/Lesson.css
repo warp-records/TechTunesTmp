@@ -154,13 +154,14 @@ background-attachment: fixed;
 
 .note {
     width: 12vh;
+    transform: translate(-50%, -50%);
 }
 
 /*
 assets got fucked up and for some reason glowing note is 4x as big
 */
 .glow {
-    transform: scale(2.5);
+    scale: 2.5;
 }
 
 .back-to-home-button {
