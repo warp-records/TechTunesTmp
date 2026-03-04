@@ -161,7 +161,7 @@ background-attachment: fixed;
 assets got fucked up and for some reason glowing note is 4x as big
 */
 .glow {
-    scale: 2.5;
+    width: 30vh;
 }
 
 .back-to-home-button {
