@@ -1,29 +1,66 @@
 import uuid
+import json
 
-from fastapi import FastAPI, Request
-from fastapi import HTTPException
-from pydantic import BaseModel, field_validator
+import bcrypt
+from fastapi import FastAPI, Request, HTTPException, Depends
+from pydantic import BaseModel
+from sqlalchemy.orm import Session
+
+from database import SessionLocal, init_db, UserDB, SessionDB, AvatarDB
 
 app = FastAPI()
 
-users = {}
-sessions = {}
-avatars = {}
+init_db()
+
 
 class User(BaseModel):
     username: str
     password: str
     
-@app.post("/api/register")
-def register(user: User):
-    if user.username in users:
-        raise HTTPException(status_code=409, detail="UsernameTaken")
+class Avatar(BaseModel):
+    form: int
+    bodyColor: str
+    activeItems: dict
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
         
-    users[user.username] = user.password
-    token = str(uuid.uuid4())
-    sessions[token] = user.username
+def get_current_user(request: Request, db: Session = Depends(get_db)) -> int:
+    auth = request.headers.get("Authorization")
+    if not auth or not auth.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Unauthorized")
     
-    print("Registered: " + user.username + " : " + user.password)
+    token = auth.replace("Bearer ", "")
+    session = db.query(SessionDB).filter(SessionDB.token == token).first()
+    
+    if not session:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+        
+    return session.user_id
+        
+    
+@app.post("/api/register")
+def register(user: User, db: Session = Depends(get_db)):
+    existing = db.query(UserDB).filter(UserDB.username == user.username).first()
+    if existing:
+        raise HTTPException(status_code=409, detail="UsernameTaken")
+    
+    hashed = bcrypt.hashpw(user.password.encode(), bcrypt.gensalt())    
+    
+    db_user = UserDB(username=user.username, password_hash=hashed.decode())
+    db.add(db_user)
+    db.flush()
+    
+    token = str(uuid.uuid4())
+    db_session = SessionDB(token=token, user_id=db_user.id)
+    db.add(db_session)
+    
+    db.commit()
+    
     return { 
         "message": "User created",
         "username": user.username,
@@ -31,47 +68,63 @@ def register(user: User):
     }
 
 @app.get("/api/check-username/{username}")
-def check_username(username: str):
-    return { "taken": username in  users }
-
-# TODO: sanitize to prevent XSS
-class Avatar(BaseModel):
-    form: int
-    bodyColor: str
-    activeItems: dict
+def check_username(username: str, db: Session = Depends(get_db)):
+    existing = db.query(UserDB).filter(UserDB.username == username).first()
     
-    # @field_validator('bodyColor')
-    # @classmethod
-    # def valid_hex(cls, v):
-    #     if not v.startswith('#') or len(v) not in (4, 7):
-    #         raise ValueError('Must be a hex color like #FFF or #FF00FF')
-    #     return v
+    return { "taken": existing is not None }
+
             
+@app.post("/api/login", tags=["auth"])
+def login(user: User, db: Session = Depends(get_db)):
+    db_user = db.query(UserDB).filter(UserDB.username == user.username).first()
+    
+    if not db_user or not bcrypt.checkpw(user.password.encode(), db_user.password_hash.encode()):
+        raise HTTPException(status_code=401, detail="Bad login")
+        
+    token = str(uuid.uuid4())
+    db_session = SessionDB(token=token, user_id=db_user.id)
+    db.add(db_session)
+    db.commit()
+        
+    return { 
+        "message": "Logged in",
+        "username": user.username,
+        "token": token,
+    }
         
 
 @app.post("/api/save-avatar/", tags=["avatar"])
-def save_avatar(request: Request, avatar: Avatar):
-    auth = request.headers.get("Authorization")
-    if not auth or not auth.startswith("Bearer "):
-        raise HTTPException(status_code=401, detail="Unauthorized")
-    token = auth.replace("Bearer ", "")
-    if token not in sessions:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-    
-    user = sessions[token]
-    avatars[user] = avatar
-    
+def save_avatar(avatar: Avatar, user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
+    db_avatar = db.query(AvatarDB).filter(AvatarDB.user_id == user_id).first()
+
+    if db_avatar:
+        db_avatar.form = avatar.form
+        db_avatar.bodyColor = avatar.bodyColor
+        db_avatar.active_items = json.dumps(avatar.activeItems)
+    else:
+        db_avatar = AvatarDB(
+            user_id=user_id,
+            form=avatar.form,
+            bodyColor=avatar.bodyColor,
+            active_items=json.dumps(avatar.activeItems),
+        )
+        db.add(db_avatar)
+
+    db.commit()
+
 @app.get("/api/get-avatar/", tags=["avatar"])
-def get_avatar(request: Request):
-    auth = request.headers.get("Authorization")
-    if not auth or not auth.startswith("Bearer "):
-        raise HTTPException(status_code=401, detail="Unauthorized")
-    token = auth.replace("Bearer ", "")
-    if token not in sessions:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-    
-    user = sessions[token]
-    return { "avatar": avatars[user] }
+def get_avatar(user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
+    db_avatar = db.query(AvatarDB).filter(AvatarDB.user_id == user_id).first()
+    if not db_avatar:
+        raise HTTPException(status_code=404, detail="No avatar found")
+
+    return {
+        "avatar": {
+            "form": db_avatar.form,
+            "bodyColor": db_avatar.bodyColor,
+            "activeItems": json.loads(db_avatar.active_items),
+        }
+    }
     
 
 # @app.get("/api/profile")

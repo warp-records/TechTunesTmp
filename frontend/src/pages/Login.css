@@ -233,3 +233,7 @@
 .signup-link a:hover {
   color: var(--primary-purple-dark);
 }
+
+#bad-login {
+    color: #ff4444;
+}
