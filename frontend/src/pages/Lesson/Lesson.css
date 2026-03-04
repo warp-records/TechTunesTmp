@@ -152,6 +152,17 @@ background-attachment: fixed;
   transform: scale(1.05);
 }
 
+.note {
+    width: 12vh;
+}
+
+/*
+assets got fucked up and for some reason glowing note is 4x as big
+*/
+.glow {
+    transform: scale(2.5);
+}
+
 .back-to-home-button {
   background-image: url('Lesson_Page_Assets/Back to Home Button@4x.png');
 }
