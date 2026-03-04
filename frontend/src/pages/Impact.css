@@ -71,87 +71,129 @@
   justify-items: center;
 }
 
-/* ================= REGION DROPDOWNS ================= */
-.impact-root .region-select {
-  width: 100%;
+/* ================= FILTERS ================= */
+.impact-root .filters-row {
+  width: min(760px, 95vw);
   display: grid;
-  place-items: center;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
 }
 
-.impact-root .region-btn {
+.impact-root .filter-group {
+  display: grid;
+  gap: 8px;
+}
+
+.impact-root .filter-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0.2px;
+}
+
+.impact-root .filter-dropdown {
+  position: relative;
+  width: 100%;
+}
+
+.impact-root .filter-trigger {
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  width: min(680px, 92vw);
+  width: 100%;
   padding: 14px 18px;
   border-radius: var(--radius);
   border: 1px solid var(--border);
-  background: var(--card);
+  background: linear-gradient(180deg, rgba(108, 59, 255, 0.2), rgba(108, 59, 255, 0.12));
   color: var(--text);
   font-weight: 600;
-  cursor: pointer;
   box-shadow: var(--shadow);
-  transition: transform 0.08s ease, border-color 0.2s ease, background 0.2s ease;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.08s ease;
 }
 
-.impact-root .region-btn:hover {
-  border-color: #ffffff35;
+.impact-root .filter-value {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.impact-root .region-btn:active {
-  transform: translateY(1px);
+.impact-root .filter-value.placeholder {
+  color: var(--muted);
 }
 
-.impact-root .region-btn:focus-visible {
-  outline: 3px solid var(--focus);
-  outline-offset: 2px;
-}
-
-.impact-root .chevron {
+.impact-root .filter-chevron {
   width: 20px;
   height: 20px;
   opacity: 0.9;
   transition: transform 0.2s ease;
+  flex-shrink: 0;
 }
 
-.impact-root .region-btn[aria-expanded='true'] .chevron {
+.impact-root .filter-chevron.open {
   transform: rotate(180deg);
 }
 
-/* Disabled New Jersey control */
-.impact-root .region-btn.disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  filter: grayscale(0.2);
-}
-
-/* Dropdown panel */
-.impact-root .dropdown-menu {
-  width: min(680px, 92vw);
-  margin-top: 8px;
-  padding: 6px;
-  background: #0f1117;
-  border: 1px solid var(--border);
-  border-radius: calc(var(--radius) - 4px);
-  box-shadow: var(--shadow);
+.impact-root .filter-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 8px;
   list-style: none;
+  border-radius: calc(var(--radius) - 2px);
+  border: 1px solid var(--border);
+  background: #0f1117;
+  box-shadow: var(--shadow);
+  z-index: 20;
 }
 
-.impact-root .dropdown-menu li {
-  padding: 12px 12px;
+.impact-root .filter-option-row {
+  margin: 0;
+}
+
+.impact-root .filter-option {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  font-size: 1rem;
+  padding: 12px;
   border-radius: 10px;
   cursor: pointer;
-  color: var(--text);
+  transition: background 0.2s ease;
 }
 
-.impact-root .dropdown-menu li:hover {
-  background: rgba(108, 59, 255, 0.12);
+.impact-root .filter-option:hover,
+.impact-root .filter-option:focus-visible {
+  background: rgba(108, 59, 255, 0.16);
+  outline: none;
 }
 
-.impact-root .dropdown-menu li:focus-visible {
+.impact-root .filter-option.selected {
+  background: rgba(108, 59, 255, 0.24);
+}
+
+.impact-root .filter-trigger:hover {
+  border-color: #ffffff35;
+}
+
+.impact-root .filter-trigger:active {
+  transform: translateY(1px);
+}
+
+.impact-root .filter-trigger:focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: 2px;
+}
+
+@media (max-width: 640px) {
+  .impact-root .filters-row {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ================= PROGRAM CARD ================= */
@@ -164,12 +206,6 @@
   padding: 22px 20px 26px;
   transform: translateY(20px);
   transition: opacity 0.5s ease, transform 0.5s ease;
-}
-
-.impact-root .program-card.show {
-  display: block;
-  opacity: 1;
-  transform: translateY(0);
 }
 
 .impact-root .program-header {
@@ -221,6 +257,12 @@
     background 0.2s ease;
 }
 
+.impact-root .action-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .impact-root .action-btn:hover {
   border-color: #ffffff44;
   box-shadow: 0 6px 16px rgba(108, 59, 255, 0.25);
@@ -233,16 +275,6 @@
 .impact-root .action-btn:focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: 2px;
-}
-
-/* ================= FOOTER NOTE ================= */
-.impact-root .coming-soon-note {
-  color: var(--muted);
-  font-size: 1.3rem;
-  margin-top: 6px;
-  text-align: center;
-  opacity: 0.9;
-  font-weight: 500;
 }
 
 /* ================= GLOWING HEADER ================= */

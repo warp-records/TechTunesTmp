@@ -1,7 +1,64 @@
+import { useEffect, useRef, useState } from 'react'
+
 import './Impact.css'
 import HomeButton from '../components/HomeButton'
+import { CITY_REGIONS, PROGRAMS_BY_ID } from './impactData'
 
 export default function Impact() {
+  const [selectedCity, setSelectedCity] = useState('Philadelphia')
+  const [selectedRegionId, setSelectedRegionId] = useState('')
+  const [openDropdown, setOpenDropdown] = useState(null)
+  const filtersRef = useRef(null)
+
+  const cityOptions = Object.keys(CITY_REGIONS)
+  const regionOptions = CITY_REGIONS[selectedCity] ?? []
+  const programs = Object.values(PROGRAMS_BY_ID)
+  const filteredPrograms =
+    selectedRegionId === ''
+      ? []
+      : programs.filter(
+          (program) =>
+            program.city === selectedCity &&
+            program.regionIds.includes(selectedRegionId)
+        )
+
+  useEffect(() => {
+    function handlePointerDown(event) {
+      if (filtersRef.current && !filtersRef.current.contains(event.target)) {
+        setOpenDropdown(null)
+      }
+    }
+
+    function handleKeyDown(event) {
+      if (event.key === 'Escape') {
+        setOpenDropdown(null)
+      }
+    }
+
+    document.addEventListener('pointerdown', handlePointerDown)
+    document.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown)
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [])
+
+  function handleCitySelect(city) {
+    setSelectedCity(city)
+    setSelectedRegionId('')
+    setOpenDropdown(null)
+  }
+
+  function handleRegionSelect(region) {
+    setSelectedRegionId(region)
+    setOpenDropdown(null)
+  }
+
+  function toggleDropdown(name) {
+    setOpenDropdown((prev) => (prev === name ? null : name))
+  }
+
   return (
     <div className="impact-root">
       <HomeButton />
@@ -10,134 +67,145 @@ export default function Impact() {
       </header>
 
       <main className="impact-page" aria-labelledby="page-title">
-        <div className="region-select">
-          <button
-            id="philly-btn"
-            className="region-btn"
-            type="button"
-            aria-haspopup="listbox"
-            aria-expanded="false"
-            aria-controls="philly-menu"
-          >
-            <span>Philadelphia</span>
-            <svg className="chevron" viewBox="0 0 24 24" aria-hidden="true">
-              <path
-                d="M6 9l6 6 6-6"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-            </svg>
-          </button>
+        <div className="filters-row" ref={filtersRef}>
+          <FilterDropdown
+            id="city-filter"
+            label="City"
+            value={selectedCity}
+            options={cityOptions.map((city) => ({ value: city, label: city }))}
+            isOpen={openDropdown === 'city'}
+            onToggle={() => toggleDropdown('city')}
+            onSelect={handleCitySelect}
+          />
+
+          <FilterDropdown
+            id="region-filter"
+            label="Region"
+            value={selectedRegionId}
+            options={[
+              { value: '', label: '-' },
+              ...regionOptions.map((region) => ({
+                value: region.regionId,
+                label: region.regionName,
+              })),
+            ]}
+            isOpen={openDropdown === 'region'}
+            onToggle={() => toggleDropdown('region')}
+            onSelect={handleRegionSelect}
+          />
         </div>
 
-        <ProgramCard
-          title="Musicopia"
-          desc="We partner with the Musicopia Foundation to help 51 schools in Philadelphia that 
-          don't have access to music education, to provide them with the tools and resources they 
-          need to succeed. Let's change that!"
-          buttons={[
-            [
-              "Donate Instruments",
-              "https://www.musicopia.net/instrument-donation-form",
-            ],
-            ["Volunteer", "https://www.musicopia.net/volunteer"],
-            [
-              "Donate Money",
-              "https://secure.givelively.org/donate/musicopia-inc",
-            ],
-            ["How much we raised so far", null],
-          ]}
-        />
-
-        <ProgramCard
-          title="Generation Music"
-          desc="A fun program in Philly where kids and teens can learn, play, and share their music with others."
-          buttons={[
-            ["Support Us", "https://www.generationmusic.art/support-us"],
-            ["Get Involved", "https://www.generationmusic.art/get-involved-1"],
-            ["Learn More", "https://www.generationmusic.art"],
-            ["How much we raised so far", null],
-          ]}
-        />
-
-        <ProgramCard
-          title="Philadelphia Chamber Music Society"
-          desc="PCMS brings world-class chamber music to Philadelphia, fostering appreciation for classical music through concerts, education, and community engagement."
-          buttons={[
-            ["Learn More", "https://www.pcmsconcerts.org/about/"],
-            ["Donate", "https://www.pcmsconcerts.org/support/secure-donation/"],
-            ["Fund", "https://www.pcmsconcerts.org/support/fund/"],
-            ["How much we raised so far", null],
-          ]}
-        />
-
-        <ProgramCard
-          title="Play On Philly"
-          desc="A free program that helps kids learn instruments every day and grow through music."
-          buttons={[
-            ["Learn More", "https://playonphilly.org/"],
-            ["Donate", "https://playonphilly.org/get-involved/donate/"],
-            [
-              "Donate Instruments",
-              "https://playonphilly.org/get-involved/instrument-donations/",
-            ],
-            ["How much we raised so far", null],
-          ]}
-        />
-
-        <div className="region-select">
-          <button
-            className="region-btn disabled"
-            type="button"
-            aria-disabled="true"
-            title="Coming soon"
-          >
-            <span>New Jersey</span>
-            <svg className="chevron" viewBox="0 0 24 24" aria-hidden="true">
-              <path
-                d="M6 9l6 6 6-6"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              ></path>
-            </svg>
-          </button>
-        </div>
-
-        <p className="coming-soon-note">Coming soon!</p>
+        {filteredPrograms.map((program) => (
+          <ProgramCard
+            key={program.id}
+            title={program.title}
+            desc={program.desc}
+            actions={program.actions}
+          />
+        ))}
       </main>
     </div>
   )
 }
 
-// buttons are held in a 2d array
-// [["text", "link"], ..]
-export function ProgramCard({ title, desc, buttons }) {
+export function FilterDropdown({
+  id,
+  label,
+  value,
+  options,
+  isOpen,
+  onToggle,
+  onSelect,
+}) {
+  const selectedOption = options.find((option) => option.value === value)
+  const displayLabel = selectedOption ? selectedOption.label : '-'
+
+  return (
+    <div className="filter-group">
+      <label htmlFor={id} className="filter-label">
+        {label}
+      </label>
+
+      <div className="filter-dropdown">
+        <button
+          id={id}
+          className="filter-trigger"
+          type="button"
+          aria-haspopup="listbox"
+          aria-expanded={isOpen}
+          aria-controls={`${id}-menu`}
+          onClick={onToggle}
+        >
+          <span className={value === '' ? 'filter-value placeholder' : 'filter-value'}>
+            {displayLabel}
+          </span>
+          <svg
+            className={`filter-chevron ${isOpen ? 'open' : ''}`}
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              d="M6 9l6 6 6-6"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+          </svg>
+        </button>
+
+        {isOpen && (
+          <ul id={`${id}-menu`} className="filter-menu" role="listbox">
+            {options.map((option) => (
+              <li
+                key={option.value === '' ? 'empty-option' : option.value}
+                className="filter-option-row"
+                role="option"
+                aria-selected={value === option.value}
+              >
+                <button
+                  className={`filter-option ${value === option.value ? 'selected' : ''}`}
+                  type="button"
+                  onClick={() => onSelect(option.value)}
+                >
+                  {option.label}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  )
+}
+
+export function ProgramCard({ title, desc, actions }) {
   return (
     <section className="program-card">
       <header className="program-header">
-        <h2 id="musicopia-title">{title}</h2>
+        <h2>{title}</h2>
         <p className="program-subtitle">{desc}</p>
       </header>
 
       <div className="action-grid">
-        {buttons.map(([text, link]) => {
-          if (!link) {
+        {actions.map(({ label, href }) => {
+          if (!href) {
             return (
-              <button key={text} className="action-btn" type="button" disabled>
-                {text}
+              <button key={label} className="action-btn" type="button" disabled>
+                {label}
               </button>
             )
           }
 
           return (
-            <a key={text} href={link} target="_blank" rel="noreferrer">
-              <button className="action-btn" type="button">
-                {text}
-              </button>
+            <a
+              key={label}
+              className="action-btn action-link"
+              href={href}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {label}
             </a>
           )
         })}
