@@ -6,6 +6,7 @@ import Board from '../../assets/Lesson Page Assets/Board.png'
 import StringNames from '../../assets/Lesson Page Assets/String Names.png'
 
 export default function Lesson() {
+  
   return (
     <>
     <HomeButton />
@@ -19,4 +20,14 @@ export default function Lesson() {
     
     </>
   )
+}
+
+/*
+  progress: decimal from 0 - 1 
+  string: string path note takes ['e_low', 'a', 'd', 'g', 'b', 'e_high']
+  fret: fret number from 1 - 5 (for now)
+  glowing: use glowing or non glowing image
+*/
+export function Note({ progress, string, fret, glowing }) {
+  
 }
