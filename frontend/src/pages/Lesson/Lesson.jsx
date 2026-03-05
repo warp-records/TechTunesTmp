@@ -17,7 +17,7 @@ export default function Lesson() {
   const [progress, setProgress] = useState(0);
   const requestRef = useRef();
   
-  const ANIM_TIME = 5000;
+  const ANIM_TIME = 1000;
   const animateNote = time => {
     if (time <= ANIM_TIME) {
       setProgress(time / ANIM_TIME)
@@ -42,9 +42,11 @@ export default function Lesson() {
         <img className="layer-frame" src={NeonFrame} alt="Neon Board Frame" />
         <img className="layer-strings" src={Strings} alt="Strings" />
         <img className="layer-string-names" src={StringNames} alt="String Names" />
+        
+        <Note string="E_HIGH" fret="3" glow={false} progress={progress} />
+        <Note string="E" fret="2" glow={false} progress={progress} />
       </div>
       
-      <Note string="E_HIGH" fret="3" glow={false} progress={progress} />
     </>
   )
 }
@@ -71,11 +73,11 @@ export function Note({ progress, string, fret, glow }) {
   }
   let stringIdx = stringIdxMap[string];
   
-  const xStart = 60 + 11.5 * stringIdx;
+  const xStart = 20 + 11.5 * stringIdx;
   const yStart = 0;
   
   // in viewports
-  const xEnd = 49 + stringIdx * 16.05;
+  const xEnd = 10 + stringIdx * 16.05;
   const yEnd = 91;
   
   const currX = xStart + (xEnd - xStart) * progress
