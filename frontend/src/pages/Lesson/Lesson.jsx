@@ -1,3 +1,5 @@
+import { useState, useRef, useEffect } from 'react'
+
 import './Lesson.css'
 import HomeButton from '../../components/HomeButton'
 import Strings from '../../assets/Lesson Page Assets/Strings.png'
@@ -12,6 +14,25 @@ const noteImages = import.meta.glob(
 
 export default function Lesson() {
   
+  const [progress, setProgress] = useState(0);
+  const requestRef = useRef();
+  
+  const ANIM_TIME = 5000;
+  const animateNote = time => {
+    if (time <= ANIM_TIME) {
+      setProgress(time / ANIM_TIME)
+    } else {
+      setProgress(1.0)
+    }
+    
+    requestRef.current = requestAnimationFrame(animateNote);
+  }
+  
+  useEffect(() => {
+    requestRef.current = requestAnimationFrame(animateNote);
+    return () => cancelAnimationFrame(animateNote);
+  }, [])
+  
   return (
     <>
       <HomeButton />
@@ -23,7 +44,7 @@ export default function Lesson() {
         <img className="layer-string-names" src={StringNames} alt="String Names" />
       </div>
       
-      <Note string="B" fret="3" glow={false} progress={0.5} />
+      <Note string="E_HIGH" fret="3" glow={false} progress={progress} />
     </>
   )
 }
@@ -50,11 +71,11 @@ export function Note({ progress, string, fret, glow }) {
   }
   let stringIdx = stringIdxMap[string];
   
-  const xStart = 63.5 + 11.5 * stringIdx;
+  const xStart = 60 + 11.5 * stringIdx;
   const yStart = 0;
   
   // in viewports
-  const xEnd = 52 + stringIdx * 16.05;
+  const xEnd = 49 + stringIdx * 16.05;
   const yEnd = 91;
   
   const currX = xStart + (xEnd - xStart) * progress
@@ -67,7 +88,7 @@ export function Note({ progress, string, fret, glow }) {
         position: 'absolute',
         left: `${currX}vh`,
         top: `${currY}vh`
-    }}
+      }}
     ></img>
   )
 }
