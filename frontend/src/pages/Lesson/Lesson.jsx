@@ -12,31 +12,61 @@ const noteImages = import.meta.glob(
   { eager: true, import: 'default' }
 )
 
+// Example song chart — time is in ms from start
+const songChart = [
+  { time: 0, string: 'E', fret: 1 },
+  { time: 500, string: 'A', fret: 3 },
+  { time: 1000, string: 'D', fret: 2 },
+  { time: 1500, string: 'G', fret: 1 },
+  { time: 2000, string: 'B', fret: 3 },
+  { time: 2500, string: 'E_HIGH', fret: 2 },
+]
+
+const SCROLL_TIME = 1500 // ms for note to travel top to bottom
+
 export default function Lesson() {
-  
-  const [progress, setProgress] = useState(0);
-  const requestRef = useRef();
-  const startTimeRef = useRef(null);
-  
-  const ANIM_TIME = 1000;
-  const animateNote = time => {
-    if (!startTimeRef.current) startTimeRef.current = time;
-    const elapsed = time - startTimeRef.current;
-    
-    if (elapsed <= ANIM_TIME) {
-      setProgress(elapsed / ANIM_TIME)
-    } else {
-      setProgress(1.0)
-    }
-    
-    requestRef.current = requestAnimationFrame(animateNote);
-  }
-  
+  const [notes, setNotes] = useState([])
+  const requestRef = useRef()
+  const startTimeRef = useRef(null)
+  const nextNoteIdx = useRef(0)
+
   useEffect(() => {
-    requestRef.current = requestAnimationFrame(animateNote);
-    return () => cancelAnimationFrame(requestRef.current);
+    function loop(time) {
+      if (!startTimeRef.current) startTimeRef.current = time
+      const elapsed = time - startTimeRef.current
+
+      // Spawn notes from the chart when it's time
+      while (
+        nextNoteIdx.current < songChart.length &&
+        elapsed >= songChart[nextNoteIdx.current].time
+      ) {
+        const chartNote = songChart[nextNoteIdx.current]
+        setNotes(prev => [...prev, {
+          id: nextNoteIdx.current,
+          string: chartNote.string,
+          fret: chartNote.fret,
+          glow: false,
+          spawnTime: chartNote.time,
+        }])
+        nextNoteIdx.current++
+      }
+
+      // Update progress for all notes
+      setNotes(prev => prev
+        .map(note => ({
+          ...note,
+          progress: (elapsed - note.spawnTime) / SCROLL_TIME
+        }))
+        .filter(note => note.progress <= 1.0)
+      )
+
+      requestRef.current = requestAnimationFrame(loop)
+    }
+
+    requestRef.current = requestAnimationFrame(loop)
+    return () => cancelAnimationFrame(requestRef.current)
   }, [])
-  
+
   return (
     <>
       <HomeButton />
@@ -46,11 +76,17 @@ export default function Lesson() {
         <img className="layer-frame" src={NeonFrame} alt="Neon Board Frame" />
         <img className="layer-strings" src={Strings} alt="Strings" />
         <img className="layer-string-names" src={StringNames} alt="String Names" />
-        
-        <Note string="E_HIGH" fret="3" glow={false} progress={progress} />
-        <Note string="E" fret="2" glow={false} progress={progress} />
+
+        {notes.map(note => (
+          <Note
+            key={note.id}
+            string={note.string}
+            fret={note.fret}
+            glow={note.glow}
+            progress={note.progress}
+          />
+        ))}
       </div>
-      
     </>
   )
 }
