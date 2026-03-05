@@ -12,17 +12,48 @@ const noteImages = import.meta.glob(
   { eager: true, import: 'default' }
 )
 
-// Example song chart — time is in ms from start
+const BEATS_PER_MINUTE = 130;
+const SECS_PER_BEAT = 1 / (BEATS_PER_MINUTE / 60)
+
+// Happy Birthday in C — beat is in quarter notes
+const beat = SECS_PER_BEAT * 1000
 const songChart = [
-  { time: 0, string: 'E', fret: 1 },
-  { time: 500, string: 'A', fret: 3 },
-  { time: 1000, string: 'D', fret: 2 },
-  { time: 1500, string: 'G', fret: 1 },
-  { time: 2000, string: 'B', fret: 3 },
-  { time: 2500, string: 'E_HIGH', fret: 2 },
+  // "Happy birthday to you"
+  { time: 0 * beat,     string: 'B', fret: 1 },   // C
+  { time: 0.5 * beat,   string: 'B', fret: 1 },   // C
+  { time: 1 * beat,     string: 'B', fret: 3 },   // D
+  { time: 2 * beat,     string: 'B', fret: 1 },   // C
+  { time: 3 * beat,     string: 'E_HIGH', fret: 1 }, // F
+  { time: 4 * beat,     string: 'B', fret: 5 },   // E (B string fret 5)
+
+  // "Happy birthday to you"
+  { time: 6 * beat,     string: 'B', fret: 1 },   // C
+  { time: 6.5 * beat,   string: 'B', fret: 1 },   // C
+  { time: 7 * beat,     string: 'B', fret: 3 },   // D
+  { time: 8 * beat,     string: 'B', fret: 1 },   // C
+  { time: 9 * beat,     string: 'E_HIGH', fret: 3 }, // G
+  { time: 10 * beat,    string: 'E_HIGH', fret: 1 }, // F
+
+  // "Happy birthday dear [name]"
+  { time: 12 * beat,    string: 'B', fret: 1 },   // C
+  { time: 12.5 * beat,  string: 'B', fret: 1 },   // C
+  { time: 13 * beat,    string: 'E_HIGH', fret: 5 }, // high C (E string fret 5 = A... close enough)
+  { time: 14 * beat,    string: 'E_HIGH', fret: 2 }, // A (E string fret 2... approximation)
+  { time: 15 * beat,    string: 'E_HIGH', fret: 1 }, // F
+  { time: 16 * beat,    string: 'B', fret: 5 },   // E
+  { time: 17 * beat,    string: 'B', fret: 3 },   // D
+
+  // "Happy birthday to you"
+  { time: 18 * beat,    string: 'G', fret: 3 },   // Bb (approx)
+  { time: 18.5 * beat,  string: 'G', fret: 3 },   // Bb
+  { time: 19 * beat,    string: 'E_HIGH', fret: 2 }, // A
+  { time: 20 * beat,    string: 'E_HIGH', fret: 1 }, // F
+  { time: 21 * beat,    string: 'E_HIGH', fret: 3 }, // G
+  { time: 22 * beat,    string: 'E_HIGH', fret: 1 }, // F
 ]
 
 const SCROLL_TIME = 1500 // ms for note to travel top to bottom
+const START_DELAY = 5000 // ms before song starts
 
 export default function Lesson() {
   const [notes, setNotes] = useState([])
@@ -33,7 +64,7 @@ export default function Lesson() {
   useEffect(() => {
     function loop(time) {
       if (!startTimeRef.current) startTimeRef.current = time
-      const elapsed = time - startTimeRef.current
+      const elapsed = time - startTimeRef.current - START_DELAY
 
       // Spawn notes from the chart when it's time
       while (
