@@ -16,11 +16,15 @@ export default function Lesson() {
   
   const [progress, setProgress] = useState(0);
   const requestRef = useRef();
+  const startTimeRef = useRef(null);
   
   const ANIM_TIME = 1000;
   const animateNote = time => {
-    if (time <= ANIM_TIME) {
-      setProgress(time / ANIM_TIME)
+    if (!startTimeRef.current) startTimeRef.current = time;
+    const elapsed = time - startTimeRef.current;
+    
+    if (elapsed <= ANIM_TIME) {
+      setProgress(elapsed / ANIM_TIME)
     } else {
       setProgress(1.0)
     }
@@ -30,7 +34,7 @@ export default function Lesson() {
   
   useEffect(() => {
     requestRef.current = requestAnimationFrame(animateNote);
-    return () => cancelAnimationFrame(animateNote);
+    return () => cancelAnimationFrame(requestRef.current);
   }, [])
   
   return (
