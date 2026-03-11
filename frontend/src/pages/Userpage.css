@@ -50,6 +50,7 @@
 
 .container {
     max-width: 1280px;
+    width: 100%;
     margin: 0 auto;
     padding: 24px;
 }
@@ -59,6 +60,7 @@ header#header {
     position: sticky;
     top: 0;
     z-index: 50;
+    width: 100%;
     background: rgba(10, 15, 15, 0.6);
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
@@ -78,6 +80,7 @@ header#header {
     align-items: center;
     gap: 12px;
 }
+
 .logo {
     font-weight: 700;
     letter-spacing: 0.5px;

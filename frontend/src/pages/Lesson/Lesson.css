@@ -48,7 +48,7 @@ background-attachment: fixed;
   z-index: 1000;
 }
 
-.chip {
+.lesson-viewport .chip {
   background: rgba(212,158,251,.12);
   border: 1px solid rgba(212,158,251,.35);
   padding: 8px 12px;
@@ -65,7 +65,7 @@ background-attachment: fixed;
   z-index: 1000;
 }
 
-.chip:hover {
+.lesson-viewport .chip:hover {
   background-color: rgba(255, 255, 255, 0.2);
   transform: scale(1.1);
 }
