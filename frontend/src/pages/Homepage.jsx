@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react'
+import { useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 import './Homepage.css'
@@ -7,10 +7,9 @@ import TuneStationImg from '../assets/Homepage/TuneStation.png'
 import SongSearchImg from '../assets/Homepage/SongSearch.png'
 import ProfileImg from '../assets/Homepage/Profile.png'
 import ImpactImg from '../assets/Homepage/Impact.png'
-import HomepageTitleBgImg from '../assets/Homepage/Brick With Title.png'
+
 
 export default function Homepage() {
-  const [isBackgroundReady, setIsBackgroundReady] = useState(false)
   const navigate = useNavigate()
   const homepageRef = useRef(null)
   const lessonIslandRef = useRef(null)
@@ -32,42 +31,9 @@ export default function Homepage() {
     }, 800)
   }
 
-  useEffect(() => {
-    let cancelled = false
-    const image = new Image()
-    const fallbackTimer = window.setTimeout(() => {
-      if (!cancelled) {
-        setIsBackgroundReady(true)
-      }
-    }, 1500)
-
-    const markReady = () => {
-      if (!cancelled) {
-        window.clearTimeout(fallbackTimer)
-        setIsBackgroundReady(true)
-      }
-    }
-
-    image.src = HomepageTitleBgImg
-
-    if (image.complete) {
-      markReady()
-    } else {
-      image.onload = markReady
-      image.onerror = markReady
-    }
-
-    return () => {
-      cancelled = true
-      window.clearTimeout(fallbackTimer)
-      image.onload = null
-      image.onerror = null
-    }
-  }, [])
-
   return (
-    <div ref={homepageRef} className={`homepage ${isBackgroundReady ? 'bg-ready' : 'bg-loading'}`}>
-      <div className={`loading-screen ${isBackgroundReady ? 'hidden' : ''}`}>
+    <div ref={homepageRef} className="homepage bg-ready">
+      <div className="loading-screen hidden">
         <div className="loading-content">
           <div className="music-note-container">
             <div className="music-note">♪</div>
@@ -78,7 +44,7 @@ export default function Homepage() {
         </div>
       </div>
 
-      <div id="main-content" className={`main-content ${isBackgroundReady ? 'visible' : ''}`}>
+      <div id="main-content" className="main-content visible">
         <div ref={lessonIslandRef} className="lesson-island" aria-label="Lesson Island" onClick={handleLessonIslandClick}>
           <img src={LessonIslandImg} alt="Lesson Island" />
         </div>

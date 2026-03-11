@@ -8,35 +8,14 @@
   width: 100vw;
   overflow: hidden;
   isolation: isolate;
-  background-image:
-    url('../assets/brick_wall.png'),
-    url('../assets/DressingRoom/Light.png');
-  background-size: cover, 100% auto;
-  background-position: center -50px, top left;
-  background-repeat: no-repeat, no-repeat;
-  background-attachment: fixed, fixed;
-  transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  transform-origin: 50% 78%;
-  z-index: 0;
-}
-
-.homepage::before {
-  content: '';
-  position: absolute;
-  inset: 0;
   background-image: url('../assets/Homepage/Brick With Title.png');
   background-size: cover;
   background-position: center -50px;
   background-repeat: no-repeat;
   background-attachment: fixed;
-  opacity: 0;
-  transition: opacity 0.25s ease-in;
-  pointer-events: none;
+  transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transform-origin: 50% 78%;
   z-index: 0;
-}
-
-.homepage.bg-ready::before {
-  opacity: 1;
 }
 
 .floor {
