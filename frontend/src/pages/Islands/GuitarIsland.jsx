@@ -44,6 +44,10 @@ const difficultyNodes = [
   {
     id: LESSON_ISLAND_LEVELS.HARD,
     label: 'Hard',
+    href: buildLessonIslandPath(
+      LESSON_ISLAND_INSTRUMENTS.GUITAR,
+      LESSON_ISLAND_LEVELS.HARD
+    ),
     pathSrc: HardPathImg,
     pathClassName: 'hard-path',
     signSrc: HardSignImg,
