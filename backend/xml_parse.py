@@ -1,4 +1,5 @@
 
+import json
 import xml.etree.ElementTree as ET
 
 
@@ -63,7 +64,7 @@ class Note:
             currStr += 1
 
         fret = self._semitone() - Note.from_str(Note.GUITAR_STRINGS[currStr])._semitone()
-        if fret < 0 or fret > 5:
+        if fret < 0 or fret > 20:
             return None
 
         return Note.GUITAR_STRINGS[currStr]
@@ -81,7 +82,12 @@ def parse_song(filename: str):
     
     if root.tag != "score-partwise":
         raise ValueError("Score must be partwise")
-        
+
+    sound = root.find(".//sound[@tempo]")
+    if sound is None:
+        raise ValueError("No BPM found in file")
+    bpm = float(sound.get("tempo"))  # type: ignore[arg-type]
+
     curr_time = 0
     prev_beat_len = 0
     
@@ -122,7 +128,8 @@ def parse_song(filename: str):
         }
         output.append(output_note)
 
-    return output
+    return json.dumps({ 'bpm': bpm, 'notes': output })
 
 
-print(parse_song("assets/songs/happy_birthday.xml"))
+with open("assets/songs/canon_in_d_nobassclef.json", "w") as f:
+    f.write(parse_song("assets/songs/canon_in_d_nobassclef.xml"))
