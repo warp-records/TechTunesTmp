@@ -90,43 +90,52 @@ def parse_song(filename: str):
 
     curr_time = 0
     prev_beat_len = 0
-    
-    output = []
-    
-    notes = list(root.iter("note"))
-    for note in notes:
-        is_chord = note.find("chord") is not None
-        type_el = note.find("type")
-        duration = TYPE_BEATS.get(type_el.text, 0) if type_el is not None and type_el.text is not None else 0
+    divisions = 1
 
-        # rests advance time but produce no output
-        if note.find("rest") is not None:
+    output = []
+
+    for measure in root.iter("measure"):
+        divisions_el = measure.find("attributes/divisions")
+        if divisions_el is not None and divisions_el.text is not None:
+            divisions = int(divisions_el.text)
+
+        for note in measure.findall("note"):
+            is_chord = note.find("chord") is not None
+            type_el = note.find("type")
+            if type_el is not None and type_el.text is not None:
+                duration = TYPE_BEATS.get(type_el.text, 0)
+            else:
+                dur_el = note.find("duration")
+                duration = int(dur_el.text) / divisions if dur_el is not None and dur_el.text is not None else 0
+
+            # rests advance time but produce no output
+            if note.find("rest") is not None:
+                if not is_chord:
+                    curr_time += prev_beat_len
+                    prev_beat_len = duration
+                continue
+
+            pitch = note.find("pitch")
+            assert pitch is not None
+            step = pitch.find("step").text  # type: ignore[union-attr]
+            octave = int(pitch.find("octave").text)  # type: ignore[union-attr]
+            assert step is not None
+            alter_el = pitch.find("alter")
+            alter = int(float(alter_el.text)) if alter_el is not None and alter_el.text is not None else 0
+
             if not is_chord:
                 curr_time += prev_beat_len
                 prev_beat_len = duration
-            continue
 
-        pitch = note.find("pitch")
-        assert pitch is not None
-        step = pitch.find("step").text  # type: ignore[union-attr]
-        octave = int(pitch.find("octave").text)  # type: ignore[union-attr]
-        assert step is not None
-        alter_el = pitch.find("alter")
-        alter = int(float(alter_el.text)) if alter_el is not None and alter_el.text is not None else 0
-
-        if not is_chord:
-            curr_time += prev_beat_len
-            prev_beat_len = duration
-
-        n = Note(step, octave, alter)
-        if n.getString() is None:
-            raise ValueError(f"Note {step}{octave} is outside playable range")
-        output_note = {
-            'beat_time': curr_time,
-            'string': GUITAR_STRINGS_ENCODED[n.getString()],  # type: ignore[index]
-            'fret': n.getFret(),
-        }
-        output.append(output_note)
+            n = Note(step, octave, alter)
+            if n.getString() is None:
+                raise ValueError(f"Note {step}{octave} is outside playable range")
+            output_note = {
+                'beat_time': curr_time,
+                'string': GUITAR_STRINGS_ENCODED[n.getString()],  # type: ignore[index]
+                'fret': n.getFret(),
+            }
+            output.append(output_note)
 
     return json.dumps({ 'bpm': bpm, 'notes': output })
 
