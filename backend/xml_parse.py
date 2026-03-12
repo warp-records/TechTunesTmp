@@ -32,8 +32,6 @@ class Note:
     def __init__(self, step: str, octave: int, alter: int = 0):
         if step < 'A' or step > 'G':
             raise ValueError("Invalid note")
-        if (step < 'E' and octave < 3) or octave > 5:
-            raise ValueError("Outside playable range")
         self.step = step
         self.octave = octave
         self.alter = alter
@@ -48,6 +46,9 @@ class Note:
 
     def __lt__(self, other):
         return self._semitone() < other._semitone()
+        
+    def __le__(self, other):
+        return self._semitone() <= other._semitone()
 
     def getFret(self) -> int | None:
         string = self.getString()
@@ -58,10 +59,11 @@ class Note:
     # string which note should be played on
     def getString(self) -> str | None:
         currStr = 0
-        while currStr < len(Note.GUITAR_STRINGS) and self < Note.from_str(Note.GUITAR_STRINGS[currStr]):
+        while currStr < len(Note.GUITAR_STRINGS) - 1 and self > Note.from_str(Note.GUITAR_STRINGS[currStr + 1]):
             currStr += 1
 
-        if currStr == len(Note.GUITAR_STRINGS):
+        fret = self._semitone() - Note.from_str(Note.GUITAR_STRINGS[currStr])._semitone()
+        if fret < 0 or fret > 5:
             return None
 
         return Note.GUITAR_STRINGS[currStr]
@@ -111,6 +113,8 @@ def parse_song(filename: str):
             prev_beat_len = duration
 
         n = Note(step, octave, alter)
+        if n.getString() is None:
+            raise ValueError(f"Note {step}{octave} is outside playable range")
         output_note = {
             'beat_time': curr_time,
             'string': GUITAR_STRINGS_ENCODED[n.getString()],  # type: ignore[index]
