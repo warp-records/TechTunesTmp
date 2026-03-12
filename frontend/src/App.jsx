@@ -16,6 +16,8 @@ import IslandSelect from './pages/IslandSelect'
 import GuitarIsland from './pages/Islands/GuitarIsland'
 import SongSearch from './pages/SongSearch'
 import Lesson from './pages/Lesson/Lesson'
+import LessonIslandPage from './features/lesson-islands/pages/LessonIslandPage'
+import { LESSON_ISLAND_ROUTE_PATTERN } from './features/lesson-islands/constants/lessonIslandRoutes'
 
 function App() {
   return (
@@ -35,6 +37,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/island_select" element={<IslandSelect />} />
         <Route path="/guitar_island" element={<GuitarIsland />} />
+        <Route path={LESSON_ISLAND_ROUTE_PATTERN} element={<LessonIslandPage />} />
         <Route path="/song_search" element={<SongSearch />} />
         <Route path="/lesson" element={<Lesson />} />
       </Routes>

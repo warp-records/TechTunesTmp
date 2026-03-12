@@ -1,0 +1,177 @@
+.lesson-island-scene-page {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+  overflow: hidden;
+  background:
+    var(
+      --lesson-island-page-fill,
+      linear-gradient(180deg, #67b9dc 0%, #67b9dc 15%, #aec94d 15%, #61aa63 46%, #4d9157 100%)
+    );
+}
+
+.lesson-island-scene-page__toolbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  display: flex;
+  justify-content: flex-start;
+  padding:
+    max(16px, env(safe-area-inset-top))
+    max(16px, env(safe-area-inset-right))
+    0
+    max(16px, env(safe-area-inset-left));
+  pointer-events: none;
+}
+
+.lesson-island-scene-page__back-link {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: 2px solid rgba(18, 77, 103, 0.18);
+  background: rgba(255, 255, 255, 0.86);
+  color: #1d5672;
+  font-family: 'Trebuchet MS', 'Gill Sans', sans-serif;
+  font-size: 0.96rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  box-shadow: 0 10px 30px rgba(13, 66, 37, 0.16);
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    background-color 180ms ease;
+}
+
+.lesson-island-scene-page__back-link:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 36px rgba(13, 66, 37, 0.22);
+  background: rgba(255, 255, 255, 0.94);
+}
+
+.lesson-island-scene-page__back-link:focus-visible {
+  outline: 3px solid #fae26b;
+  outline-offset: 3px;
+}
+
+.lesson-island-scene-page__viewport {
+  width: min(100vw, calc(100dvh * var(--lesson-island-scene-ratio)));
+  height: min(100dvh, calc(100vw / var(--lesson-island-scene-ratio)));
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lesson-island-scene {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: var(--lesson-island-scene-ratio);
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--lesson-island-stage-fill, #5ea35b);
+  box-shadow: var(--lesson-island-stage-shadow, 0 28px 64px rgba(18, 53, 26, 0.28));
+}
+
+.lesson-island-scene img {
+  max-width: none;
+  user-select: none;
+}
+
+.lesson-island-scene__layer {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+}
+
+.lesson-island-scene__hotspot {
+  position: absolute;
+  display: block;
+  text-decoration: none;
+  background: transparent;
+  border-radius: 18px;
+}
+
+.lesson-island-scene__hotspot--interactive {
+  cursor: pointer;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.lesson-island-scene__hotspot--interactive:hover,
+.lesson-island-scene__hotspot--interactive:focus-visible {
+  transform: translateY(-0.6%);
+  box-shadow: inset 0 0 0 2px rgba(250, 226, 107, 0.3);
+}
+
+.lesson-island-scene__hotspot--interactive:focus-visible {
+  outline: 3px solid #fae26b;
+  outline-offset: 4px;
+}
+
+.lesson-island-scene__hotspot--planned,
+.lesson-island-scene__hotspot--static {
+  cursor: default;
+  pointer-events: none;
+}
+
+.lesson-island-scene__sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.lesson-island-scene-page--empty {
+  display: grid;
+  place-items: center;
+  padding: 32px 16px;
+}
+
+.lesson-island-scene-page__empty-card {
+  width: min(100%, 520px);
+  padding: 32px 28px;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 22px 48px rgba(13, 66, 37, 0.2);
+  color: #18485e;
+  text-align: center;
+}
+
+.lesson-island-scene-page__empty-card h1 {
+  font-family: 'Trebuchet MS', 'Gill Sans', sans-serif;
+  font-size: clamp(1.6rem, 2vw + 1rem, 2.3rem);
+  margin-bottom: 12px;
+}
+
+.lesson-island-scene-page__empty-card p {
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+@media (max-width: 720px) {
+  .lesson-island-scene-page__toolbar {
+    padding-top: max(12px, env(safe-area-inset-top));
+  }
+
+  .lesson-island-scene-page__back-link {
+    min-height: 40px;
+    padding: 0 14px;
+    font-size: 0.9rem;
+  }
+}
