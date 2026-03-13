@@ -35,8 +35,13 @@ const songChart = songData.notes.map(n => ({
 const SCROLL_TIME = 1500 // ms for note to travel top to bottom
 const START_DELAY = 3000
 const MISS_DURATION = 500 // ms to display note after it reaches the bottom
+const PLAY_WINDOW = 100  // ms before/after bottom that counts as a hit
+const HIT_DURATION = 300 // ms to display glowing note after a hit
 
 export default function Lesson() {
+  const [levelNum, setLevelNum] = useState(1)
+  const [progress, setProgress] = useState(0.0)
+  
   const [notes, setNotes] = useState([])
   const requestRef = useRef()
   
@@ -46,6 +51,7 @@ export default function Lesson() {
   const nextNoteIdx = useRef(0)
   
   const loopRef = useRef()
+  const elapsedRef = useRef(0)
   // may be redundant since pausedAt exists
   const [isPaused, setIsPaused] = useState(false)
   const [countdown, setCountdown] = useState(3)
@@ -64,6 +70,7 @@ export default function Lesson() {
   const lastCountdown = useRef(3)
 
   useEffect(() => {
+    // main game loop
     function loop(time) {
       if (!startTimeRef.current) startTimeRef.current = time
       if (pausedAt.current != null) {
@@ -79,6 +86,7 @@ export default function Lesson() {
       }
 
       const elapsed = rawElapsed - START_DELAY;
+      elapsedRef.current = elapsed
 
       // Collect all notes to spawn this frame
       const toSpawn = []
@@ -96,16 +104,24 @@ export default function Lesson() {
         })
         nextNoteIdx.current++
       }
+      if (toSpawn.length > 0) {
+        setProgress(nextNoteIdx.current / songChart.length)
+      }
 
       // Single update: spawn + progress + filter
       setNotes(prev => [...prev, ...toSpawn]
         .map(note => {
-          if (note.miss) return note
+          if (note.miss || note.hit) return note
           const progress = (elapsed - note.spawnTime) / SCROLL_TIME
-          if (progress >= 1.0) return { ...note, progress: 1.0, miss: true, missAt: elapsed }
-          return { ...note, progress }
+          const noteTime = note.spawnTime + SCROLL_TIME
+          if (elapsed > noteTime + PLAY_WINDOW) return { ...note, progress: 1.0, miss: true, missAt: elapsed }
+          return { ...note, progress: Math.min(progress, 1.0) }
         })
-        .filter(note => note.miss ? elapsed - note.missAt < MISS_DURATION : true)
+        .filter(note => {
+          if (note.miss) return elapsed - note.missAt < MISS_DURATION
+          if (note.hit) return elapsed - note.hitAt < HIT_DURATION
+          return true
+        })
       )
 
       requestRef.current = requestAnimationFrame(loop)
@@ -117,9 +133,36 @@ export default function Lesson() {
     return () => cancelAnimationFrame(requestRef.current)
   }, [])
 
+  useEffect(() => {
+    function handleKeyDown(e) {
+      if (e.code !== 'Space') return
+      const elapsed = elapsedRef.current
+      setNotes(prev => {
+        let bestNote = null
+        let bestDist = Infinity
+        for (const note of prev) {
+          if (note.hit || note.miss) continue
+          const noteTime = note.spawnTime + SCROLL_TIME
+          const dist = Math.abs(elapsed - noteTime)
+          if (dist <= PLAY_WINDOW && dist < bestDist) {
+            bestNote = note
+            bestDist = dist
+          }
+        }
+        if (!bestNote) return prev
+        return prev.map(n => n.id === bestNote.id
+          ? { ...n, glow: true, hit: true, hitAt: elapsed }
+          : n
+        )
+      })
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
+
   return (
     <>
-      <PauseMenu show={isPaused} />
+      <PauseMenu show={isPaused} progress={progress} levelNum={levelNum} />
       <CountDown num={countdown} />
       <img src={SongTitle} className="song-title" />
       <PickbotButton />
@@ -141,9 +184,9 @@ export default function Lesson() {
             key={note.id}
             string={note.string}
             fret={note.fret}
-            glow={note.glow}
             progress={note.progress}
             miss={note.miss}
+            hit={note.hit}
           />
         ))}
       </div>
@@ -182,7 +225,6 @@ export function PickbotButton() {
 }
 
 const countdownImgs = { 1: Countdown1, 2: Countdown2, 3: Countdown3 }
-
 export function CountDown({ num }) {
   if (!countdownImgs[num]) return null
   return (
@@ -190,7 +232,7 @@ export function CountDown({ num }) {
   )
 }
 
-export function PauseMenu({ show }) {
+export function PauseMenu({ show, progress, levelNum }) {
   const navigate = useNavigate()
   return (
     <>
@@ -198,6 +240,10 @@ export function PauseMenu({ show }) {
       <div className={`pause-box-popup${show ? ' visible' : ''}`}>
         <div className="pause-box">
           <img src={PauseBoxImg} className="pause-box-img" />
+          <div className="pause-box-upper">
+            <p>Level {levelNum}</p>
+            <p style={{fontSize: '35px'}}>{Math.round(progress * 100)}% Complete</p>
+          </div>
           <div className="pause-box-lower">
             <button className="pause-menu-btn" onClick={() => navigate('/homepage')}>
               <img src={BackToHomeImg} className="back-to-home-button" />
@@ -221,7 +267,7 @@ string: string path note takes ['E', 'A', 'D', 'G', 'B', 'E_HIGH']
 fret: fret number from 1 - 5 (for now)
 glowing: use glowing or non glowing image
 */
-export function Note({ progress, string, fret, glow, miss }) {
+export function Note({ progress, string, fret, miss, hit }) {
   let string_filename = string;
   if (string == 'E_HIGH') {
     string_filename = "E2";
@@ -247,10 +293,10 @@ export function Note({ progress, string, fret, glow, miss }) {
   const currX = xStart + (xEnd - xStart) * progress
   const currY = yStart + (yEnd - yStart) * progress
   
-  const fretPart = miss ? `X ${string_filename}` : `${fret}${glow ? " Glow" : ""}`;
+  const fretPart = miss ? `X ${string_filename}` : `${fret}${hit ? " Glow" : ""}`;
   const noteImgPath = `../../assets/Lesson Page Assets/Notes/${string_filename}/${fretPart}.png`;
   return (
-    <img src={noteImages[noteImgPath]} className={`note ${glow ? "glow" : ""} ${miss ? "miss" : ""}`}
+    <img src={noteImages[noteImgPath]} className={`note ${miss ? "miss" : ""} ${hit ? "hit glow" : ""}`}
       style={{
         position: 'absolute',
         left: `${currX}vh`,

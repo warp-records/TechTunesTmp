@@ -1,3 +1,7 @@
+@font-face {
+  font-family: 'CoreSansM';
+  src: url('./assets/Fonts/Core Sans M W01 SC 55.woff2') format('woff2');
+}
 
 body {
       margin: 0;
@@ -78,6 +82,8 @@ body {
       left: 50%;
       transform: translate(-50%, -50%);
       z-index: 10;
+      width: 400px;
+      height: auto;
     }
 
     .logo-container:hover {
