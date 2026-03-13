@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import songData from '../../assets/test_song.json'
 
 import './Lesson.css'
@@ -12,6 +13,8 @@ import PlayImg from '../../assets/Lesson Page Assets/Play Button.png'
 import SongTitle from '../../assets/Lesson Page Assets/Song Title.png'
 import PickbotImg from '../../assets/Lesson Page Assets/Pickbot Button.png'
 import PauseBoxImg from '../../assets/Lesson Page Assets/Pause Box.png'
+import BackToHomeImg from '../../assets/Lesson Page Assets/Back to Home Button.png'
+import BattleFriendImg from '../../assets/Lesson Page Assets/Battle Friend Button.png'
 import Countdown1 from '../../assets/Lesson Page Assets/Countdown 1.png'
 import Countdown2 from '../../assets/Lesson Page Assets/Countdown 2.png'
 import Countdown3 from '../../assets/Lesson Page Assets/Countdown 3.png'
@@ -184,11 +187,20 @@ export function CountDown({ num }) {
 }
 
 export function PauseMenu({ show }) {
+  const navigate = useNavigate()
   return (
     <>
       <div className={`pause-menu-overlay${show ? ' visible' : ''}`} />
       <div className={`pause-box-popup${show ? ' visible' : ''}`}>
-        <img src={PauseBoxImg} />
+        <div className="pause-box">
+          <img src={PauseBoxImg} className="pause-box-img" />
+          <div className="pause-box-lower">
+            <button className="pause-menu-btn" onClick={() => navigate('/homepage')}>
+              <img src={BackToHomeImg} className="back-to-home-button" />
+            </button>
+            <img src={BattleFriendImg} className="battle-friend-button" />
+          </div>
+        </div>
       </div>
     </>
   )

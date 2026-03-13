@@ -160,7 +160,30 @@ background-attachment: fixed;
   opacity: 1;
 }
 
-.pause-box-popup img {
+.pause-box {
+  position: relative;
+  display: inline-flex;
+}
+
+.pause-box-lower {
+  position: absolute;
+  top: 28%;
+  bottom: 10%;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.battle-friend-button {
+  width: 20vw;
+  height: auto;
+}
+
+.pause-box-img {
   width: 35vw;
   height: auto;
   pointer-events: auto;
@@ -255,8 +278,17 @@ assets got fucked up and for some reason glowing note is 4x as big
     width: 30vh;
 }
 
+.pause-menu-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
 .back-to-home-button {
-  background-image: url('Lesson_Page_Assets/Back to Home Button@4x.png');
+  width: 20vw;
+  height: auto;
 }
 
 .battle-friend-button {
