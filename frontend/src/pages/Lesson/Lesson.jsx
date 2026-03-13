@@ -21,18 +21,50 @@ const songChart = songData.notes.map(n => ({
 }))
 
 const SCROLL_TIME = 1500 // ms for note to travel top to bottom
-const START_DELAY = 5000 // ms before song starts
 
 export default function Lesson() {
   const [notes, setNotes] = useState([])
   const requestRef = useRef()
+  
+  const pausedTime = useRef(0)
+  const pausedAt = useRef(null)
   const startTimeRef = useRef(null)
   const nextNoteIdx = useRef(0)
+  
+  const loopRef = useRef()
+  const isPaused = useRef(false)
+
+  function pause() {
+    pausedAt.current = performance.now()
+    cancelAnimationFrame(requestRef.current)
+    isPaused.current = true
+  }
+
+  function unpause() {
+    requestRef.current = requestAnimationFrame(loopRef.current)
+    isPaused.current = false
+  }
+
+  // toggle pause with a for now
+  useEffect(() => {
+    function handleKey(e) {
+      if (e.key === 'a') {
+        isPaused.current ? unpause() : pause()
+      }
+    }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [])
 
   useEffect(() => {
     function loop(time) {
       if (!startTimeRef.current) startTimeRef.current = time
-      const elapsed = time - startTimeRef.current - START_DELAY
+      if (pausedAt.current != null) {
+        pausedTime.current += time - pausedAt.current;
+        pausedAt.current = null;
+      }
+      
+      const elapsed = time - startTimeRef.current - pausedTime.current;
 
       // Collect all notes to spawn this frame
       const toSpawn = []
@@ -64,6 +96,8 @@ export default function Lesson() {
     }
 
     requestRef.current = requestAnimationFrame(loop)
+    loopRef.current = loop
+    
     return () => cancelAnimationFrame(requestRef.current)
   }, [])
 
