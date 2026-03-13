@@ -131,7 +131,7 @@ background-attachment: fixed;
 .pause-menu-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
   z-index: 16;
   opacity: 0;
@@ -269,6 +269,16 @@ background-attachment: fixed;
     width: 12vh;
     transform: translate(-50%, -50%);
     z-index: 15;
+}
+
+@keyframes miss-pulse {
+  0%   { transform: translate(-50%, -50%) scale(1); }
+  50%  { transform: translate(-50%, -50%) scale(1.2); }
+  100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+.miss {
+  animation: miss-pulse 0.3s ease-out;
 }
 
 /*

@@ -217,7 +217,7 @@ string: string path note takes ['E', 'A', 'D', 'G', 'B', 'E_HIGH']
 fret: fret number from 1 - 5 (for now)
 glowing: use glowing or non glowing image
 */
-export function Note({ progress, string, fret, glow }) {
+export function Note({ progress, string, fret, glow, miss }) {
   let string_filename = string;
   if (string == 'E_HIGH') {
     string_filename = "E2";
@@ -243,9 +243,10 @@ export function Note({ progress, string, fret, glow }) {
   const currX = xStart + (xEnd - xStart) * progress
   const currY = yStart + (yEnd - yStart) * progress
   
-  const noteImgPath = `../../assets/Lesson Page Assets/Notes/${string_filename}/${fret}${glow ? " Glow" : ""}.png`;
+  const fretPart = miss ? `X ${string_filename}` : `${fret}${glow ? " Glow" : ""}`;
+  const noteImgPath = `../../assets/Lesson Page Assets/Notes/${string_filename}/${fretPart}.png`;
   return (
-    <img src={noteImages[noteImgPath]} className={`note ${glow ? "glow" : ""}`}
+    <img src={noteImages[noteImgPath]} className={`note ${glow ? "glow" : ""} ${fret === 'miss' ? "miss" : ""}`}
       style={{
         position: 'absolute',
         left: `${currX}vh`,
