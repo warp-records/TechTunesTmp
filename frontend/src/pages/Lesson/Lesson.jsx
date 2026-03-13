@@ -11,6 +11,7 @@ import PauseImg from '../../assets/Lesson Page Assets/Pause Button.png'
 import PlayImg from '../../assets/Lesson Page Assets/Play Button.png'
 import SongTitle from '../../assets/Lesson Page Assets/Song Title.png'
 import PickbotImg from '../../assets/Lesson Page Assets/Pickbot Button.png'
+import PauseBoxImg from '../../assets/Lesson Page Assets/Pause Box.png'
 import Countdown1 from '../../assets/Lesson Page Assets/Countdown 1.png'
 import Countdown2 from '../../assets/Lesson Page Assets/Countdown 2.png'
 import Countdown3 from '../../assets/Lesson Page Assets/Countdown 3.png'
@@ -112,6 +113,7 @@ export default function Lesson() {
 
   return (
     <>
+      <PauseMenu show={isPaused} />
       <CountDown num={countdown} />
       <img src={SongTitle} className="song-title" />
       <PickbotButton />
@@ -178,6 +180,17 @@ export function CountDown({ num }) {
   if (!countdownImgs[num]) return null
   return (
     <img key={num} src={countdownImgs[num]} className="countdown-img" />
+  )
+}
+
+export function PauseMenu({ show }) {
+  return (
+    <>
+      <div className={`pause-menu-overlay${show ? ' visible' : ''}`} />
+      <div className={`pause-box-popup${show ? ' visible' : ''}`}>
+        <img src={PauseBoxImg} />
+      </div>
+    </>
   )
 }
 

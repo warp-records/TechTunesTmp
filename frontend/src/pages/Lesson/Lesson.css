@@ -12,6 +12,10 @@
   box-sizing: border-box;
 }
 
+html, body {
+  overflow: hidden;
+}
+
 .lesson-page {
   font-family: 'Arial', sans-serif;
   background: linear-gradient(45deg, var(--dark-bg), var(--dark-purple), var(--teal));
@@ -123,26 +127,42 @@ background-attachment: fixed;
   transform: scale(1.1);
 }
 
+/* Pause Menu Overlay */
+.pause-menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(4px);
+  z-index: 16;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.pause-menu-overlay.visible {
+  opacity: 1;
+}
+
 /* Pause Box Pop-up */
 .pause-box-popup {
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 500px;
-  height: 375px;
-  background-image: url('Lesson_Page_Assets/Pause_Box@4x.png');
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
-  z-index: 2000;
-  display: none;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 17;
   pointer-events: none;
-  animation: pauseBoxGlow 2s ease-in-out infinite;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
-.pause-box-popup.show {
-  display: block;
+.pause-box-popup.visible {
+  opacity: 1;
+}
+
+.pause-box-popup img {
+  width: 35vw;
+  height: auto;
   pointer-events: auto;
 }
 
@@ -192,6 +212,8 @@ background-attachment: fixed;
   left: 50%;
   transform: translateX(-50%);
   z-index: 1;
+  width: 400px;
+  height: auto;
 }
 
 /* Pause/Play Button */
@@ -202,6 +224,7 @@ background-attachment: fixed;
   width: 100px;
   height: 100px;
   cursor: pointer;
+  z-index: 18;
 }
 
 /* Countdown */
