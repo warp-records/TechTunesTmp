@@ -116,7 +116,6 @@ background-attachment: fixed;
   background-position: center;
   background-repeat: no-repeat;
   cursor: pointer;
-  z-index: 1000;
   transition: transform 0.2s ease;
 }
 
@@ -184,6 +183,40 @@ background-attachment: fixed;
 
 .pause-box-button:hover {
   transform: scale(1.05);
+}
+
+/* Song Title */
+.song-title {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+}
+
+/* Pause/Play Button */
+.pause-play-button {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 100px;
+  height: 100px;
+  cursor: pointer;
+}
+
+/* Countdown */
+@keyframes countdown-grow {
+  from { transform: translate(-50%, -50%) scale(1); }
+  to   { transform: translate(-50%, -50%) scale(1.5); }
+}
+
+.countdown-img {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  animation: countdown-grow 1s ease-out forwards;
 }
 
 .note {

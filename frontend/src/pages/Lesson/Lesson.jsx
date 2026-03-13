@@ -11,6 +11,9 @@ import PauseImg from '../../assets/Lesson Page Assets/Pause Button.png'
 import PlayImg from '../../assets/Lesson Page Assets/Play Button.png'
 import SongTitle from '../../assets/Lesson Page Assets/Song Title.png'
 import PickbotImg from '../../assets/Lesson Page Assets/Pickbot Button.png'
+import Countdown1 from '../../assets/Lesson Page Assets/Countdown 1.png'
+import Countdown2 from '../../assets/Lesson Page Assets/Countdown 2.png'
+import Countdown3 from '../../assets/Lesson Page Assets/Countdown 3.png'
 import Avatar from '../../components/Avatar'
 
 const noteImages = import.meta.glob(
@@ -26,6 +29,7 @@ const songChart = songData.notes.map(n => ({
 }))
 
 const SCROLL_TIME = 1500 // ms for note to travel top to bottom
+const START_DELAY = 3000
 
 export default function Lesson() {
   const [notes, setNotes] = useState([])
@@ -39,6 +43,7 @@ export default function Lesson() {
   const loopRef = useRef()
   // may be redundant since pausedAt exists
   const [isPaused, setIsPaused] = useState(false)
+  const [countdown, setCountdown] = useState(3)
 
   function pause() {
     pausedAt.current = performance.now()
@@ -51,6 +56,8 @@ export default function Lesson() {
     setIsPaused(false)
   }
 
+  const lastCountdown = useRef(3)
+
   useEffect(() => {
     function loop(time) {
       if (!startTimeRef.current) startTimeRef.current = time
@@ -58,8 +65,15 @@ export default function Lesson() {
         pausedTime.current += time - pausedAt.current;
         pausedAt.current = null;
       }
-      
-      const elapsed = time - startTimeRef.current - pausedTime.current;
+
+      const rawElapsed = time - startTimeRef.current - pausedTime.current
+      const newCountdown = rawElapsed < 1000 ? 3 : rawElapsed < 2000 ? 2 : rawElapsed < START_DELAY ? 1 : null
+      if (newCountdown !== lastCountdown.current) {
+        lastCountdown.current = newCountdown
+        setCountdown(newCountdown)
+      }
+
+      const elapsed = rawElapsed - START_DELAY;
 
       // Collect all notes to spawn this frame
       const toSpawn = []
@@ -98,7 +112,8 @@ export default function Lesson() {
 
   return (
     <>
-      <img src={SongTitle} style={{ position: 'fixed', top: 20, left: '50%', transform: 'translateX(-50%)', zIndex: 10 }} />
+      <CountDown num={countdown} />
+      <img src={SongTitle} className="song-title" />
       <PickbotButton />
       <PauseButton
         isPaused={isPaused}
@@ -157,9 +172,18 @@ export function PickbotButton() {
   )
 }
 
+const countdownImgs = { 1: Countdown1, 2: Countdown2, 3: Countdown3 }
+
+export function CountDown({ num }) {
+  if (!countdownImgs[num]) return null
+  return (
+    <img key={num} src={countdownImgs[num]} className="countdown-img" />
+  )
+}
+
 export function PauseButton({ isPaused, handleClick }) {
   const imgSrc = isPaused ? PlayImg : PauseImg;
-  return (<img src={imgSrc} onClick={handleClick} style={{ position: 'fixed', top: 20, left: 20, width: 100, height: 100 }} />)
+  return (<img src={imgSrc} onClick={handleClick} className="pause-play-button" />)
 }
 
 /*
