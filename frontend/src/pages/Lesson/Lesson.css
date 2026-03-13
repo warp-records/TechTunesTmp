@@ -273,12 +273,12 @@ background-attachment: fixed;
 
 @keyframes miss-pulse {
   0%   { transform: translate(-50%, -50%) scale(1); }
-  50%  { transform: translate(-50%, -50%) scale(1.2); }
-  100% { transform: translate(-50%, -50%) scale(1); }
+  30%  { transform: translate(-50%, -50%) scale(1.2); }
+  100% { transform: translate(-50%, -50%) scale(0); }
 }
 
 .miss {
-  animation: miss-pulse 0.3s ease-out;
+  animation: miss-pulse 0.5s ease-in forwards;
 }
 
 /*

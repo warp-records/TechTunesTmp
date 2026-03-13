@@ -34,6 +34,7 @@ const songChart = songData.notes.map(n => ({
 
 const SCROLL_TIME = 1500 // ms for note to travel top to bottom
 const START_DELAY = 3000
+const MISS_DURATION = 500 // ms to display note after it reaches the bottom
 
 export default function Lesson() {
   const [notes, setNotes] = useState([])
@@ -98,11 +99,13 @@ export default function Lesson() {
 
       // Single update: spawn + progress + filter
       setNotes(prev => [...prev, ...toSpawn]
-        .map(note => ({
-          ...note,
-          progress: (elapsed - note.spawnTime) / SCROLL_TIME
-        }))
-        .filter(note => note.progress <= 1.0)
+        .map(note => {
+          if (note.miss) return note
+          const progress = (elapsed - note.spawnTime) / SCROLL_TIME
+          if (progress >= 1.0) return { ...note, progress: 1.0, miss: true, missAt: elapsed }
+          return { ...note, progress }
+        })
+        .filter(note => note.miss ? elapsed - note.missAt < MISS_DURATION : true)
       )
 
       requestRef.current = requestAnimationFrame(loop)
@@ -140,6 +143,7 @@ export default function Lesson() {
             fret={note.fret}
             glow={note.glow}
             progress={note.progress}
+            miss={note.miss}
           />
         ))}
       </div>
@@ -246,7 +250,7 @@ export function Note({ progress, string, fret, glow, miss }) {
   const fretPart = miss ? `X ${string_filename}` : `${fret}${glow ? " Glow" : ""}`;
   const noteImgPath = `../../assets/Lesson Page Assets/Notes/${string_filename}/${fretPart}.png`;
   return (
-    <img src={noteImages[noteImgPath]} className={`note ${glow ? "glow" : ""} ${fret === 'miss' ? "miss" : ""}`}
+    <img src={noteImages[noteImgPath]} className={`note ${glow ? "glow" : ""} ${miss ? "miss" : ""}`}
       style={{
         position: 'absolute',
         left: `${currX}vh`,
