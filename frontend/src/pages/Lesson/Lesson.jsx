@@ -7,6 +7,8 @@ import Strings from '../../assets/Lesson Page Assets/Strings.png'
 import NeonFrame from '../../assets/Lesson Page Assets/Neon Board Frame.png'
 import Board from '../../assets/Lesson Page Assets/Board.png'
 import StringNames from '../../assets/Lesson Page Assets/String Names.png'
+import PauseImg from '../../assets/Lesson Page Assets/Pause Button.png'
+import PlayImg from '../../assets/Lesson Page Assets/Play Button.png'
 
 const noteImages = import.meta.glob(
   '../../assets/Lesson Page Assets/Notes/**/*.png',
@@ -32,29 +34,19 @@ export default function Lesson() {
   const nextNoteIdx = useRef(0)
   
   const loopRef = useRef()
-  const isPaused = useRef(false)
+  // may be redundant since pausedAt exists
+  const [isPaused, setIsPaused] = useState(false)
 
   function pause() {
     pausedAt.current = performance.now()
     cancelAnimationFrame(requestRef.current)
-    isPaused.current = true
+    setIsPaused(true)
   }
 
   function unpause() {
     requestRef.current = requestAnimationFrame(loopRef.current)
-    isPaused.current = false
+    setIsPaused(false)
   }
-
-  // toggle pause with a for now
-  useEffect(() => {
-    function handleKey(e) {
-      if (e.key === 'a') {
-        isPaused.current ? unpause() : pause()
-      }
-    }
-    window.addEventListener('keydown', handleKey)
-    return () => window.removeEventListener('keydown', handleKey)
-  }, [])
 
   useEffect(() => {
     function loop(time) {
@@ -103,7 +95,12 @@ export default function Lesson() {
 
   return (
     <>
-      <HomeButton />
+      <PauseButton
+        isPaused={isPaused}
+        handleClick={() => {
+          isPaused ? unpause() : pause()
+        }}
+      />
       
       <div className="lesson-stage">
         <img className="layer-board" src={Board} alt="Board" />
@@ -123,6 +120,11 @@ export default function Lesson() {
       </div>
     </>
   )
+}
+
+export function PauseButton({ isPaused, handleClick }) {
+  const imgSrc = isPaused ? PlayImg : PauseImg;
+  return (<img src={imgSrc} onClick={handleClick} style={{ position: 'fixed', top: 20, left: 20, width: 100, height: 100 }} />)
 }
 
 /*
