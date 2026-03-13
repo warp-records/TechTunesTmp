@@ -9,6 +9,9 @@ import Board from '../../assets/Lesson Page Assets/Board.png'
 import StringNames from '../../assets/Lesson Page Assets/String Names.png'
 import PauseImg from '../../assets/Lesson Page Assets/Pause Button.png'
 import PlayImg from '../../assets/Lesson Page Assets/Play Button.png'
+import SongTitle from '../../assets/Lesson Page Assets/Song Title.png'
+import PickbotImg from '../../assets/Lesson Page Assets/Pickbot Button.png'
+import Avatar from '../../components/Avatar'
 
 const noteImages = import.meta.glob(
   '../../assets/Lesson Page Assets/Notes/**/*.png',
@@ -95,6 +98,8 @@ export default function Lesson() {
 
   return (
     <>
+      <img src={SongTitle} style={{ position: 'fixed', top: 20, left: '50%', transform: 'translateX(-50%)', zIndex: 10 }} />
+      <PickbotButton />
       <PauseButton
         isPaused={isPaused}
         handleClick={() => {
@@ -119,6 +124,36 @@ export default function Lesson() {
         ))}
       </div>
     </>
+  )
+}
+
+export function PickbotButton() {
+  const [avatarData, setAvatarData] = useState(null)
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (!token) return
+    async function getAvatar() {
+      const res = await fetch('/api/get-avatar/', {
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }
+      })
+      if (res.ok) {
+        const data = await res.json()
+        setAvatarData(data.avatar)
+      }
+    }
+    getAvatar()
+  }, [])
+
+  return (
+    <div className="pickbot-button">
+      <img src={PickbotImg} className="pickbot-button-bg" />
+      {avatarData && (
+        <div className="pickbot-button-avatar">
+          <Avatar form={avatarData.form} activeItems={avatarData.activeItems} color={avatarData.bodyColor} />
+        </div>
+      )}
+    </div>
   )
 }
 
