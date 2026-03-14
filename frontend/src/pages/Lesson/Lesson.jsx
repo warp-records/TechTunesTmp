@@ -67,6 +67,7 @@ export default function Lesson() {
     setIsPaused(false)
   }
 
+  // used for the countdown at the beginning
   const lastCountdown = useRef(3)
 
   useEffect(() => {
@@ -164,7 +165,7 @@ export default function Lesson() {
     <>
       <PauseMenu show={isPaused} progress={progress} levelNum={levelNum} />
       <CountDown num={countdown} />
-      <img src={SongTitle} className="song-title" />
+      <SongTitleBanner title="TEST SONG" />
       <PickbotButton />
       <PauseButton
         isPaused={isPaused}
@@ -220,6 +221,15 @@ export function PickbotButton() {
           <Avatar form={avatarData.form} activeItems={avatarData.activeItems} color={avatarData.bodyColor} />
         </div>
       )}
+    </div>
+  )
+}
+
+export function SongTitleBanner({ title }) {
+  return (
+    <div className="song-title">
+      <img src={SongTitle} className="song-title-img" />
+      <span className="song-title-text">{title}</span>
     </div>
   )
 }
@@ -293,15 +303,22 @@ export function Note({ progress, string, fret, miss, hit }) {
   const currX = xStart + (xEnd - xStart) * progress
   const currY = yStart + (yEnd - yStart) * progress
   
-  const fretPart = miss ? `X ${string_filename}` : `${fret}${hit ? " Glow" : ""}`;
-  const noteImgPath = `../../assets/Lesson Page Assets/Notes/${string_filename}/${fretPart}.png`;
+  const missImgPath = `../../assets/Lesson Page Assets/Notes/${string_filename}/X ${string_filename}.png`;
+  const normalImgPath = `../../assets/Lesson Page Assets/Notes/${string_filename}/${fret}.png`;
+  const glowImgPath = `../../assets/Lesson Page Assets/Notes/${string_filename}/${fret} Glow.png`;
+  const pos = { position: 'absolute', left: `${currX}vh`, top: `${currY}vh` }
+
+  if (miss) {
+    return <img src={noteImages[missImgPath]} className="note miss" style={pos} />
+  }
+
+  // render both images since swapping out the src makes it lag
   return (
-    <img src={noteImages[noteImgPath]} className={`note ${miss ? "miss" : ""} ${hit ? "hit glow" : ""}`}
-      style={{
-        position: 'absolute',
-        left: `${currX}vh`,
-        top: `${currY}vh`
-      }}
-    ></img>
+    <>
+      <img src={noteImages[normalImgPath]} className="note"
+        style={{ ...pos, opacity: hit ? 0 : 1 }} />
+      <img src={noteImages[glowImgPath]} className={`note glow${hit ? " hit" : ""}`}
+        style={{ ...pos, opacity: hit ? 1 : 0 }} />
+    </>
   )
 }

@@ -250,8 +250,23 @@ background-attachment: fixed;
   left: 50%;
   transform: translateX(-50%);
   z-index: 1;
-  width: 400px;
+  display: grid;
+  place-items: center;
+}
+
+.song-title-img {
+  grid-area: 1 / 1;
+  width: 500px;
   height: auto;
+}
+
+.song-title-text {
+  grid-area: 1 / 1;
+  font-family: 'Nunito-SemiBold', sans-serif;
+  font-size: 60px;
+  color: white;
+  -webkit-text-stroke: 1px #12138a;
+  text-shadow: 3px 3px 0px #475dbf;
 }
 
 /* Pause/Play Button */
