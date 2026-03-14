@@ -1,0 +1,13 @@
+{
+  "bpm": 100.0,
+  "notes": [
+    { "beat_time": 0, "string": "E_HIGH", "fret": 2 },
+    { "beat_time": 2, "string": "B", "fret": 5 },
+    { "beat_time": 4, "string": "B", "fret": 3 },
+    { "beat_time": 6, "string": "B", "fret": 2 },
+    { "beat_time": 8, "string": "G", "fret": 4 },
+    { "beat_time": 10, "string": "G", "fret": 2 },
+    { "beat_time": 12, "string": "G", "fret": 4 },
+    { "beat_time": 14, "string": "B", "fret": 2 }
+     ]
+}

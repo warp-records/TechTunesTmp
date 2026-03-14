@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import songData from '../../assets/test_song.json'
+import songData from '../../assets/test_song_short.json'
 
 import './Lesson.css'
 import HomeButton from '../../components/HomeButton'
@@ -44,14 +44,28 @@ const HIT_DURATION = 300 // ms to display glowing note after a hit
 export default function Lesson() {
   const [songName, setSongName] = useState("Canon In D")
   const [levelNum, setLevelNum] = useState(1)
+  // as a decimal
   const [progress, setProgress] = useState(0.0)
   
   const [score, setScore] = useState(0)
+  const [gameOver, setGameOver] = useState(false)
+  // used to force a re render on the arrow which triggers animation
+  const [arrowKey, setArrowKey] = useState(0)
+  const [arrowVisible, setArrowVisible] = useState(false)
+
+  function showArrow() {
+    setArrowKey(k => k + 1)
+    setArrowVisible(true)
+  }
   const [notes, setNotes] = useState([])
+  // request animation frame ref
   const requestRef = useRef()
   
+  // used to calculate elapsed game time
   const pausedTime = useRef(0)
+  // last paued time
   const pausedAt = useRef(null)
+  // time when the game started
   const startTimeRef = useRef(null)
   const nextNoteIdx = useRef(0)
   
@@ -139,6 +153,7 @@ export default function Lesson() {
     return () => cancelAnimationFrame(requestRef.current)
   }, [])
 
+  // should prolly remove this
   useEffect(() => {
     function handleKeyDown(e) {
       if (e.code !== 'Space') return
@@ -156,7 +171,8 @@ export default function Lesson() {
           }
         }
         if (!bestNote) return prev
-        setScore(s => s + 10)
+        setScore(s => s + 5)
+        showArrow()
         return prev.map(n => n.id === bestNote.id
           ? { ...n, glow: true, hit: true, hitAt: elapsed }
           : n
@@ -169,6 +185,7 @@ export default function Lesson() {
 
   return (
     <>
+      <ScreenBlur show={gameOver} />
       <PauseMenu show={isPaused} progress={progress} levelNum={levelNum} />
       <CountDown num={countdown} />
       <SongTitleBanner title={songName.toUpperCase()} />
@@ -180,7 +197,7 @@ export default function Lesson() {
         }}
       />
       <Score score={score} />
-      <Arrow isUp={true} />
+      <Arrow key={arrowKey} isUp isVisible={arrowVisible} />
       
       <div className="lesson-stage">
         <img className="layer-board" src={Board} alt="Board" />
@@ -233,16 +250,20 @@ export function PickbotButton() {
   )
 }
 
-export function Arrow({ isUp }) {
+export function Arrow({ isUp, isVisible }) {
   if (isUp) {
     return (
-      <div className="arrow-container">
+      <div className={`arrow-container${isVisible ? ' visible' : ''}`}>
         <img src={UpArrowGlow} className="arrow-glow" />
         <img src={UpArrow} className="arrow-inner" />
       </div>
     )
   }
   return <img src={DownArrow} className="arrow-inner" />
+}
+
+export function ScreenBlur({ show }) {
+  return <div className={`screen-blur${show ? ' visible' : ''}`} />
 }
 
 export function Score({ score }) {

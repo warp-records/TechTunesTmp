@@ -270,11 +270,21 @@ background-attachment: fixed;
 }
 
 /* Arrow */
+@keyframes arrow-flash {
+  0%   { opacity: 1; }
+  100% { opacity: 0; }
+}
+
 .arrow-container {
   position: fixed;
   top: 50%;
   transform: translateY(-50%);
   width: 300px;
+  opacity: 0;
+}
+
+.arrow-container.visible {
+  animation: arrow-flash 1s ease-out forwards;
 }
 
 .arrow-glow {
@@ -293,6 +303,21 @@ background-attachment: fixed;
 }
 
 /* Score */
+.screen-blur {
+  position: fixed;
+  inset: 0;
+  backdrop-filter: blur(0px);
+  background: rgba(0, 0, 0, 0);
+  pointer-events: none;
+  transition: backdrop-filter 0.8s ease, background 0.8s ease;
+  z-index: 18;
+}
+
+.screen-blur.visible {
+  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.4);
+}
+
 .score {
   position: fixed;
   top: 150px;
@@ -301,6 +326,8 @@ background-attachment: fixed;
   font-family: 'CoreSansM', sans-serif;
   font-size: 64px;
   z-index: 18;
+  -webkit-text-stroke: 1px #12138a;
+  text-shadow: 3px 3px 0px #475dbf;
 }
 
 /* Pause/Play Button */
