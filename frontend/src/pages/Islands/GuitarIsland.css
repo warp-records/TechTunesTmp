@@ -12,6 +12,33 @@
   background-repeat: no-repeat;
 }
 
+.guitar-sign-button {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+}
+
+.difficulty-link {
+  text-decoration: none;
+}
+
+.difficulty-link img {
+  display: block;
+}
+
+.difficulty-link:hover img,
+.difficulty-link:focus-visible img {
+  filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8));
+}
+
+.difficulty-link:focus-visible {
+  outline: none;
+}
+
 /* Green overlay to cover blue water area */
 .lesson-island-container::after {
   content: '';
@@ -84,6 +111,12 @@
   left: 20vw;
   width: 12vw;
   height: 12vw;
+}
+
+.medium-sign,
+.hard-sign,
+.expert-sign {
+  cursor: not-allowed;
 }
 
 /* ─── Override global img max-width ─── */
