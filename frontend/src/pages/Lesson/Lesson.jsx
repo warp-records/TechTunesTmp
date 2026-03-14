@@ -15,6 +15,9 @@ import PickbotImg from '../../assets/Lesson Page Assets/Pickbot Button.png'
 import PauseBoxImg from '../../assets/Lesson Page Assets/Pause Box.png'
 import BackToHomeImg from '../../assets/Lesson Page Assets/Back to Home Button.png'
 import BattleFriendImg from '../../assets/Lesson Page Assets/Battle Friend Button.png'
+import UpArrow from '../../assets/Lesson Page Assets/Up Arrow.png'
+import UpArrowGlow from '../../assets/Lesson Page Assets/Up Arrow Glow.png'
+import DownArrow from '../../assets/Lesson Page Assets/Down Arrow.png'
 import Countdown1 from '../../assets/Lesson Page Assets/Countdown 1.png'
 import Countdown2 from '../../assets/Lesson Page Assets/Countdown 2.png'
 import Countdown3 from '../../assets/Lesson Page Assets/Countdown 3.png'
@@ -39,9 +42,11 @@ const PLAY_WINDOW = 100  // ms before/after bottom that counts as a hit
 const HIT_DURATION = 300 // ms to display glowing note after a hit
 
 export default function Lesson() {
+  const [songName, setSongName] = useState("Canon In D")
   const [levelNum, setLevelNum] = useState(1)
   const [progress, setProgress] = useState(0.0)
   
+  const [score, setScore] = useState(0)
   const [notes, setNotes] = useState([])
   const requestRef = useRef()
   
@@ -151,6 +156,7 @@ export default function Lesson() {
           }
         }
         if (!bestNote) return prev
+        setScore(s => s + 10)
         return prev.map(n => n.id === bestNote.id
           ? { ...n, glow: true, hit: true, hitAt: elapsed }
           : n
@@ -165,7 +171,7 @@ export default function Lesson() {
     <>
       <PauseMenu show={isPaused} progress={progress} levelNum={levelNum} />
       <CountDown num={countdown} />
-      <SongTitleBanner title="TEST SONG" />
+      <SongTitleBanner title={songName.toUpperCase()} />
       <PickbotButton />
       <PauseButton
         isPaused={isPaused}
@@ -173,6 +179,8 @@ export default function Lesson() {
           isPaused ? unpause() : pause()
         }}
       />
+      <Score score={score} />
+      <Arrow isUp={true} />
       
       <div className="lesson-stage">
         <img className="layer-board" src={Board} alt="Board" />
@@ -223,6 +231,22 @@ export function PickbotButton() {
       )}
     </div>
   )
+}
+
+export function Arrow({ isUp }) {
+  if (isUp) {
+    return (
+      <div className="arrow-container">
+        <img src={UpArrowGlow} className="arrow-glow" />
+        <img src={UpArrow} className="arrow-inner" />
+      </div>
+    )
+  }
+  return <img src={DownArrow} className="arrow-inner" />
+}
+
+export function Score({ score }) {
+  return <div className="score">{score}</div>
 }
 
 export function SongTitleBanner({ title }) {
