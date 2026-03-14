@@ -78,13 +78,22 @@ background-attachment: fixed;
 .pickbot-button {
   position: fixed;
   top: 20px;
-  right: 20px;
+  left: calc(100vw - 320px);
   width: 300px;
   height: 300px;
   background: none;
   border: none;
   padding: 0;
   cursor: pointer;
+  transition: top 0.8s ease, left 0.8s ease, transform 0.8s ease, z-index 0s;
+  z-index: 1;
+}
+
+.pickbot-button.game-over {
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(2);
+  z-index: 20;
 }
 
 .pickbot-button-bg {
@@ -252,6 +261,12 @@ background-attachment: fixed;
   z-index: 1;
   display: grid;
   place-items: center;
+  transition: top 0.8s ease, z-index 0s;
+}
+
+.song-title.game-over {
+  top: 15%;
+  z-index: 20;
 }
 
 .song-title-img {
@@ -338,6 +353,11 @@ background-attachment: fixed;
 
 .fade-strings-letters {
   transition: opacity 1s ease;
+  opacity: 0;
+}
+
+.fade-hud {
+  transition: opacity 0.4s ease;
   opacity: 0;
 }
 

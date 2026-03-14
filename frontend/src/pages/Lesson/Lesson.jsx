@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import confetti from 'canvas-confetti'
 import songData from '../../assets/test_song_short.json'
 
 import './Lesson.css'
@@ -52,6 +53,7 @@ export default function Lesson() {
   const [fadeStrings, setFadeStrings] = useState(false)
   const [fadeFrets, setFadeFrets] = useState(false)
   const [fadeBoard, setFadeBoard] = useState(false)
+  const [fadeHUD, setFadeHUD] = useState(false)
   const [showBlur, setShowBlur] = useState(false)
   // used to force a re render on the arrow which triggers animation
   const [arrowKey, setArrowKey] = useState(0)
@@ -202,8 +204,21 @@ export default function Lesson() {
     if (!gameOver) return
     setFadeStrings(true)
     setTimeout(() => setFadeFrets(true), 1000)
-    setTimeout(() => setFadeBoard(true), 2000)
-    setTimeout(() => setShowBlur(true), 3000)
+    setTimeout(() => setFadeBoard(true), 1500)
+    setTimeout(() => setFadeHUD(true), 2000)
+    setTimeout(() => setShowBlur(true), 2250)
+    setTimeout(() => {
+      const fire = (origin, angle) => confetti({
+        particleCount: 80,
+        angle,
+        spread: 60,
+        origin,
+        colors: ['#9300fc', '#ff00cc', '#ffffff', '#00eaff'],
+        zIndex: 25,
+      })
+      fire({ x: 0, y: 0.6 }, 60)
+      fire({ x: 1, y: 0.6 }, 120)
+    }, 2250 + 1300)
   }, [gameOver])
 
   return (
@@ -211,17 +226,18 @@ export default function Lesson() {
       <ScreenBlur show={showBlur} />
       <PauseMenu show={isPaused} progress={progress} levelNum={levelNum} />
       <CountDown num={countdown} />
-      <SongTitleBanner title={songName.toUpperCase()} />
-      <PickbotButton />
+      <SongTitleBanner title={songName.toUpperCase()} gameOver={showBlur} />
+      <PickbotButton gameOver={showBlur} />
       <PauseButton
         isPaused={isPaused}
+        fadeHUD={fadeHUD}
         handleClick={() => {
           if (!gameOver) {
             isPaused ? unpause() : pause()
           }
         }}
       />
-      <Score score={score} />
+      <Score score={score} fadeHUD={fadeHUD} />
       <Arrow key={arrowKey} isUp isVisible={arrowVisible} />
       
       <div className="lesson-stage">
@@ -246,7 +262,7 @@ export default function Lesson() {
   )
 }
 
-export function PickbotButton() {
+export function PickbotButton({ gameOver }) {
   const [avatarData, setAvatarData] = useState(null)
 
   useEffect(() => {
@@ -265,7 +281,7 @@ export function PickbotButton() {
   }, [])
 
   return (
-    <div className="pickbot-button">
+    <div className={`pickbot-button${gameOver ? ' game-over' : ''}`}>
       <img src={PickbotImg} className="pickbot-button-bg" />
       {avatarData && (
         <div className="pickbot-button-avatar">
@@ -292,13 +308,13 @@ export function ScreenBlur({ show }) {
   return <div className={`screen-blur${show ? ' visible' : ''}`} />
 }
 
-export function Score({ score }) {
-  return <div className="score">{score}</div>
+export function Score({ score, fadeHUD }) {
+  return <div className={`score${fadeHUD ? ' fade-hud' : ''}`}>{score}</div>
 }
 
-export function SongTitleBanner({ title }) {
+export function SongTitleBanner({ title, gameOver }) {
   return (
-    <div className="song-title">
+    <div className={`song-title${gameOver ? ' game-over' : ''}`}>
       <img src={SongTitle} className="song-title-img" />
       <span className="song-title-text">{title}</span>
     </div>
@@ -337,9 +353,9 @@ export function PauseMenu({ show, progress, levelNum }) {
   )
 }
 
-export function PauseButton({ isPaused, handleClick }) {
+export function PauseButton({ isPaused, fadeHUD, handleClick }) {
   const imgSrc = isPaused ? PlayImg : PauseImg;
-  return (<img src={imgSrc} onClick={handleClick} className="pause-play-button" />)
+  return (<img src={imgSrc} onClick={handleClick} className={`pause-play-button${fadeHUD ? ' fade-hud' : ''}`} />)
 }
 
 /*
