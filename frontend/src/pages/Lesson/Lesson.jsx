@@ -49,6 +49,10 @@ export default function Lesson() {
   
   const [score, setScore] = useState(0)
   const [gameOver, setGameOver] = useState(false)
+  const [fadeStrings, setFadeStrings] = useState(false)
+  const [fadeFrets, setFadeFrets] = useState(false)
+  const [fadeBoard, setFadeBoard] = useState(false)
+  const [showBlur, setShowBlur] = useState(false)
   // used to force a re render on the arrow which triggers animation
   const [arrowKey, setArrowKey] = useState(0)
   const [arrowVisible, setArrowVisible] = useState(false)
@@ -183,9 +187,28 @@ export default function Lesson() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
 
+  // check if gameover
+  useEffect(() => {
+    if (
+      nextNoteIdx.current >= songChart.length &&
+      notes.length === 0 &&
+      elapsedRef.current > 0
+    ) {
+      setGameOver(true)
+    }
+  }, [notes])
+
+  useEffect(() => {
+    if (!gameOver) return
+    setFadeStrings(true)
+    setTimeout(() => setFadeFrets(true), 1000)
+    setTimeout(() => setFadeBoard(true), 2000)
+    setTimeout(() => setShowBlur(true), 3000)
+  }, [gameOver])
+
   return (
     <>
-      <ScreenBlur show={gameOver} />
+      <ScreenBlur show={showBlur} />
       <PauseMenu show={isPaused} progress={progress} levelNum={levelNum} />
       <CountDown num={countdown} />
       <SongTitleBanner title={songName.toUpperCase()} />
@@ -193,17 +216,19 @@ export default function Lesson() {
       <PauseButton
         isPaused={isPaused}
         handleClick={() => {
-          isPaused ? unpause() : pause()
+          if (!gameOver) {
+            isPaused ? unpause() : pause()
+          }
         }}
       />
       <Score score={score} />
       <Arrow key={arrowKey} isUp isVisible={arrowVisible} />
       
       <div className="lesson-stage">
-        <img className="layer-board" src={Board} alt="Board" />
-        <img className="layer-frame" src={NeonFrame} alt="Neon Board Frame" />
-        <img className="layer-strings" src={Strings} alt="Strings" />
-        <img className="layer-string-names" src={StringNames} alt="String Names" />
+        <img className={`layer-board${fadeBoard ? ' fade-frets' : ''}`} src={Board} alt="Board" />
+        <img className={`layer-frame${fadeFrets ? ' fade-frets' : ''}`} src={NeonFrame} alt="Neon Board Frame" />
+        <img className={`layer-strings${fadeStrings ? ' fade-strings-letters' : ''}`} src={Strings} alt="Strings" />
+        <img className={`layer-string-names${fadeStrings ? ' fade-strings-letters' : ''}`} src={StringNames} alt="String Names" />
 
         {notes.map(note => (
           <Note
@@ -213,6 +238,7 @@ export default function Lesson() {
             progress={note.progress}
             miss={note.miss}
             hit={note.hit}
+            fadeFrets={fadeFrets}
           />
         ))}
       </div>

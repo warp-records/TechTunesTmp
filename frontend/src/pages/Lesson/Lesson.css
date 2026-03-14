@@ -310,7 +310,7 @@ background-attachment: fixed;
   background: rgba(0, 0, 0, 0);
   pointer-events: none;
   transition: backdrop-filter 0.8s ease, background 0.8s ease;
-  z-index: 18;
+  z-index: 19;
 }
 
 .screen-blur.visible {
@@ -328,6 +328,17 @@ background-attachment: fixed;
   z-index: 18;
   -webkit-text-stroke: 1px #12138a;
   text-shadow: 3px 3px 0px #475dbf;
+}
+
+/* Game Over Fades */
+.fade-frets {
+  transition: opacity 1s ease;
+  opacity: 0;
+}
+
+.fade-strings-letters {
+  transition: opacity 1s ease;
+  opacity: 0;
 }
 
 /* Pause/Play Button */
