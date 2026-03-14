@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import confetti from 'canvas-confetti'
-import songData from '../../assets/test_song_short.json'
+import songData from '../../assets/emptysong.json'
+import drumrollSrc from '../../assets/sounds/drumroll.mp3'
 
 import './Lesson.css'
 import HomeButton from '../../components/HomeButton'
@@ -56,6 +57,7 @@ export default function Lesson() {
   const [fadeHUD, setFadeHUD] = useState(false)
   const [showBlur, setShowBlur] = useState(false)
   const [showFinalScore, setShowFinalScore] = useState(false)
+  const [showBackToHome, setShowBackToHome] = useState(false)
   // used to force a re render on the arrow which triggers animation
   const [arrowKey, setArrowKey] = useState(0)
   const [arrowVisible, setArrowVisible] = useState(false)
@@ -209,6 +211,8 @@ export default function Lesson() {
     setTimeout(() => setFadeHUD(true), 2000)
     setTimeout(() => setShowBlur(true), 2250)
     setTimeout(() => {
+      new Audio(drumrollSrc).play()
+      setTimeout(() => {
       setShowFinalScore(true)
       setTimeout(() => {
         const fire = (origin, angle) => confetti({
@@ -221,7 +225,9 @@ export default function Lesson() {
         })
         fire({ x: 0, y: 0.6 }, 60)
         fire({ x: 1, y: 0.6 }, 120)
+        setTimeout(() => setShowBackToHome(true), 500)
       }, 1100)
+      }, 2000)
     }, 2250 + 1300)
   }, [gameOver])
 
@@ -243,6 +249,7 @@ export default function Lesson() {
       />
       <Score score={score} fadeHUD={fadeHUD} />
       <FinalScore score={score} show={showFinalScore} />
+      <BackToHomeButton show={showBackToHome} />
       <Arrow key={arrowKey} isUp isVisible={arrowVisible} />
       
       <div className="lesson-stage">
@@ -320,6 +327,18 @@ export function Score({ score, fadeHUD }) {
 export function FinalScore({ score, show }) {
   if (!show) return null
   return <div className="final-score">{score}</div>
+}
+
+export function BackToHomeButton({ show }) {
+  const navigate = useNavigate()
+  return (
+    <button
+      className={`back-to-home-gameover${show ? ' visible' : ''}`}
+      onClick={() => navigate('/homepage')}
+    >
+      <img src={BackToHomeImg} className="back-to-home-button" />
+    </button>
+  )
 }
 
 export function SongTitleBanner({ title, gameOver }) {

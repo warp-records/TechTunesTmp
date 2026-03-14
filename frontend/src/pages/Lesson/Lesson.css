@@ -362,6 +362,28 @@ background-attachment: fixed;
   opacity: 0;
 }
 
+.back-to-home-gameover {
+  position: fixed;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  z-index: 22;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.back-to-home-gameover.visible {
+  opacity: 1;
+}
+
+.back-to-home-gameover:hover img {
+  filter: brightness(1.2);
+}
+
 @keyframes bounce-in {
   0%   { transform: translate(-50%, -50%) scale(0);   opacity: 0; }
   50%  { transform: translate(-50%, -50%) scale(1.5); opacity: 1; }
