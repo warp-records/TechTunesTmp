@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import confetti from 'canvas-confetti'
-import songData from '../../assets/emptysong.json'
+import songData from '../../assets/test_song_short.json'
 import drumrollSrc from '../../assets/sounds/drumroll.mp3'
 
 import './Lesson.css'
@@ -30,6 +30,7 @@ const noteImages = import.meta.glob(
   { eager: true, import: 'default' }
 )
 
+// fuck man life hits so fast
 const beat = (60 / songData.bpm) * 1000
 const songChart = songData.notes.map(n => ({
   time: n.beat_time * beat,
