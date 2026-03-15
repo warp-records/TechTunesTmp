@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import styles from './Create.module.css'
 import Avatar from '../../components/Avatar'
 import { avatarList, serializeAvatar } from '../../components/avatarData'
-import { eyeAssets, mouthAssets, accessoryAssets } from '../../assetRegistry'
+import { eyeAssets, mouthAssets, accessoryAssets, bodyTextureAssets } from '../../assetRegistry'
 import eyesBtn from '../../assets/DressingRoom/Dressing/Eyes Button.png'
 import mouthBtn from '../../assets/DressingRoom/Dressing/Mouth Button.png'
 import accessoryBtn from '../../assets/DressingRoom/Dressing/AccessoryButton.png'
@@ -317,8 +317,22 @@ export function Spinner({ setBodyTexture }) {
         <div className={[styles['wheel-pointer'], selectedColor ? styles[selectedColor.glowClass] : ''].filter(Boolean).join(' ')}
              style={selectedColor ? { borderTopColor: selectedColor.hex } : {}}></div>
       </div>
-      <div className={[styles['spin-button'], spinning ? styles['disabled'] : ''].filter(Boolean).join(' ')} onClick={spin}>
-        {spinning ? 'SPINNING...' : 'SPIN'}
+      <div className={styles['body-right-col']}>
+        <div className={[styles['spin-button'], spinning ? styles['disabled'] : ''].filter(Boolean).join(' ')} onClick={spin}>
+          {spinning ? 'SPINNING...' : 'SPIN'}
+        </div>
+        {Object.entries(bodyTextureAssets).length > 0 && (
+          <div className={styles['texture-grid']}>
+            {Object.entries(bodyTextureAssets).map(([name, url]) => (
+              <div
+                key={name}
+                className={styles['texture-cell']}
+                style={{ backgroundImage: `url(${url})` }}
+                onClick={() => setBodyTexture(name)}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )

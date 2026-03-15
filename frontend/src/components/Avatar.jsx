@@ -7,6 +7,11 @@ import { avatarList } from './avatarData'
 
 const avatarMasks = import.meta.glob('../assets/Avatar/Avatar[0-9]Mask.png', { eager: true, import: 'default' })
 
+const bodyTextureGlobs = import.meta.glob('../assets/DressingRoom/BodyTextures/*', { eager: true, import: 'default' })
+const bodyTextures = Object.fromEntries(
+  Object.entries(bodyTextureGlobs).map(([path, url]) => [path.split('/').pop().replace(/\.[^.]+$/, ''), url])
+)
+
 const EYE_POSITIONS = [
   { top: '50%', left: '57%', width: '90px', height: '45px' },
   { top: '50%', left: '56%', width: '80px', height: '40px' },
@@ -72,8 +77,8 @@ export default function Avatar({ form, activeItems = {}, bodyTexture, onAccessor
   <div ref={avatarRef} className={styles['avatar-image']}>
       <div className={styles['body-image']} style={{backgroundImage: `url(${avatarList[form]})`}}></div>
       <div className={styles['body-color-layer']} style={{
-        ...(assetRegistry.bodyTexture[bodyTexture]
-          ? { backgroundImage: `url(${assetRegistry.bodyTexture[bodyTexture]})`, backgroundSize: 'cover' }
+        ...(bodyTextures[bodyTexture]
+          ? { backgroundImage: `url(${bodyTextures[bodyTexture]})`, backgroundSize: 'cover' }
           : { background: bodyTexture || 'transparent' }
         ),
         WebkitMaskImage: `url(${maskList[form]})`,

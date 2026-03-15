@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@markusstrasser/pitchplease": "^2.0.0",
     "canvas-confetti": "^1.9.4",
     "react": "^19.2.0",
     "react-dnd": "^16.0.1",
