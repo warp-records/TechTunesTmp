@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import confetti from 'canvas-confetti'
-import songData from '../../assets/test_song_short.json'
+import songData from '../../assets/emptysong.json'
 import drumrollSrc from '../../assets/sounds/drumroll.mp3'
 import applauseSrc from '../../assets/sounds/applause.mp3'
 
@@ -236,7 +236,7 @@ export default function Lesson() {
   }, [gameOver])
 
   return (
-    <>
+    <div className="lesson-active">
       <ScreenBlur show={showBlur} />
       <PauseMenu show={isPaused} progress={progress} levelNum={levelNum} />
       <CountDown num={countdown} />
@@ -253,6 +253,7 @@ export default function Lesson() {
       />
       <Score score={score} fadeHUD={fadeHUD} />
       <FinalScore score={score} show={showFinalScore} />
+      
       <BackToHomeButton show={showBackToHome} />
       <Arrow key={arrowKey} isUp isVisible={arrowVisible} />
       
@@ -274,7 +275,7 @@ export default function Lesson() {
           />
         ))}
       </div>
-    </>
+    </div>
   )
 }
 

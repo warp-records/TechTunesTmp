@@ -22,7 +22,7 @@ export default function Homepage() {
 
     const rect = island.getBoundingClientRect()
     const centerX = ((rect.left + rect.width / 2) / window.innerWidth) * 100
-    const centerY = ((rect.top + rect.height / 2) / window.innerHeight) * 100
+    const centerY = (rect.top / window.innerHeight) * 100 + 6.12
 
     homepage.style.transformOrigin = `${centerX}% ${centerY}%`
     setZooming(true)

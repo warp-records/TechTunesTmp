@@ -1,3 +1,7 @@
+:global(body:has(.lesson-active)) {
+  overflow: hidden;
+}
+
 :root {
   --primary-purple: #9300fc;
   --dark-purple: #4c1a80;
@@ -12,22 +16,18 @@
   box-sizing: border-box;
 }
 
-html, body {
-  overflow: hidden;
-}
-
 .lesson-page {
   font-family: 'Arial', sans-serif;
   background: linear-gradient(45deg, var(--dark-bg), var(--dark-purple), var(--teal));
   background-size: 200% 200%;
   background-image: url('images/Brick_Wall.png');
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   color: var(--white);
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 /* Fixed Background */
@@ -373,11 +373,13 @@ background-attachment: fixed;
   cursor: pointer;
   z-index: 22;
   opacity: 0;
+  pointer-events: none;
   transition: opacity 0.6s ease;
 }
 
 .back-to-home-gameover.visible {
   opacity: 1;
+  pointer-events: auto;
 }
 
 .back-to-home-gameover:hover img {
@@ -518,7 +520,7 @@ assets got fucked up and for some reason glowing note is 4x as big
 
 .layer-strings {
   width: 80%;
-  height: 100.65vh;
+  height: 100vh;
   z-index: 15;
   pointer-events: none;
   transform: translateY(-10%);
