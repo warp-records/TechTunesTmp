@@ -28,7 +28,7 @@ const MOUTH_POSITIONS = [
  *
  * @returns {JSX.Element}
  */
-export default function Avatar({ form, activeItems = {}, color, onAccessoryDrag }) {
+export default function Avatar({ form, activeItems = {}, bodyTexture, onAccessoryDrag }) {
   const avatarRef = useRef(null)
   const maskList = Object.values(avatarMasks)
   const accessoryRef = useRef(null)
@@ -72,7 +72,10 @@ export default function Avatar({ form, activeItems = {}, color, onAccessoryDrag 
   <div ref={avatarRef} className={styles['avatar-image']}>
       <div className={styles['body-image']} style={{backgroundImage: `url(${avatarList[form]})`}}></div>
       <div className={styles['body-color-layer']} style={{
-        '--body-color': color || 'transparent',
+        ...(assetRegistry.bodyTexture[bodyTexture]
+          ? { backgroundImage: `url(${assetRegistry.bodyTexture[bodyTexture]})`, backgroundSize: 'cover' }
+          : { background: bodyTexture || 'transparent' }
+        ),
         WebkitMaskImage: `url(${maskList[form]})`,
         maskImage: `url(${maskList[form]})`,
       }}></div>

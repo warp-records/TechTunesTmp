@@ -120,7 +120,7 @@ export default function Userpage() {
                 </div>
                 
               <div className={styles['userpage-avatar']}>
-                {avatarData && <Avatar form={avatarData["form"]} activeItems={avatarData["activeItems"]} color={avatarData["bodyColor"]} />}
+                {avatarData && <Avatar form={avatarData["form"]} activeItems={avatarData["activeItems"]} bodyTexture={avatarData["bodyTexture"]} />}
               </div>
         </div>
       </section>

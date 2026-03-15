@@ -27,7 +27,7 @@ class AvatarDB(Base):
     
     user_id = Column(Integer, ForeignKey("users.id"), primary_key=True)
     form = Column(Integer, nullable=False)
-    bodyColor = Column(String, nullable=False)
+    bodyTexture = Column(String, nullable=False)
     active_items = Column(Text, nullable=False)
     
 def init_db():

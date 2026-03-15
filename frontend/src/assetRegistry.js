@@ -1,11 +1,13 @@
 const eyeGlobs = import.meta.glob('./assets/DressingRoom/Dressing/Eyes/*.png', { eager: true, import: 'default' })
 const mouthGlobs = import.meta.glob('./assets/DressingRoom/Dressing/Mouths/*.png', { eager: true, import: 'default' })
 const accessoryGlobs = import.meta.glob('./assets/DressingRoom/Dressing/Accessories/*.png', { eager: true, import: 'default' })
+const bodyTextureGlobs = import.meta.glob('./assets/DressingRoom/BodyTextures/*', { eager: true, import: 'default' })
 
 function buildAssetMap(globs) {
   const map = {}
   for (const [path, url] of Object.entries(globs)) {
-    const name = path.split('/').pop().replace('.png', '')
+    const filename = path.split('/').pop()
+    const name = filename.replace(/\.[^.]+$/, '')
     map[name] = url
   }
   return map
@@ -14,5 +16,6 @@ function buildAssetMap(globs) {
 export const eyeAssets = buildAssetMap(eyeGlobs)
 export const mouthAssets = buildAssetMap(mouthGlobs)
 export const accessoryAssets = buildAssetMap(accessoryGlobs)
+export const bodyTextureAssets = buildAssetMap(bodyTextureGlobs)
 
-export const assetRegistry = { eye: eyeAssets, mouth: mouthAssets, accessory: accessoryAssets }
+export const assetRegistry = { eye: eyeAssets, mouth: mouthAssets, accessory: accessoryAssets, bodyTexture: bodyTextureAssets }

@@ -19,7 +19,7 @@ class User(BaseModel):
     
 class Avatar(BaseModel):
     form: int
-    bodyColor: str
+    bodyTexture: str
     activeItems: dict
 
 def get_db():
@@ -99,13 +99,13 @@ def save_avatar(avatar: Avatar, user_id: int = Depends(get_current_user), db: Se
 
     if db_avatar:
         db_avatar.form = avatar.form
-        db_avatar.bodyColor = avatar.bodyColor
+        db_avatar.bodyTexture = avatar.bodyTexture
         db_avatar.active_items = json.dumps(avatar.activeItems)
     else:
         db_avatar = AvatarDB(
             user_id=user_id,
             form=avatar.form,
-            bodyColor=avatar.bodyColor,
+            bodyTexture=avatar.bodyTexture,
             active_items=json.dumps(avatar.activeItems),
         )
         db.add(db_avatar)
@@ -121,7 +121,7 @@ def get_avatar(user_id: int = Depends(get_current_user), db: Session = Depends(g
     return {
         "avatar": {
             "form": db_avatar.form,
-            "bodyColor": db_avatar.bodyColor,
+            "bodyTexture": db_avatar.bodyTexture,
             "activeItems": json.loads(db_avatar.active_items),
         }
     }

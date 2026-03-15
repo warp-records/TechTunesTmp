@@ -26,7 +26,7 @@ const TORSO_COLORS = [
 export default function PickbotEdit() {
   const [category, setCategory] = useState("")
   const [form, setForm] = useState(0)
-  const [bodyColor, setBodyColor] = useState("#FFFFFF")
+  const [bodyTexture, setBodyTexture] = useState("#FFFFFF")
   const [activeItems, setActiveItems] = useState({})
   
   const navigate = useNavigate();
@@ -39,7 +39,7 @@ export default function PickbotEdit() {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + token
       },
-      body: serializeAvatar({ form, bodyColor, activeItems })
+      body: serializeAvatar({ form, bodyTexture, activeItems })
     })
     
     navigate('/userpage')
@@ -47,20 +47,20 @@ export default function PickbotEdit() {
   
   return (
     <>
-      <ChoiceFrame category={category} setCategory={setCategory} setActiveItems={setActiveItems} setBodyColor={setBodyColor} />
+      <ChoiceFrame category={category} setCategory={setCategory} setActiveItems={setActiveItems} setBodyTexture={setBodyTexture} />
       <div className={styles['mirror']}></div>
       <div className={styles['light']}></div>
       <div className={styles['stand']}></div>
       <div className={styles['action-buttons']}>
           <button className={styles['save-button']} onClick={saveAvatar}>Save</button>
-        <button className={styles['reset-button']} onClick={() => { setActiveItems({}); setForm(0); setBodyColor(); } }>
+        <button className={styles['reset-button']} onClick={() => { setActiveItems({}); setForm(0); setBodyTexture("#FFFFFF"); } }>
           Reset
         </button>
       </div>
       <div className={styles['arrow-back']} onClick={() => { setForm((form - 1 + avatarList.length) % avatarList.length) }}></div>
       <div className={styles['arrow-forward']} onClick={() => { setForm((form + 1) % avatarList.length) }}></div>
       <div className={styles['avatar-container']}>
-        <Avatar form={form} activeItems={activeItems} color={bodyColor}
+        <Avatar form={form} activeItems={activeItems} bodyTexture={bodyTexture}
           onAccessoryDrag={(x, y) => setActiveItems(prev => ({
             ...prev, accessory: { ...prev.accessory, x, y },
           }))} />
@@ -81,10 +81,10 @@ export default function PickbotEdit() {
  * @param {string} props.category Selected part category.
  * @param {(category: string) => void} props.setCategory Category setter.
  * @param {(next: Object|((prev: Object) => Object)) => void} props.setActiveItems Active item setter.
- * @param {(color: string|undefined) => void} props.setBodyColor Body color setter.
+ * @param {(color: string|undefined) => void} props.setBodyTexture Body color setter.
  * @returns {JSX.Element}
  */
-export function ChoiceFrame({ category, setCategory, setActiveItems, setBodyColor }) {
+export function ChoiceFrame({ category, setCategory, setActiveItems, setBodyTexture }) {
   
   const categoryAssets = {
     "eye": Object.entries(eyeAssets),
@@ -117,7 +117,7 @@ export function ChoiceFrame({ category, setCategory, setActiveItems, setBodyColo
 
       <div className={styles['choice-frame']}>
         {category === "body" ? (
-          <Spinner key="body" setBodyColor={setBodyColor} />
+          <Spinner key="body" setBodyTexture={setBodyTexture} />
         ) : (
           <div key={category} className={styles[`${category}-options`]}>
             {rows.map((rowElems, rowIdx) => (
@@ -158,10 +158,10 @@ export function Item({ category, img, onClick }) {
  * Body color selector with spin and drag interactions.
  *
  * @param {Object} props
- * @param {(color: string) => void} props.setBodyColor Body color setter.
+ * @param {(color: string) => void} props.setBodyTexture Body color setter.
  * @returns {JSX.Element}
  */
-export function Spinner({ setBodyColor }) {
+export function Spinner({ setBodyTexture }) {
   const [spinning, setSpinning] = useState(false)
   const [rotation, setRotation] = useState(0)
   const [selectedColor, setSelectedColor] = useState(null)
@@ -192,9 +192,9 @@ export function Spinner({ setBodyColor }) {
     (rotationValue) => {
       const color = getColorForRotation(rotationValue)
       setSelectedColor(color)
-      setBodyColor(color.hex)
+      setBodyTexture(color.hex)
     },
-    [getColorForRotation, setBodyColor]
+    [getColorForRotation, setBodyTexture]
   )
 
   const getPointerAngle = useCallback((clientX, clientY) => {

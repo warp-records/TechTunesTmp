@@ -302,7 +302,7 @@ export function PickbotButton({ gameOver }) {
       <img src={PickbotImg} className={styles['pickbot-button-bg']} />
       {avatarData && (
         <div className={styles['pickbot-button-avatar']}>
-          <Avatar form={avatarData.form} activeItems={avatarData.activeItems} color={avatarData.bodyColor} />
+          <Avatar form={avatarData.form} activeItems={avatarData.activeItems} bodyTexture={avatarData.bodyTexture} />
         </div>
       )}
     </div>
