@@ -5,8 +5,8 @@ import Signup from './pages/Signup'
 import Start from './pages/Start'
 import Onboard from './pages/Onboard/Onboard'
 import Pricing from './pages/Pricing'
-import Create from './pages/Create/Create'
-import Username from './pages/Username'
+import PickbotEdit from './pages/PickbotEdit/Create'
+import AccountCreate from './pages/AccountCreate'
 import Userpage from './pages/Userpage'
 import Homepage from './pages/Homepage'
 import GuitarTuner from './pages/GuitarTuner'
@@ -28,8 +28,8 @@ function App() {
         <Route path="/start" element={<Start />} />
         <Route path="/onboard" element={<Onboard />} />
         <Route path="/pricing" element={<Pricing />} />
-        <Route path="/account_create" element={<Username />} />
-        <Route path="/pickbot_edit" element={<Create />} />
+        <Route path="/account_create" element={<AccountCreate />} />
+        <Route path="/pickbot_edit" element={<PickbotEdit />} />
         <Route path="/userpage" element={<Userpage />} />
         <Route path="/homepage" element={<Homepage />} />
         <Route path="/guitar_tuner" element={<GuitarTuner />} />

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Route, Link, useNavigate } from 'react-router-dom'
-import styles from './Username.module.css'
+import styles from './AccountCreate.module.css'
 import { useEffect } from 'react';
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
 
@@ -19,7 +19,7 @@ const allSuggestions = [
 
 // const defaultSuggestions = ["MusicMaster", "GuitarHero", "PickBotFan", "RockStar", "MelodyMaker"]
 
-export default function Username() {
+export default function AccountCreate() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);

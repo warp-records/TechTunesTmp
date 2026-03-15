@@ -23,7 +23,7 @@ const TORSO_COLORS = [
   { name: 'orange', hex: '#FF8C00', glowClass: 'glow-orange' },
 ]
 
-export default function Create() {
+export default function PickbotEdit() {
   const [category, setCategory] = useState("")
   const [form, setForm] = useState(0)
   const [bodyColor, setBodyColor] = useState("#FFFFFF")
