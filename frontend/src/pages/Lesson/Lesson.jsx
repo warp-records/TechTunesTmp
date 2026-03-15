@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import confetti from 'canvas-confetti'
 import songData from '../../assets/test_song_short.json'
 import drumrollSrc from '../../assets/sounds/drumroll.mp3'
+import applauseSrc from '../../assets/sounds/applause.mp3'
 
 import './Lesson.css'
 import HomeButton from '../../components/HomeButton'
@@ -212,7 +213,9 @@ export default function Lesson() {
     setTimeout(() => setFadeHUD(true), 2000)
     setTimeout(() => setShowBlur(true), 2250)
     setTimeout(() => {
-      new Audio(drumrollSrc).play()
+      const drumroll = new Audio(drumrollSrc)
+      drumroll.play()
+      setTimeout(() => new Audio(applauseSrc).play(), 2000)
       setTimeout(() => {
       setShowFinalScore(true)
       setTimeout(() => {
