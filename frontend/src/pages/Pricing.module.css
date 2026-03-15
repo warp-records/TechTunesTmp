@@ -1,3 +1,12 @@
+.character-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
 .pricing-root {
   margin: 0;
   background: linear-gradient(135deg, var(--dark-bg), var(--dark-purple), var(--teal));
@@ -44,6 +53,9 @@
 }
 
 .pricing-root .header-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
   margin-bottom: 3rem;
 }

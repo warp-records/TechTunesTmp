@@ -15,6 +15,7 @@ import GuitarSignImg from '../../assets/Homepage/LessonIsland/Guitar Sign@4x.png
 import { LESSON_ISLAND_INSTRUMENTS } from '../../features/lesson-islands/constants/lessonIslandInstruments'
 import { LESSON_ISLAND_LEVELS } from '../../features/lesson-islands/constants/lessonIslandLevels'
 import { buildLessonIslandPath } from '../../features/lesson-islands/constants/lessonIslandRoutes'
+import HomeButton from '../../components/HomeButton'
 
 const buildDifficultyNodes = (styles) => [
   {
@@ -69,6 +70,7 @@ export default function GuitarIsland() {
 
   return (
     <>
+      <HomeButton />
       <div
         className={styles['lesson-island-container']}
         style={{ backgroundImage: `url(${BackgroundImg})` }}

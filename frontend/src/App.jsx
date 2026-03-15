@@ -28,8 +28,8 @@ function App() {
         <Route path="/start" element={<Start />} />
         <Route path="/onboard" element={<Onboard />} />
         <Route path="/pricing" element={<Pricing />} />
-        <Route path="/username" element={<Username />} />
-        <Route path="/create" element={<Create />} />
+        <Route path="/account_create" element={<Username />} />
+        <Route path="/pickbot_edit" element={<Create />} />
         <Route path="/userpage" element={<Userpage />} />
         <Route path="/homepage" element={<Homepage />} />
         <Route path="/guitar_tuner" element={<GuitarTuner />} />

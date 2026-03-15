@@ -22,7 +22,7 @@ export default function Start() {
                 </div>
               </button>
             </Link>
-            <Link to="/create">
+            <Link to="/pickbot_edit">
               <button className={styles['account-type-btn']} data-action="freemium">
                 <div className={styles['account-icon']}>🎵</div>
                 <div className={styles['account-info']}>

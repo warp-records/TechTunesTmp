@@ -71,7 +71,7 @@
 .dialogue-bubble::after {
   content: '';
   position: absolute;
-  bottom: -15px;
+  bottom: -8px;
   left: 50%;
   width: 0;
   height: 0;

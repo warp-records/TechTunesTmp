@@ -63,7 +63,7 @@ export function PlanCard({ title, desc, features, startText, isPremium }) {
           <ul className={styles['plan-features']}>
             {list}
           </ul>
-          <Link to="/username">
+          <Link to="/account_create">
             <button className={styles['plan-button']}>
               {startText}
             </button>
