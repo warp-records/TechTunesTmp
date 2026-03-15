@@ -106,7 +106,7 @@ export default function LessonIslandScene({ scene }) {
 
   return (
     <section
-      className={styles['lesson-island-scene-page']}
+      className={`${styles['lesson-island-scene-page']} lesson-island-active`}
       style={sceneStyle}
       aria-labelledby={`${scene.id}-title`}
     >

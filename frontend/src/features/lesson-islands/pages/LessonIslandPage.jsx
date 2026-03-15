@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
 import LessonIslandScene from '../components/LessonIslandScene'
@@ -15,6 +16,7 @@ function formatSegment(segment) {
 }
 
 export default function LessonIslandPage() {
+  useEffect(() => { window.scrollTo(0, document.body.scrollHeight) }, [])
   const { instrument = '', level = '' } = useParams()
   const scene = getLessonIslandScene(instrument, level)
 
