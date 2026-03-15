@@ -1,7 +1,7 @@
 
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom';
-import './Login.css'
+import styles from './Login.module.css'
 
 export default function Login() {
   const [badLogin, setBadLogin] = useState(false);
@@ -30,57 +30,57 @@ export default function Login() {
   
   return (
     
-    <div className="login-container">
-      <div className="login-card">
+    <div className={styles['login-container']}>
+      <div className={styles['login-card']}>
         <form id="login-form" onSubmit={e => { e.preventDefault(); login(); }}>
-          <div className="form-header">
+          <div className={styles['form-header']}>
             <h3 id="form-title">Login</h3>
           </div>
-          
-          <div className="form-group">
+
+          <div className={styles['form-group']}>
             <label htmlFor="login-username">Username</label>
             <input id="login-username" placeholder="Enter your username" required value={username} onChange={e => setUsername(e.target.value)} />
           </div>
-          
-          <div className="form-group">
+
+          <div className={styles['form-group']}>
             <label htmlFor="login-password">Password</label>
-            <div className="password-group">
+            <div className={styles['password-group']}>
               <input type="password" id="login-password" placeholder="Enter your password" required value={password} onChange={e => setPassword(e.target.value)} />
-              <button type="button" className="password-toggle" id="password-toggle">
-                <span className="eye-icon">👁️</span>
+              <button type="button" className={styles['password-toggle']} id="password-toggle">
+                <span className={styles['eye-icon']}>👁️</span>
               </button>
             </div>
           </div>
-          
-          {badLogin ? 
+
+          {badLogin ?
             (<p id="bad-login">
                 Invalid username or password
               </p>) : (<></>)
           }
-          
-          <div className="form-options">
-            <label className="remember-me">
+
+          <div className={styles['form-options']}>
+            <label className={styles['remember-me']}>
               <input type="checkbox" id="remember-me" />
               Remember me
             </label>
-            <a className="forgot-password">Forgot password?</a>
+            <a className={styles['forgot-password']}>Forgot password?</a>
           </div>
-          
-          
-          <button className="btn btn-primary" id="login-btn">Sign In</button>
-          
+
+
+          <button className={[styles['btn'], styles['btn-primary']].join(' ')} id="login-btn">Sign In</button>
+
           {/* <div className="divider">
             <span>or</span>
           </div>*/}
-          
-          <div className="signup-link">
+
+          <div className={styles['signup-link']}>
             <p>Don't have an account?
               <Link to="/signup">
                 <a id="show-register"> Sign up</a>
               </Link>
             </p>
           </div>
-        </form>    
+        </form>
       </div>
     </div>
   )

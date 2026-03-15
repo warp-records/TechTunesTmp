@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import './Create.css'
+import styles from './Create.module.css'
 import Avatar from '../../components/Avatar'
 import { avatarList, serializeAvatar } from '../../components/avatarData'
 import { eyeAssets, mouthAssets, accessoryAssets } from '../../assetRegistry'
@@ -48,27 +48,27 @@ export default function Create() {
   return (
     <>
       <ChoiceFrame category={category} setCategory={setCategory} setActiveItems={setActiveItems} setBodyColor={setBodyColor} />
-      <div class="mirror"></div>
-      <div class="light"></div>
-      <div class="stand"></div>
-      <div class="action-buttons">
-          <button class="save-button" onClick={saveAvatar}>Save</button>
-        <button class="reset-button" onClick={() => { setActiveItems({}); setForm(0); setBodyColor(); } }>
+      <div className={styles['mirror']}></div>
+      <div className={styles['light']}></div>
+      <div className={styles['stand']}></div>
+      <div className={styles['action-buttons']}>
+          <button className={styles['save-button']} onClick={saveAvatar}>Save</button>
+        <button className={styles['reset-button']} onClick={() => { setActiveItems({}); setForm(0); setBodyColor(); } }>
           Reset
         </button>
       </div>
-      <div class="arrow-back" onClick={() => { setForm((form - 1 + avatarList.length) % avatarList.length) }}></div>
-      <div class="arrow-forward" onClick={() => { setForm((form + 1) % avatarList.length) }}></div>
-      <div class="avatar-container">
+      <div className={styles['arrow-back']} onClick={() => { setForm((form - 1 + avatarList.length) % avatarList.length) }}></div>
+      <div className={styles['arrow-forward']} onClick={() => { setForm((form + 1) % avatarList.length) }}></div>
+      <div className={styles['avatar-container']}>
         <Avatar form={form} activeItems={activeItems} color={bodyColor}
           onAccessoryDrag={(x, y) => setActiveItems(prev => ({
             ...prev, accessory: { ...prev.accessory, x, y },
           }))} />
-        <div class="avatar-slider">
+        <div className={styles['avatar-slider']}>
         </div>
       </div>
-      
-      <div class="floor"></div>
+
+      <div className={styles['floor']}></div>
     </>
   )
 }
@@ -108,20 +108,20 @@ export function ChoiceFrame({ category, setCategory, setActiveItems, setBodyColo
   
   return (
     <>
-      <div className="button-row">
-          <div className="button-icon" onClick={() => { setCategory("eye") }} style={{backgroundImage: `url(${eyesBtn})`}}></div>
-          <div className="button-icon" onClick={() => { setCategory("mouth") }} style={{backgroundImage: `url(${mouthBtn})`}}></div>
-          <div className="button-icon" onClick={() => { setCategory("accessory") }} style={{backgroundImage: `url(${accessoryBtn})`}}></div>
-          <div className="button-icon" onClick={() => { setCategory("body") }} style={{backgroundImage: `url(${bodyBtn})`}}></div>
+      <div className={styles['button-row']}>
+          <div className={styles['button-icon']} onClick={() => { setCategory("eye") }} style={{backgroundImage: `url(${eyesBtn})`}}></div>
+          <div className={styles['button-icon']} onClick={() => { setCategory("mouth") }} style={{backgroundImage: `url(${mouthBtn})`}}></div>
+          <div className={styles['button-icon']} onClick={() => { setCategory("accessory") }} style={{backgroundImage: `url(${accessoryBtn})`}}></div>
+          <div className={styles['button-icon']} onClick={() => { setCategory("body") }} style={{backgroundImage: `url(${bodyBtn})`}}></div>
       </div>
-      
-      <div class="choice-frame">
+
+      <div className={styles['choice-frame']}>
         {category === "body" ? (
           <Spinner key="body" setBodyColor={setBodyColor} />
         ) : (
-          <div key={category} className={`${category}-options`}>
+          <div key={category} className={styles[`${category}-options`]}>
             {rows.map((rowElems, rowIdx) => (
-            <div key={rowIdx} className={`${category}-row`}>
+            <div key={rowIdx} className={styles[`${category}-row`]}>
                 {rowElems.map(([name, url], idx) => (
                   <Item key={idx} category={category} img={url}
                     onClick={() => setActiveItems(prev => ({
@@ -150,7 +150,7 @@ export function ChoiceFrame({ category, setCategory, setActiveItems, setBodyColo
  * @returns {JSX.Element}
  */
 export function Item({ category, img, onClick }) {
-  return (<div className={`${category}-option`} style={{ backgroundImage: `url(${img})` }} onClick={onClick}></div>)
+  return (<div className={styles[`${category}-option`]} style={{ backgroundImage: `url(${img})` }} onClick={onClick}></div>)
 }
 
 
@@ -303,21 +303,21 @@ export function Spinner({ setBodyColor }) {
   }
 
   return (
-    <div className="body-options">
-      <div className="color-wheel-container">
+    <div className={styles['body-options']}>
+      <div className={styles['color-wheel-container']}>
         <div
           ref={wheelRef}
-          className={`color-wheel ${isDragging ? 'dragging' : ''}`}
+          className={[styles['color-wheel'], isDragging ? styles['dragging'] : ''].filter(Boolean).join(' ')}
           style={{ transform: `rotate(${rotation}deg)` }}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
           onPointerCancel={handlePointerUp}
         ></div>
-        <div className={`wheel-pointer ${selectedColor ? selectedColor.glowClass : ''}`}
+        <div className={[styles['wheel-pointer'], selectedColor ? styles[selectedColor.glowClass] : ''].filter(Boolean).join(' ')}
              style={selectedColor ? { borderTopColor: selectedColor.hex } : {}}></div>
       </div>
-      <div className={`spin-button ${spinning ? 'disabled' : ''}`} onClick={spin}>
+      <div className={[styles['spin-button'], spinning ? styles['disabled'] : ''].filter(Boolean).join(' ')} onClick={spin}>
         {spinning ? 'SPINNING...' : 'SPIN'}
       </div>
     </div>

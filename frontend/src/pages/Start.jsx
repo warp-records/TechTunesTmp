@@ -1,19 +1,19 @@
 import logo from '../assets/logo.png'
 import AccountTypeButton from '../components/AccountTypeButton'
 import { Link } from 'react-router-dom'
-import './Start.css'
+import styles from './Start.module.css'
 
 export default function Start() {
   return (
-    <div className="welcome-container">
-      <div className="welcome-card">
-        <div className="logo-section">
-          <img src={logo} alt="TechTunes" className="logo-image" />
+    <div className={styles['welcome-container']}>
+      <div className={styles['welcome-card']}>
+        <div className={styles['logo-section']}>
+          <img src={logo} alt="TechTunes" className={styles['logo-image']} />
         </div>
 
-        <div className="account-type-selection">
+        <div className={styles['account-type-selection']}>
           <h3>Get Started</h3>
-          <div className="account-types">
+          <div className={styles['account-types']}>
             <Link to="/onboard">
               <AccountTypeButton action="create" icon="✨" title="Create Account"
                 description="New to TechTunes? Sign up and start your musical journey!" />

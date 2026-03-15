@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { Route, Link, useNavigate } from 'react-router-dom'
 
 import Avatar from "../components/Avatar"
-import "./Userpage.css"
+import styles from './Userpage.module.css'
 
 const suggestedSongs = [
   { title: "Get Got", subtitle: "Death Grips", stars: 5, },
@@ -85,36 +85,36 @@ export default function Userpage() {
   }, []);
   
   return (
-  <div className="userpage-root">
+  <div className={styles['userpage-root']}>
     <header id="header">
-        <nav class="nav container" aria-label="Top Navigation">
-          <div class="nav-left">
+        <nav className={[styles['nav'], styles['container']].join(' ')} aria-label="Top Navigation">
+          <div className={styles['nav-left']}>
             <Link to={'/homepage'}>
-              <div class="chip" title="Go to Home">🏠</div>
+              <div className={styles['chip']} title="Go to Home">🏠</div>
             </Link>
           </div>
-          <div class="logo">🎧 TuneVerse 🎶</div>
-          <div class="nav-right">
-            <details class="settings">
-              <summary class="chip" role="button" aria-haspopup="menu">☰ Settings ▾</summary>
-              <div class="menu" role="menu">
+          <div className={styles['logo']}>🎧 TuneVerse 🎶</div>
+          <div className={styles['nav-right']}>
+            <details className={styles['settings']}>
+              <summary className={styles['chip']} role="button" aria-haspopup="menu">☰ Settings ▾</summary>
+              <div className={styles['menu']} role="menu">
                 <a role="menuitem">Add Friends</a>
                 <a role="menuitem">Edit PickBot</a>
                 <a role="menuitem">Privacy Settings</a>
                 <a role="menuitem">Add Spotify</a>
                 <a role="menuitem">Add Apple Music</a>
                 <a role="menuitem">SongBook</a>
-                <a role="menuitem" class="logout" onClick={logout}>Log out</a>
+                <a role="menuitem" className={styles['logout']} onClick={logout}>Log out</a>
               </div>
             </details>
           </div>
         </nav>
-      </header> 
-      
-    <main class="container">
+      </header>
+
+    <main className={styles['container']}>
     <section id="avatar" aria-labelledby="avatar-title">
-        <div class="avatar-welcome">
-          <h2 id="avatar-title" class="avatar-welcome-title">Welcome to TuneVerse</h2>
+        <div className={styles['avatar-welcome']}>
+          <h2 id="avatar-title" className={styles['avatar-welcome-title']}>Welcome to TuneVerse</h2>
           <div id="pickbot-speech-bubble">
               Hello, <span id="username-display">{username}</span>!
                 </div>
@@ -126,8 +126,8 @@ export default function Userpage() {
       </section>
         
     <section id="lessons" aria-labelledby="lessons-title">
-      <h3 class="section-title">Lesson Island</h3>
-      <div class="grid">
+      <h3 className={styles['section-title']}>Lesson Island</h3>
+      <div className={styles['grid']}>
         <LessonCard 
         instrument={"Guitar"}
         emoji={"🎸"}
@@ -155,16 +155,16 @@ export default function Userpage() {
         <SongRow title={"SongBook"} songs={songBook} />
         
         <section id="friends">
-          <h3 class="section-title" id="friends-title">Friends</h3>
-          <div class="friends-wrap">
+          <h3 className={styles['section-title']} id="friends-title">Friends</h3>
+          <div className={styles['friends-wrap']}>
             {
               friends.map((friend, index) => {
                 return <Friend key={index} name={friend["name"]} isOnline={friend["online"]} />
               })
           }
           
-            <div class="friend">
-              <div class="pfp" aria-hidden="true">+</div>
+            <div className={styles['friend']}>
+              <div className={styles['pfp']} aria-hidden="true">+</div>
                 <div>More Friends</div>
               </div>
             </div>
@@ -172,8 +172,8 @@ export default function Userpage() {
         </section>
         
         <section id="leaderboard" aria-labelledby="leaderboard-title">
-          <h3 class="section-title" id="leaderboard-title">Leaderboard</h3>
-          <div class="grid">
+          <h3 className={styles['section-title']} id="leaderboard-title">Leaderboard</h3>
+          <div className={styles['grid']}>
             {
               leaderboard.map((entry) => {
                 return <LeaderBoardCard friend={entry["name"]} song={entry["song"]} score={entry["score"]} />
@@ -194,11 +194,11 @@ export default function Userpage() {
 export function LessonCard({ instrument, emoji, completed, total }) {
   
   return (
-    <div class="lesson-card card">
+    <div className={[styles['lesson-card'], styles['card']].join(' ')}>
       <h4>{emoji} {instrument}</h4>
-      <div class="progress"><span style={{width: `${completed/total*100}%`}}></span></div>
-      <div class="tiny">{completed} / {total} lessons</div>
-      <div style={{ marginTop: '16px' }}><a href="" className="chip">Continue {instrument}</a></div>
+      <div className={styles['progress']}><span style={{width: `${completed/total*100}%`}}></span></div>
+      <div className={styles['tiny']}>{completed} / {total} lessons</div>
+      <div style={{ marginTop: '16px' }}><a href="" className={styles['chip']}>Continue {instrument}</a></div>
     </div>
   )
 }
@@ -214,10 +214,10 @@ export function SongRow({ title, songs }) {
   
   return (
     <section>
-      <h3 class="section-title" id="suggested-title">{title}</h3>
-      <div class="row card">
-        <div class="arrow left" data-arrow="left" data-row="suggested" tabindex="0" aria-label="Scroll left">‹</div>
-        <div class="row-track" id="row-suggested">
+      <h3 className={styles['section-title']} id="suggested-title">{title}</h3>
+      <div className={[styles['row'], styles['card']].join(' ')}>
+        <div className={[styles['arrow'], styles['left']].join(' ')} data-arrow="left" data-row="suggested" tabIndex="0" aria-label="Scroll left">‹</div>
+        <div className={styles['row-track']} id="row-suggested">
           {
             songs.map(song => <SongTile
               title={song["title"]}
@@ -225,7 +225,7 @@ export function SongRow({ title, songs }) {
               stars={song["stars"]} />)
           }
         </div>
-        <div class="arrow right" data-arrow="right" data-row="suggested" tabindex="0" aria-label="Scroll right">›</div>
+        <div className={[styles['arrow'], styles['right']].join(' ')} data-arrow="right" data-row="suggested" tabIndex="0" aria-label="Scroll right">›</div>
       </div>
     </section>
   )
@@ -233,10 +233,10 @@ export function SongRow({ title, songs }) {
 
 export function SongTile({ title, subtitle, stars }) {
   return (
-    <div class="tile">
-      <div class="meta">{title}</div>
-      <div class="sub">{subtitle}</div>
-      <div class="stars">
+    <div className={styles['tile']}>
+      <div className={styles['meta']}>{title}</div>
+      <div className={styles['sub']}>{subtitle}</div>
+      <div className={styles['stars']}>
         {[...Array(5)].map((_, i) => (
           <span key={i}>{i < stars ? '★' : '☆'}</span>
         ))}
@@ -248,10 +248,10 @@ export function SongTile({ title, subtitle, stars }) {
 export function Friend({ name, isOnline }) {
   return (
     <>
-      <div class="friend">
-        <div class="pfp">{name[0].toUpperCase()}</div>
+      <div className={styles['friend']}>
+        <div className={styles['pfp']}>{name[0].toUpperCase()}</div>
         <div>{name}</div>
-        <div className={`status ${ isOnline ? 'online' : 'offline'} `}>{ isOnline ? 'Online' : 'Offline'}</div>
+        <div className={[styles['status'], isOnline ? styles['online'] : styles['offline']].join(' ')}>{ isOnline ? 'Online' : 'Offline'}</div>
       </div>
     </>
   )
@@ -259,9 +259,9 @@ export function Friend({ name, isOnline }) {
 
 export function LeaderBoardCard({ friend, song, score }) {
   return (
-    <div class="lb card">
+    <div className={[styles['lb'], styles['card']].join(' ')}>
       <strong>{friend}</strong> —
-      <span class="tiny">{song}</span>
+      <span className={styles['tiny']}>{song}</span>
       <div style={{ "marginTop": "8px" }}>
         Score: <strong>{score}</strong>
       </div>

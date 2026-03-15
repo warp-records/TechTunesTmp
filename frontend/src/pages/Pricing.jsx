@@ -1,13 +1,13 @@
 import { Route, Link } from 'react-router-dom'
-import './Pricing.css'
+import styles from './Pricing.module.css'
 import Pickbot, { Dialogue } from '../components/Pickbot'
 
 export default function Pricing() {
   return (
-    <div className="pricing-root">
-      <main className="main-container">
-        <div className="pricing-card">
-          <div className="header-section">
+    <div className={styles['pricing-root']}>
+      <main className={styles['main-container']}>
+        <div className={styles['pricing-card']}>
+          <div className={styles['header-section']}>
             <Pickbot />
             <Dialogue
               text={
@@ -16,7 +16,7 @@ export default function Pricing() {
             />
           </div>
 
-          <div className="plans-container">
+          <div className={styles['plans-container']}>
             <PlanCard
               title={'Freemium'}
               desc={'Perfect to get started on your musical journey'}
@@ -56,15 +56,15 @@ export function PlanCard({ title, desc, features, startText, isPremium }) {
   return (
     <>
       
-      <div className={"pricing-options"}>
-        <div className={`plan-card ${isPremium ? 'premium-card' : ''}`}>
-          <div className="plan-title">{title}</div>
-          <div className="plan-description">{desc}</div>
-          <ul className="plan-features">
+      <div className={styles['pricing-options']}>
+        <div className={[styles['plan-card'], isPremium ? styles['premium-card'] : ''].filter(Boolean).join(' ')}>
+          <div className={styles['plan-title']}>{title}</div>
+          <div className={styles['plan-description']}>{desc}</div>
+          <ul className={styles['plan-features']}>
             {list}
           </ul>
           <Link to="/username">
-            <button className="plan-button">
+            <button className={styles['plan-button']}>
               {startText}
             </button>
           </Link>

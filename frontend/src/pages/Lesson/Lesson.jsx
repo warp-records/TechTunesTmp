@@ -5,7 +5,7 @@ import songData from '../../assets/test_song_short.json'
 import drumrollSrc from '../../assets/sounds/drumroll.mp3'
 import applauseSrc from '../../assets/sounds/applause.mp3'
 
-import './Lesson.css'
+import styles from './Lesson.module.css'
 import HomeButton from '../../components/HomeButton'
 import Strings from '../../assets/Lesson Page Assets/Strings.png'
 import NeonFrame from '../../assets/Lesson Page Assets/Neon Board Frame.png'
@@ -256,11 +256,11 @@ export default function Lesson() {
       <BackToHomeButton show={showBackToHome} />
       <Arrow key={arrowKey} isUp isVisible={arrowVisible} />
       
-      <div className="lesson-stage">
-        <img className={`layer-board${fadeBoard ? ' fade-frets' : ''}`} src={Board} alt="Board" />
-        <img className={`layer-frame${fadeFrets ? ' fade-frets' : ''}`} src={NeonFrame} alt="Neon Board Frame" />
-        <img className={`layer-strings${fadeStrings ? ' fade-strings-letters' : ''}`} src={Strings} alt="Strings" />
-        <img className={`layer-string-names${fadeStrings ? ' fade-strings-letters' : ''}`} src={StringNames} alt="String Names" />
+      <div className={styles['lesson-stage']}>
+        <img className={[styles['layer-board'], fadeBoard ? styles['fade-frets'] : ''].filter(Boolean).join(' ')} src={Board} alt="Board" />
+        <img className={[styles['layer-frame'], fadeFrets ? styles['fade-frets'] : ''].filter(Boolean).join(' ')} src={NeonFrame} alt="Neon Board Frame" />
+        <img className={[styles['layer-strings'], fadeStrings ? styles['fade-strings-letters'] : ''].filter(Boolean).join(' ')} src={Strings} alt="Strings" />
+        <img className={[styles['layer-string-names'], fadeStrings ? styles['fade-strings-letters'] : ''].filter(Boolean).join(' ')} src={StringNames} alt="String Names" />
 
         {notes.map(note => (
           <Note
@@ -297,10 +297,10 @@ export function PickbotButton({ gameOver }) {
   }, [])
 
   return (
-    <div className={`pickbot-button${gameOver ? ' game-over' : ''}`}>
-      <img src={PickbotImg} className="pickbot-button-bg" />
+    <div className={[styles['pickbot-button'], gameOver ? styles['game-over'] : ''].filter(Boolean).join(' ')}>
+      <img src={PickbotImg} className={styles['pickbot-button-bg']} />
       {avatarData && (
-        <div className="pickbot-button-avatar">
+        <div className={styles['pickbot-button-avatar']}>
           <Avatar form={avatarData.form} activeItems={avatarData.activeItems} color={avatarData.bodyColor} />
         </div>
       )}
@@ -311,45 +311,45 @@ export function PickbotButton({ gameOver }) {
 export function Arrow({ isUp, isVisible }) {
   if (isUp) {
     return (
-      <div className={`arrow-container${isVisible ? ' visible' : ''}`}>
-        <img src={UpArrowGlow} className="arrow-glow" />
-        <img src={UpArrow} className="arrow-inner" />
+      <div className={[styles['arrow-container'], isVisible ? styles['visible'] : ''].filter(Boolean).join(' ')}>
+        <img src={UpArrowGlow} className={styles['arrow-glow']} />
+        <img src={UpArrow} className={styles['arrow-inner']} />
       </div>
     )
   }
-  return <img src={DownArrow} className="arrow-inner" />
+  return <img src={DownArrow} className={styles['arrow-inner']} />
 }
 
 export function ScreenBlur({ show }) {
-  return <div className={`screen-blur${show ? ' visible' : ''}`} />
+  return <div className={[styles['screen-blur'], show ? styles['visible'] : ''].filter(Boolean).join(' ')} />
 }
 
 export function Score({ score, fadeHUD }) {
-  return <div className={`score${fadeHUD ? ' fade-hud' : ''}`}>{score}</div>
+  return <div className={[styles['score'], fadeHUD ? styles['fade-hud'] : ''].filter(Boolean).join(' ')}>{score}</div>
 }
 
 export function FinalScore({ score, show }) {
   if (!show) return null
-  return <div className="final-score">{score}</div>
+  return <div className={styles['final-score']}>{score}</div>
 }
 
 export function BackToHomeButton({ show }) {
   const navigate = useNavigate()
   return (
     <button
-      className={`back-to-home-gameover${show ? ' visible' : ''}`}
+      className={[styles['back-to-home-gameover'], show ? styles['visible'] : ''].filter(Boolean).join(' ')}
       onClick={() => navigate('/homepage')}
     >
-      <img src={BackToHomeImg} className="back-to-home-button" />
+      <img src={BackToHomeImg} className={styles['back-to-home-button']} />
     </button>
   )
 }
 
 export function SongTitleBanner({ title, gameOver }) {
   return (
-    <div className={`song-title${gameOver ? ' game-over' : ''}`}>
-      <img src={SongTitle} className="song-title-img" />
-      <span className="song-title-text">{title}</span>
+    <div className={[styles['song-title'], gameOver ? styles['game-over'] : ''].filter(Boolean).join(' ')}>
+      <img src={SongTitle} className={styles['song-title-img']} />
+      <span className={styles['song-title-text']}>{title}</span>
     </div>
   )
 }
@@ -358,7 +358,7 @@ const countdownImgs = { 1: Countdown1, 2: Countdown2, 3: Countdown3 }
 export function CountDown({ num }) {
   if (!countdownImgs[num]) return null
   return (
-    <img key={num} src={countdownImgs[num]} className="countdown-img" />
+    <img key={num} src={countdownImgs[num]} className={styles['countdown-img']} />
   )
 }
 
@@ -366,19 +366,19 @@ export function PauseMenu({ show, progress, levelNum }) {
   const navigate = useNavigate()
   return (
     <>
-      <div className={`pause-menu-overlay${show ? ' visible' : ''}`} />
-      <div className={`pause-box-popup${show ? ' visible' : ''}`}>
-        <div className="pause-box">
-          <img src={PauseBoxImg} className="pause-box-img" />
-          <div className="pause-box-upper">
+      <div className={[styles['pause-menu-overlay'], show ? styles['visible'] : ''].filter(Boolean).join(' ')} />
+      <div className={[styles['pause-box-popup'], show ? styles['visible'] : ''].filter(Boolean).join(' ')}>
+        <div className={styles['pause-box']}>
+          <img src={PauseBoxImg} className={styles['pause-box-img']} />
+          <div className={styles['pause-box-upper']}>
             <p>Level {levelNum}</p>
             <p style={{fontSize: '35px'}}>{Math.round(progress * 100)}% Complete</p>
           </div>
-          <div className="pause-box-lower">
-            <button className="pause-menu-btn" onClick={() => navigate('/homepage')}>
-              <img src={BackToHomeImg} className="back-to-home-button" />
+          <div className={styles['pause-box-lower']}>
+            <button className={styles['pause-menu-btn']} onClick={() => navigate('/homepage')}>
+              <img src={BackToHomeImg} className={styles['back-to-home-button']} />
             </button>
-            <img src={BattleFriendImg} className="battle-friend-button" />
+            <img src={BattleFriendImg} className={styles['battle-friend-button']} />
           </div>
         </div>
       </div>
@@ -388,7 +388,7 @@ export function PauseMenu({ show, progress, levelNum }) {
 
 export function PauseButton({ isPaused, fadeHUD, handleClick }) {
   const imgSrc = isPaused ? PlayImg : PauseImg;
-  return (<img src={imgSrc} onClick={handleClick} className={`pause-play-button${fadeHUD ? ' fade-hud' : ''}`} />)
+  return (<img src={imgSrc} onClick={handleClick} className={[styles['pause-play-button'], fadeHUD ? styles['fade-hud'] : ''].filter(Boolean).join(' ')} />)
 }
 
 /*
@@ -429,15 +429,15 @@ export function Note({ progress, string, fret, miss, hit }) {
   const pos = { position: 'absolute', left: `${currX}vh`, top: `${currY}vh` }
 
   if (miss) {
-    return <img src={noteImages[missImgPath]} className="note miss" style={pos} />
+    return <img src={noteImages[missImgPath]} className={[styles['note'], styles['miss']].join(' ')} style={pos} />
   }
 
   // render both images since swapping out the src makes it lag
   return (
     <>
-      <img src={noteImages[normalImgPath]} className="note"
+      <img src={noteImages[normalImgPath]} className={styles['note']}
         style={{ ...pos, opacity: hit ? 0 : 1 }} />
-      <img src={noteImages[glowImgPath]} className={`note glow${hit ? " hit" : ""}`}
+      <img src={noteImages[glowImgPath]} className={[styles['note'], styles['glow'], hit ? styles['hit'] : ''].filter(Boolean).join(' ')}
         style={{ ...pos, opacity: hit ? 1 : 0 }} />
     </>
   )

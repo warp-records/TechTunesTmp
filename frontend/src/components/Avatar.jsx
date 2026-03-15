@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import Draggable from 'react-draggable'
 
-import './Avatar.css'
+import styles from './Avatar.module.css'
 import { assetRegistry } from '../assetRegistry'
 import { avatarList } from './avatarData'
 
@@ -69,18 +69,18 @@ export default function Avatar({ form, activeItems = {}, color, onAccessoryDrag 
   }
   
   return (
-  <div ref={avatarRef} class="avatar-image">
-      <div class="body-image" style={{backgroundImage: `url(${avatarList[form]})`}}></div>
-      <div class="body-color-layer" style={{
+  <div ref={avatarRef} className={styles['avatar-image']}>
+      <div className={styles['body-image']} style={{backgroundImage: `url(${avatarList[form]})`}}></div>
+      <div className={styles['body-color-layer']} style={{
         '--body-color': color || 'transparent',
         WebkitMaskImage: `url(${maskList[form]})`,
         maskImage: `url(${maskList[form]})`,
       }}></div>
-      <div class="avatar-eyes" style={{
+      <div className={styles['avatar-eyes']} style={{
         backgroundImage: eyeUrl ? `url(${eyeUrl})` : '',
         top: eyePos.top, left: eyePos.left, width: eyePos.width, height: eyePos.height,
       }}></div>
-      <div class="avatar-mouth" style={{
+      <div className={styles['avatar-mouth']} style={{
         backgroundImage: mouthUrl ? `url(${mouthUrl})` : '',
         top: mouthPos.top, left: mouthPos.left, width: mouthPos.width, height: mouthPos.height,
       }}></div>
@@ -88,10 +88,10 @@ export default function Avatar({ form, activeItems = {}, color, onAccessoryDrag 
         onAccessoryDrag ? (
           <Draggable nodeRef={accessoryRef} position={accessoryPos}
             onStop={handleAccessoryStop}>
-            <div ref={accessoryRef} className="avatar-accessory" style={{backgroundImage: `url(${accessoryUrl})`}}></div>
+            <div ref={accessoryRef} className={styles['avatar-accessory']} style={{backgroundImage: `url(${accessoryUrl})`}}></div>
           </Draggable>
         ) : (
-          <div className="avatar-accessory" style={{backgroundImage: `url(${accessoryUrl})`, transform: `translate(${accessoryPos.x}px, ${accessoryPos.y}px)`}}></div>
+          <div className={styles['avatar-accessory']} style={{backgroundImage: `url(${accessoryUrl})`, transform: `translate(${accessoryPos.x}px, ${accessoryPos.y}px)`}}></div>
         )
       )}
   </div>

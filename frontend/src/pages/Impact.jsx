@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 
-import './Impact.css'
+import styles from './Impact.module.css'
 import HomeButton from '../components/HomeButton'
 import { CITY_REGIONS, PROGRAMS_BY_ID } from './impactData'
 
@@ -60,14 +60,14 @@ export default function Impact() {
   }
 
   return (
-    <div className="impact-root">
+    <div className={styles['impact-root']}>
       <HomeButton />
-      <header className="impact-header">
-        <h1 className="impact-title">IMPACT PAGE</h1>
+      <header className={styles['impact-header']}>
+        <h1 className={styles['impact-title']}>IMPACT PAGE</h1>
       </header>
 
-      <main className="impact-page" aria-labelledby="page-title">
-        <div className="filters-row" ref={filtersRef}>
+      <main className={styles['impact-page']} aria-labelledby="page-title">
+        <div className={styles['filters-row']} ref={filtersRef}>
           <FilterDropdown
             id="city-filter"
             label="City"
@@ -121,26 +121,26 @@ export function FilterDropdown({
   const displayLabel = selectedOption ? selectedOption.label : '-'
 
   return (
-    <div className="filter-group">
-      <label htmlFor={id} className="filter-label">
+    <div className={styles['filter-group']}>
+      <label htmlFor={id} className={styles['filter-label']}>
         {label}
       </label>
 
-      <div className="filter-dropdown">
+      <div className={styles['filter-dropdown']}>
         <button
           id={id}
-          className="filter-trigger"
+          className={styles['filter-trigger']}
           type="button"
           aria-haspopup="listbox"
           aria-expanded={isOpen}
           aria-controls={`${id}-menu`}
           onClick={onToggle}
         >
-          <span className={value === '' ? 'filter-value placeholder' : 'filter-value'}>
+          <span className={value === '' ? [styles['filter-value'], styles['placeholder']].join(' ') : styles['filter-value']}>
             {displayLabel}
           </span>
           <svg
-            className={`filter-chevron ${isOpen ? 'open' : ''}`}
+            className={[styles['filter-chevron'], isOpen ? styles['open'] : ''].filter(Boolean).join(' ')}
             viewBox="0 0 24 24"
             aria-hidden="true"
           >
@@ -155,16 +155,16 @@ export function FilterDropdown({
         </button>
 
         {isOpen && (
-          <ul id={`${id}-menu`} className="filter-menu" role="listbox">
+          <ul id={`${id}-menu`} className={styles['filter-menu']} role="listbox">
             {options.map((option) => (
               <li
                 key={option.value === '' ? 'empty-option' : option.value}
-                className="filter-option-row"
+                className={styles['filter-option-row']}
                 role="option"
                 aria-selected={value === option.value}
               >
                 <button
-                  className={`filter-option ${value === option.value ? 'selected' : ''}`}
+                  className={[styles['filter-option'], value === option.value ? styles['selected'] : ''].filter(Boolean).join(' ')}
                   type="button"
                   onClick={() => onSelect(option.value)}
                 >
@@ -181,17 +181,17 @@ export function FilterDropdown({
 
 export function ProgramCard({ title, desc, actions }) {
   return (
-    <section className="program-card">
-      <header className="program-header">
+    <section className={styles['program-card']}>
+      <header className={styles['program-header']}>
         <h2>{title}</h2>
-        <p className="program-subtitle">{desc}</p>
+        <p className={styles['program-subtitle']}>{desc}</p>
       </header>
 
-      <div className="action-grid">
+      <div className={styles['action-grid']}>
         {actions.map(({ label, href }) => {
           if (!href) {
             return (
-              <button key={label} className="action-btn" type="button" disabled>
+              <button key={label} className={styles['action-btn']} type="button" disabled>
                 {label}
               </button>
             )
@@ -200,7 +200,7 @@ export function ProgramCard({ title, desc, actions }) {
           return (
             <a
               key={label}
-              className="action-btn action-link"
+              className={[styles['action-btn'], styles['action-link']].join(' ')}
               href={href}
               target="_blank"
               rel="noreferrer"

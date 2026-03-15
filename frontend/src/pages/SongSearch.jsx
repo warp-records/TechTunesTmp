@@ -1,14 +1,14 @@
-import './SongSearch.css'
+import styles from './SongSearch.module.css'
 import HomeButton from '../components/HomeButton'
 
 export default function SongSearch() {
   return (
-    <div className="song-search-page">
+    <div className={styles['song-search-page']}>
       <HomeButton />
-      <div className="wip-container">
+      <div className={styles['wip-container']}>
         <h1>Work in Progress</h1>
       </div>
-      <div className="floor"></div>
+      <div className={styles['floor']}></div>
     </div>
   )
 }

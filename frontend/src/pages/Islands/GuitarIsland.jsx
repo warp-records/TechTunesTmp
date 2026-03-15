@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import './GuitarIsland.css'
+import styles from './GuitarIsland.module.css'
 import BackgroundImg from '../../assets/Homepage/LessonIsland/Background@4x.png'
 import BeginnerPathImg from '../../assets/Homepage/LessonIsland/Beginner Path with grass@4x.png'
 import MediumPathImg from '../../assets/Homepage/LessonIsland/Medium Path With Grass@4x.png'
@@ -16,7 +16,7 @@ import { LESSON_ISLAND_INSTRUMENTS } from '../../features/lesson-islands/constan
 import { LESSON_ISLAND_LEVELS } from '../../features/lesson-islands/constants/lessonIslandLevels'
 import { buildLessonIslandPath } from '../../features/lesson-islands/constants/lessonIslandRoutes'
 
-const difficultyNodes = [
+const buildDifficultyNodes = (styles) => [
   {
     id: LESSON_ISLAND_LEVELS.BEGINNER,
     label: 'Beginner',
@@ -25,9 +25,9 @@ const difficultyNodes = [
       LESSON_ISLAND_LEVELS.BEGINNER
     ),
     pathSrc: BeginnerPathImg,
-    pathClassName: 'beginner-path',
+    pathClassName: styles['beginner-path'],
     signSrc: BeginnerSignImg,
-    signClassName: 'difficulty-sign beginner-sign',
+    signClassName: [styles['difficulty-sign'], styles['beginner-sign']].join(' '),
   },
   {
     id: LESSON_ISLAND_LEVELS.MEDIUM,
@@ -37,9 +37,9 @@ const difficultyNodes = [
       LESSON_ISLAND_LEVELS.MEDIUM
     ),
     pathSrc: MediumPathImg,
-    pathClassName: 'medium-path',
+    pathClassName: styles['medium-path'],
     signSrc: MediumSignImg,
-    signClassName: 'difficulty-sign medium-sign',
+    signClassName: [styles['difficulty-sign'], styles['medium-sign']].join(' '),
   },
   {
     id: LESSON_ISLAND_LEVELS.HARD,
@@ -49,27 +49,28 @@ const difficultyNodes = [
       LESSON_ISLAND_LEVELS.HARD
     ),
     pathSrc: HardPathImg,
-    pathClassName: 'hard-path',
+    pathClassName: styles['hard-path'],
     signSrc: HardSignImg,
-    signClassName: 'difficulty-sign hard-sign',
+    signClassName: [styles['difficulty-sign'], styles['hard-sign']].join(' '),
   },
   {
     id: LESSON_ISLAND_LEVELS.EXPERT,
     label: 'Expert',
     pathSrc: ExpertPathImg,
-    pathClassName: 'expert-path',
+    pathClassName: styles['expert-path'],
     signSrc: ExpertSignImg,
-    signClassName: 'difficulty-sign expert-sign',
+    signClassName: [styles['difficulty-sign'], styles['expert-sign']].join(' '),
   },
 ]
 
 export default function GuitarIsland() {
   const [showModal, setShowModal] = useState(false)
+  const difficultyNodes = buildDifficultyNodes(styles)
 
   return (
     <>
       <div
-        className="lesson-island-container"
+        className={styles['lesson-island-container']}
         style={{ backgroundImage: `url(${BackgroundImg})` }}
       >
         {difficultyNodes.map((node) => (
@@ -78,12 +79,12 @@ export default function GuitarIsland() {
 
         <button
           type="button"
-          className="guitar-sign-button"
+          className={styles['guitar-sign-button']}
           aria-expanded={showModal}
           aria-controls="guitar-island-modal"
           onClick={() => setShowModal((currentValue) => !currentValue)}
         >
-          <img src={GuitarSignImg} alt="Guitar Sign" className="guitar-sign" />
+          <img src={GuitarSignImg} alt="Guitar Sign" className={styles['guitar-sign']} />
         </button>
 
       </div>
@@ -98,7 +99,7 @@ function DifficultyNode({ node }) {
       <>
         <Link
           to={node.href}
-          className="difficulty-link"
+          className={styles['difficulty-link']}
           aria-hidden="true"
           tabIndex={-1}
         >
@@ -107,7 +108,7 @@ function DifficultyNode({ node }) {
 
         <Link
           to={node.href}
-          className="difficulty-link"
+          className={styles['difficulty-link']}
           aria-label={`Open ${node.label} lesson island`}
           title={`Open ${node.label} lesson island`}
         >
@@ -131,28 +132,28 @@ function DifficultyNode({ node }) {
 
 export function Modal({ onClose }) {
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className={styles['modal-overlay']} onClick={onClose}>
       <div
         id="guitar-island-modal"
-        className="difficulty-modal"
+        className={styles['difficulty-modal']}
         role="dialog"
         aria-modal="true"
         aria-labelledby="guitar-island-modal-title"
         onClick={(event) => event.stopPropagation()}
       >
-        <div className="modal-header">
+        <div className={styles['modal-header']}>
           <h2 id="guitar-island-modal-title">Guitar Lesson Island</h2>
-          <button type="button" className="close-btn" onClick={onClose}>
+          <button type="button" className={styles['close-btn']} onClick={onClose}>
             ×
           </button>
         </div>
-        <div className="modal-content">
-          <p className="description">
+        <div className={styles['modal-content']}>
+          <p className={styles['description']}>
             Welcome to your central hub for guitar learning. Start with the
             beginner island, then progress through the remaining difficulty
             paths as they ship.
           </p>
-          <div className="skills-section">
+          <div className={styles['skills-section']}>
             <h3>How to Use This Island:</h3>
             <ul>
               <li>Choose a difficulty level from the island map</li>
@@ -161,7 +162,7 @@ export function Modal({ onClose }) {
               <li>Return here when you are ready for the next level</li>
             </ul>
           </div>
-          <div className="lessons-section">
+          <div className={styles['lessons-section']}>
             <h3>Available Levels:</h3>
             <ul>
               <li>🟢 Beginner - Basic chords and strumming</li>
@@ -171,8 +172,8 @@ export function Modal({ onClose }) {
             </ul>
           </div>
         </div>
-        <div className="modal-actions">
-          <button type="button" className="btn btn-primary" onClick={onClose}>
+        <div className={styles['modal-actions']}>
+          <button type="button" className={[styles['btn'], styles['btn-primary']].join(' ')} onClick={onClose}>
             Got it
           </button>
         </div>

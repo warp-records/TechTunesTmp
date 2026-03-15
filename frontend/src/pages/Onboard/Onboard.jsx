@@ -2,9 +2,9 @@
 import { useState } from 'react';
 
 import Pickbot, { Dialogue } from '../../components/Pickbot.jsx'
-import './Onboard.css'
-import './Select.css'
-import './RectSelect.css'
+import onboardStyles from './Onboard.module.css'
+import selectStyles from './Select.module.css'
+import rectSelectStyles from './RectSelect.module.css'
 import { useEffect } from 'react';
 
 const numPages = 6;
@@ -155,10 +155,10 @@ export default function Onboard() {
   
   return (
     <>
-      <div className="onboard-root">
-        <main className="main-container">
-          <div class="registration-card">
-            <div class="character-section">
+      <div className={onboardStyles['onboard-root']}>
+        <main className={onboardStyles['main-container']}>
+          <div className={onboardStyles['registration-card']}>
+            <div className={onboardStyles['character-section']}>
             <Pickbot />
             <Dialogue text={pickBotDialogue[progIdx]} />
             <QuestionTitle text={questTitle[progIdx]} />
@@ -170,8 +170,8 @@ export default function Onboard() {
             {progIdx === 5 && <RectSelect formName={"genres"} options={genres} emojis={genreEmojis} descriptions={genreDescs} multiSelect={true} handleClick={handleClick} />}
           
             <ProgressDots pos={progIdx} />
-            <div class="continue-section">
-            
+            <div className={onboardStyles['continue-section']}>
+
               <ContinueBtn text={continueBtnText} onContinue={handleContinue} />
             </div>
           </div>
@@ -183,7 +183,7 @@ export default function Onboard() {
 
 function ContinueBtn({ text, onContinue }) {
   return (
-    <button class="continue-btn" id="continue-btn" onClick={onContinue}>{text}</button>
+    <button className={onboardStyles['continue-btn']} id="continue-btn" onClick={onContinue}>{text}</button>
   )
 }
 
@@ -192,27 +192,27 @@ function ProgressDots({ pos }) {
   let dots = []
   for (let i = 0; i < numPages; i++) {
     dots.push(
-      <div key={i} className={`progress-dot ${ i == pos ? 'active' : ''}`}></div> 
+      <div key={i} className={[onboardStyles['progress-dot'], i == pos ? onboardStyles['active'] : ''].filter(Boolean).join(' ')}></div>
     )
   }
   
   return (
-    <div className="progress-indicator">{dots}</div>
+    <div className={onboardStyles['progress-indicator']}>{dots}</div>
   )
 }
 
 function QuestionTitle({ text }) {
-  return (<h2 class="question-title">{text}</h2>)
+  return (<h2 className={onboardStyles['question-title']}>{text}</h2>)
 }
 
 function ListSelect({ formName, options, multiSelect, handleClick }) {
   const items = options.map((option, idx) =>
-    <div class="skill-option" key={idx}>
+    <div className={selectStyles['skill-option']} key={idx}>
       <input type={multiSelect ? 'checkbox' : 'radio'} name="skillLevel" id={`skill-${idx}`} onChange={() => handleClick(formName, idx, multiSelect)} />
-      <label htmlFor={`skill-${idx}`} className={`skill-label${multiSelect ? ' has-checkbox' : ''}`}>
+      <label htmlFor={`skill-${idx}`} className={[selectStyles['skill-label'], multiSelect ? selectStyles['has-checkbox'] : ''].filter(Boolean).join(' ')}>
         {multiSelect && (
-          <div className="custom-checkbox">
-            <svg className="checkmark" viewBox="0 0 24 24">
+          <div className={selectStyles['custom-checkbox']}>
+            <svg className={selectStyles['checkmark']} viewBox="0 0 24 24">
               <polyline points="20,6 9,17 4,12"></polyline>
             </svg>
           </div>
@@ -221,9 +221,9 @@ function ListSelect({ formName, options, multiSelect, handleClick }) {
       </label>
     </div>
   );
-  
+
   return (
-    <div class="skill-options">
+    <div className={selectStyles['skill-options']}>
       {items}
     </div>
   )
@@ -231,18 +231,18 @@ function ListSelect({ formName, options, multiSelect, handleClick }) {
 
 function RectSelect({ formName, options, emojis, descriptions, multiSelect, handleClick }) {
   const items = options.map((option, idx) =>
-    <div class="guitar-option" key={idx}>
+    <div className={rectSelectStyles['guitar-option']} key={idx}>
       <input type={multiSelect ? 'checkbox' : 'radio'} name="rectSelect" id={`rect-${idx}`} value={option} />
-      <label htmlFor={`rect-${idx}`} class="guitar-label" onClick={() => handleClick(formName, idx, multiSelect)}>
-        <div class="guitar-icon">{emojis[idx]}</div>
+      <label htmlFor={`rect-${idx}`} className={rectSelectStyles['guitar-label']} onClick={() => handleClick(formName, idx, multiSelect)}>
+        <div className={rectSelectStyles['guitar-icon']}>{emojis[idx]}</div>
         <div>{option}</div>
-        <div class="genre-desc">{descriptions[idx]}</div>
+        <div className={rectSelectStyles['genre-desc']}>{descriptions[idx]}</div>
       </label>
     </div>
   );
-  
+
   return (
-    <div class="guitar-options">
+    <div className={rectSelectStyles['guitar-options']}>
       {items}
     </div>);
 }

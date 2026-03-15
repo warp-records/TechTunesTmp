@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import './GuitarTuner.css'
+import styles from './GuitarTuner.module.css'
 import HomeButton from '../components/HomeButton'
 
 const meterImages = import.meta.glob('../assets/Tuner/Sound Meter/*.png', { eager: true, import: 'default' })
@@ -25,19 +25,19 @@ export default function GuitarTuner() {
   }
   
   return (
-    <div class="tuner-container">
+    <div className={styles['tuner-container']}>
       <HomeButton />
       <SoundMeter activeNote={activeNote} />
-        <div className="guitar-container">
-          <div className="guitar-headstock">
-            <div className="headstock-image"></div>
-            <div className="guitar-strings">
-              {stringLetters.map((note, idx) => ( 
+        <div className={styles['guitar-container']}>
+          <div className={styles['guitar-headstock']}>
+            <div className={styles['headstock-image']}></div>
+            <div className={styles['guitar-strings']}>
+              {stringLetters.map((note, idx) => (
                 <GuitarString note={note} activeNote={activeNote} key={idx} />
                ))}
             </div>
-            <div className="string-letters">
-              {stringLetters.map((note, idx) => ( 
+            <div className={styles['string-letters']}>
+              {stringLetters.map((note, idx) => (
                 <StringLetter note={note}
                   activeNote={activeNote}
                   key={idx}
@@ -53,14 +53,14 @@ export default function GuitarTuner() {
 
 export function GuitarString({ note, activeNote }) {
   return (
-    <div className={`guitar-string string-${note} ${note == activeNote ? 'active' : ''}`} id={note}></div>
+    <div className={[styles['guitar-string'], styles[`string-${note}`], note == activeNote ? styles['active'] : ''].filter(Boolean).join(' ')} id={note}></div>
   )
 }
 
 export function StringLetter({ note, activeNote, handleClick }) {
   return (
     <div
-      className={`string-letter letter-${note} ${note == activeNote ? 'active' : ''}`}
+      className={[styles['string-letter'], styles[`letter-${note}`], note == activeNote ? styles['active'] : ''].filter(Boolean).join(' ')}
       id={note}
       onClick={handleClick}
     >
@@ -85,10 +85,10 @@ export function SoundMeter({ activeNote }) {
   if (!images) return null
 
   return (
-    <div className="sound-meter">
-      <div className={`string-meter meter-${activeNote} active`} id={`meter-${activeNote}`}>
-        <img className="meter-image" src={images.meter} alt={`${activeNote} Meter`} />
-        <img className="meter-arrow" src={images.arrow} alt={`${activeNote} Arrow`}
+    <div className={styles['sound-meter']}>
+      <div className={[styles['string-meter'], styles[`meter-${activeNote}`], styles['active']].filter(Boolean).join(' ')} id={`meter-${activeNote}`}>
+        <img className={styles['meter-image']} src={images.meter} alt={`${activeNote} Meter`} />
+        <img className={styles['meter-arrow']} src={images.arrow} alt={`${activeNote} Arrow`}
              data-unclicked={images.arrow}
              data-clicked={images.checked} />
       </div>

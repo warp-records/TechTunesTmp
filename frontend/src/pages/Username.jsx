@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Route, Link, useNavigate } from 'react-router-dom'
-import './Username.css'
+import styles from './Username.module.css'
 import { useEffect } from 'react';
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
 
@@ -93,15 +93,15 @@ export default function Username() {
   
   
   return (
-    <main className="main-container">
-      <div className="username-container">
-        <h1 className="username-title">Create Your Username</h1>
-        <p className="username-subtitle">Choose a unique username that represents your musical journey!</p>
+    <main className={styles['main-container']}>
+      <div className={styles['username-container']}>
+        <h1 className={styles['username-title']}>Create Your Username</h1>
+        <p className={styles['username-subtitle']}>Choose a unique username that represents your musical journey!</p>
 
-        <div className={`field-input-container`}>
+        <div className={styles['field-input-container']}>
           <input
             type="text"
-            class={`field-input ${username && (!validName || usernameTaken) ? 'bad-input' : ''}`}
+            className={[styles['field-input'], username && (!validName || usernameTaken) ? styles['bad-input'] : ''].filter(Boolean).join(' ')}
             placeholder="Enter your username..."
             maxLength="20"
             autoComplete="off"
@@ -109,17 +109,17 @@ export default function Username() {
             onChange={handleInput}
           />
           {username && !validName &&
-            <div class="error-message">Username must be at least 3 characters long</div>
+            <div className={styles['error-message']}>Username must be at least 3 characters long</div>
           }
           {username && validName && usernameTaken &&
-            <div class="error-message">Username is taken</div>
+            <div className={styles['error-message']}>Username is taken</div>
           }
         </div>
         
   
-        <div className="username-suggestions">
+        <div className={styles['username-suggestions']}>
           {suggestions.map((name) => (
-            <button key={name} className="suggestion-btn" onClick={() => {
+            <button key={name} className={styles['suggestion-btn']} onClick={() => {
               setUsername(name);
               setSuggestions(randSuggestions());
             }}>{name}</button>
@@ -128,10 +128,10 @@ export default function Username() {
 
         <br></br>
         
-        <p className="username-subtitle">Password</p>
-        <div className={`input-container`}>
+        <p className={styles['username-subtitle']}>Password</p>
+        <div className={styles['input-container']}>
           <input
-            class={`field-input ${password && !isGoodPassword() ? 'bad-input' : ''}`}
+            className={[styles['field-input'], password && !isGoodPassword() ? styles['bad-input'] : ''].filter(Boolean).join(' ')}
             placeholder="Enter your password"
             type={showPassword ? "text" : "password"}
             autoComplete="off"
@@ -140,15 +140,15 @@ export default function Username() {
           ></input>
           <button
             type="button"
-            className="toggle-password-btn"
+            className={styles['toggle-password-btn']}
             onClick={() => setShowPassword(!showPassword)}
           >{showPassword ? <FaEyeSlash /> : <FaEye />}</button>
         </div>
         {password && !isGoodPassword() ?
-          (<div class="error-message">Password needs 10+ characters, uppercase, lowercase, and 2 numbers or 1 special character</div>) : (<></>)
+          (<div className={styles['error-message']}>Password needs 10+ characters, uppercase, lowercase, and 2 numbers or 1 special character</div>) : (<></>)
         }
         
-          <button onClick={register} className="username-continue-btn" disabled={!validName || !isGoodPassword() || usernameTaken}>
+          <button onClick={register} className={styles['username-continue-btn']} disabled={!validName || !isGoodPassword() || usernameTaken}>
             Continue to PickBot Creation
           </button>
       </div>

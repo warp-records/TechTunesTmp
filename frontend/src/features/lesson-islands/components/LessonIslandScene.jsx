@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 
-import './LessonIslandScene.css'
+import styles from './LessonIslandScene.module.css'
 
 function toPercent(value) {
   return typeof value === 'number' ? `${value}%` : value
@@ -57,12 +57,12 @@ function SceneHotspot({ hotspot }) {
   }
 
   const classes = [
-    'lesson-island-scene__hotspot',
+    styles['lesson-island-scene__hotspot'],
     hotspot.href
-      ? 'lesson-island-scene__hotspot--interactive'
-      : 'lesson-island-scene__hotspot--static',
+      ? styles['lesson-island-scene__hotspot--interactive']
+      : styles['lesson-island-scene__hotspot--static'],
     hotspot.status
-      ? `lesson-island-scene__hotspot--${hotspot.status}`
+      ? styles[`lesson-island-scene__hotspot--${hotspot.status}`]
       : '',
     `lesson-island-scene__hotspot--${hotspot.id}`,
   ]
@@ -78,7 +78,7 @@ function SceneHotspot({ hotspot }) {
         aria-label={hotspot.label}
         title={hotspot.title ?? hotspot.label}
       >
-        <span className="lesson-island-scene__sr-only">{hotspot.label}</span>
+        <span className={styles['lesson-island-scene__sr-only']}>{hotspot.label}</span>
       </Link>
     )
   }
@@ -91,7 +91,7 @@ function SceneHotspot({ hotspot }) {
       aria-label={hotspot.label}
       title={hotspot.title ?? hotspot.label}
     >
-      <span className="lesson-island-scene__sr-only">{hotspot.label}</span>
+      <span className={styles['lesson-island-scene__sr-only']}>{hotspot.label}</span>
     </div>
   )
 }
@@ -106,27 +106,27 @@ export default function LessonIslandScene({ scene }) {
 
   return (
     <section
-      className="lesson-island-scene-page"
+      className={styles['lesson-island-scene-page']}
       style={sceneStyle}
       aria-labelledby={`${scene.id}-title`}
     >
-      <h1 id={`${scene.id}-title`} className="lesson-island-scene__sr-only">
+      <h1 id={`${scene.id}-title`} className={styles['lesson-island-scene__sr-only']}>
         {scene.title}
       </h1>
 
-      <div className="lesson-island-scene-page__toolbar">
-        <Link to={scene.backHref} className="lesson-island-scene-page__back-link">
+      <div className={styles['lesson-island-scene-page__toolbar']}>
+        <Link to={scene.backHref} className={styles['lesson-island-scene-page__back-link']}>
           {scene.backLabel}
         </Link>
       </div>
 
-      <div className="lesson-island-scene-page__viewport">
-        <div className="lesson-island-scene">
+      <div className={styles['lesson-island-scene-page__viewport']}>
+        <div className={styles['lesson-island-scene']}>
           {scene.layers.map((layer) => (
             <SceneAsset
               key={layer.id}
               asset={layer}
-              className={`lesson-island-scene__layer ${layer.className ?? ''}`.trim()}
+              className={[styles['lesson-island-scene__layer'], layer.className ?? ''].filter(Boolean).join(' ')}
             />
           ))}
 
