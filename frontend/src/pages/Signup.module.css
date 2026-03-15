@@ -144,6 +144,11 @@ nav ul li a:hover {
   min-width: 280px;
 }
 
+.button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px var(--shadow-light);
+}
+
 .button.secondary {
   background: transparent;
   border-color: var(--primary-purple);

@@ -56,7 +56,7 @@
 }
 
 /* Header */
-header#header {
+.page-header {
     position: sticky;
     top: 0;
     z-index: 50;
@@ -164,7 +164,7 @@ section {
 }
 
 /* Avatar/Hero */
-#avatar .hero {
+.hero {
     display: grid;
     grid-template-columns: 120px 1fr;
     gap: 16px;
@@ -193,14 +193,14 @@ section {
 }
 
 /* Lesson Island */
-#lessons .grid {
+.lessons-grid {
     display: grid;
     gap: var(--gap);
     grid-template-columns: 1fr;
     padding: 8px;
 }
 @media (min-width: 900px) {
-    #lessons .grid {
+    .lessons-grid {
         grid-template-columns: repeat(3, 1fr);
     }
 }
@@ -305,7 +305,7 @@ section {
 }
 
 /* Friends */
-#friends .friends-wrap {
+.friends-wrap {
     display: flex;
     gap: 14px;
     overflow: auto;
@@ -356,14 +356,14 @@ section {
 }
 
 /* Leaderboard */
-#leaderboard .grid {
+.leaderboard-grid {
     display: grid;
     gap: var(--gap);
     grid-template-columns: 1fr;
     padding: 8px;
 }
 @media (min-width: 800px) {
-    #leaderboard .grid {
+    .leaderboard-grid {
         grid-template-columns: repeat(2, 1fr);
     }
 }
@@ -375,7 +375,7 @@ section {
     height: 24px;
 }
 
-#userpage-avatar .avatar-image {
+.userpage-avatar :global(.avatar-image) {
     transform: scale(1.25);
     transform-origin: bottom center;
 }
@@ -385,7 +385,7 @@ section {
     text-align: center;
 }
 
-#pickbot-speech-bubble {
+.pickbot-speech-bubble {
     background: rgba(212, 158, 251, 0.2);
     color: var(--white);
     border: 2.5px solid rgba(212, 158, 251, 0.5);

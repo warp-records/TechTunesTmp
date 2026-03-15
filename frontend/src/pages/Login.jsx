@@ -34,7 +34,7 @@ export default function Login() {
       <div className={styles['login-card']}>
         <form id="login-form" onSubmit={e => { e.preventDefault(); login(); }}>
           <div className={styles['form-header']}>
-            <h3 id="form-title">Login</h3>
+            <h3 className={styles['form-title']}>Login</h3>
           </div>
 
           <div className={styles['form-group']}>

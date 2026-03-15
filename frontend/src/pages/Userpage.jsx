@@ -86,7 +86,7 @@ export default function Userpage() {
   
   return (
   <div className={styles['userpage-root']}>
-    <header id="header">
+    <header className={styles['page-header']}>
         <nav className={[styles['nav'], styles['container']].join(' ')} aria-label="Top Navigation">
           <div className={styles['nav-left']}>
             <Link to={'/homepage'}>
@@ -115,11 +115,11 @@ export default function Userpage() {
     <section id="avatar" aria-labelledby="avatar-title">
         <div className={styles['avatar-welcome']}>
           <h2 id="avatar-title" className={styles['avatar-welcome-title']}>Welcome to TuneVerse</h2>
-          <div id="pickbot-speech-bubble">
+          <div className={styles['pickbot-speech-bubble']}>
               Hello, <span id="username-display">{username}</span>!
                 </div>
                 
-              <div id="userpage-avatar">
+              <div className={styles['userpage-avatar']}>
                 {avatarData && <Avatar form={avatarData["form"]} activeItems={avatarData["activeItems"]} color={avatarData["bodyColor"]} />}
               </div>
         </div>
@@ -127,7 +127,7 @@ export default function Userpage() {
         
     <section id="lessons" aria-labelledby="lessons-title">
       <h3 className={styles['section-title']}>Lesson Island</h3>
-      <div className={styles['grid']}>
+      <div className={styles['lessons-grid']}>
         <LessonCard 
         instrument={"Guitar"}
         emoji={"🎸"}
@@ -173,7 +173,7 @@ export default function Userpage() {
         
         <section id="leaderboard" aria-labelledby="leaderboard-title">
           <h3 className={styles['section-title']} id="leaderboard-title">Leaderboard</h3>
-          <div className={styles['grid']}>
+          <div className={styles['leaderboard-grid']}>
             {
               leaderboard.map((entry) => {
                 return <LeaderBoardCard friend={entry["name"]} song={entry["song"]} score={entry["score"]} />

@@ -17,8 +17,6 @@
   height: 100%;
   object-fit: contain;
   object-position: center bottom;
-  transform: scale(4);
-  transform-origin: center bottom;
 }
 
 .screen-overlay {

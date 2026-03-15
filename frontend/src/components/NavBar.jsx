@@ -1,7 +1,9 @@
+import styles from './NavBar.module.css'
+
 export default function NavBar() {
   return (
-    <nav>
-      <div className="logo-text">Tech Tunes</div>
+    <nav className={styles['nav']}>
+      <div className={styles['logo-text']}>Tech Tunes</div>
       <ul>
         <li><a href="#">Features</a></li>
         <li><a href="#">Pricing</a></li>
