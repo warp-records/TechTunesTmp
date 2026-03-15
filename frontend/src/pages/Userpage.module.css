@@ -42,7 +42,11 @@
     pointer-events: none;
 }
 
-.userpage-root > header,
+.userpage-root > header {
+    position: relative;
+    z-index: 2;
+}
+
 .userpage-root > main {
     position: relative;
     z-index: 1;
