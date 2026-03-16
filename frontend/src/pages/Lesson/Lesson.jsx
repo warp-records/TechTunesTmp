@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import confetti from 'canvas-confetti'
-import songData from '../../assets/emptysong.json'
+import songData from '../../assets/test_song.json'
 import drumrollSrc from '../../assets/sounds/drumroll.mp3'
 import applauseSrc from '../../assets/sounds/applause.mp3'
 
@@ -355,6 +355,7 @@ export function SongTitleBanner({ title, gameOver }) {
   )
 }
 
+// countdown at beginning
 const countdownImgs = { 1: Countdown1, 2: Countdown2, 3: Countdown3 }
 export function CountDown({ num }) {
   if (!countdownImgs[num]) return null

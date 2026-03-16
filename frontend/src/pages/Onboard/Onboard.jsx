@@ -6,11 +6,16 @@ import onboardStyles from './Onboard.module.css'
 import selectStyles from './Select.module.css'
 import rectSelectStyles from './RectSelect.module.css'
 import { useEffect } from 'react';
+import DatePicker from 'react-date-picker';
+import 'react-date-picker/dist/DatePicker.css';
+import 'react-calendar/dist/Calendar.css';
 
-const numPages = 6;
+
+const numPages = 7;
 
 export default function Onboard() {
   const [progIdx, setProgIdx] = useState(0);
+  const [date, setDate] = useState(new Date());
   
   const [onboardData, setOnboardData] = useState(() => {
     const saved = localStorage.getItem("onboardData");
@@ -58,6 +63,7 @@ export default function Onboard() {
   const pickBotDialogue = [
     "Hi! I'm PickBot, your musical companion!",
     "I'm always here to jam with you! Let's get rocking and make some beautiful music together!",
+    "What is your date of birth?",
     "NO SHAME IN STARTING FROM SCRATCH - I GOT YOU!",
     "GREAT CHOICE! NOW LET'S PICK YOUR GUITAR!",
     "GREAT CHOICE! ANYTHING ELSE?",
@@ -147,6 +153,7 @@ export default function Onboard() {
   const questTitle = [
     "",
     "",
+    "Enter date of birth:",
     "What's your currnet guitar skill level?",
     "What type of guitar are you learning on?",
     "What are you planning to use Tech Tunes for the most?",
@@ -164,10 +171,15 @@ export default function Onboard() {
             <QuestionTitle text={questTitle[progIdx]} />
             </div>
           
-            {progIdx === 2 && <ListSelect formName={"skill"} options={skillOptions} multiSelect={false} handleClick={handleClick} />}
-            {progIdx === 3 && <RectSelect formName={"guitarType"} options={guitarTypes} emojis={guitarEmojis} descriptions={[]} multiSelect={false} handleClick={handleClick} />}
-            {progIdx === 4 && <ListSelect formName={"useCase"} options={useCases} multiSelect={true} handleClick={handleClick} />}
-            {progIdx === 5 && <RectSelect formName={"genres"} options={genres} emojis={genreEmojis} descriptions={genreDescs} multiSelect={true} handleClick={handleClick} />}
+            {progIdx === 2 &&
+              <div className={onboardStyles['date-picker-wrapper']}>
+                <DatePicker onChange={setDate} value={date} />
+              </div>
+            }
+            {progIdx === 3 && <ListSelect formName={"skill"} options={skillOptions} multiSelect={false} handleClick={handleClick} />}
+            {progIdx === 4 && <RectSelect formName={"guitarType"} options={guitarTypes} emojis={guitarEmojis} descriptions={[]} multiSelect={false} handleClick={handleClick} />}
+            {progIdx === 5 && <ListSelect formName={"useCase"} options={useCases} multiSelect={true} handleClick={handleClick} />}
+            {progIdx === 6 && <RectSelect formName={"genres"} options={genres} emojis={genreEmojis} descriptions={genreDescs} multiSelect={true} handleClick={handleClick} />}
           
             <ProgressDots pos={progIdx} />
             <div className={onboardStyles['continue-section']}>

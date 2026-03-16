@@ -13,6 +13,7 @@
     "@markusstrasser/pitchplease": "^2.0.0",
     "canvas-confetti": "^1.9.4",
     "react": "^19.2.0",
+    "react-date-picker": "^12.0.1",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^19.2.4",
