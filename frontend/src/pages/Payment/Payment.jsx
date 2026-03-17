@@ -43,13 +43,18 @@ export default function Payment() {
             <Dialogue text={"You're one step away from unlocking everything!"} />
           </div>
           <div className={styles["boxes-container"]}>
-            {showBtcPayment ? (
-              <BitcoinBox onSwitch={() => setShowBtcPayment(false)} />
-            ) : (
-              <Elements stripe={stripePromise} options={{ fonts: [{ cssSrc: "https://fonts.googleapis.com/css2?family=Poppins&display=swap" }] }}>
-                <CreditCardBox onSwitch={() => setShowBtcPayment(true)} />
-              </Elements>
-            )}
+            <div className={[styles["flip-container"], showBtcPayment ? styles["flipped"] : ""].join(" ")}>
+              <div className={styles["flip-inner"]}>
+                <div className={styles["flip-front"]}>
+                  <Elements stripe={stripePromise} options={{ fonts: [{ cssSrc: "https://fonts.googleapis.com/css2?family=Poppins&display=swap" }] }}>
+                    <CreditCardBox onSwitch={() => setShowBtcPayment(true)} />
+                  </Elements>
+                </div>
+                <div className={styles["flip-back"]}>
+                  <BitcoinBox onSwitch={() => setShowBtcPayment(false)} />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </main>
@@ -104,9 +109,14 @@ function CreditCardBox({ onSwitch }) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ payment_id: paymentMethod.id }),
-    }).then((r) => r.json());
+    });
 
-    setPayState(res.success ? "success" : "error");
+    try {
+      const data = await res.json();
+      setPayState(data.success ? "success" : "error");
+    } catch {
+      setPayState("error");
+    }
   }
 
   return (
