@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@markusstrasser/pitchplease": "^2.0.0",
+    "@stripe/react-stripe-js": "^5.6.1",
     "@stripe/stripe-js": "^8.10.0",
     "canvas-confetti": "^1.9.4",
     "card-validator": "^10.0.4",

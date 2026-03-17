@@ -2,6 +2,9 @@ import os
 import uuid
 import json
 
+from dotenv import load_dotenv
+load_dotenv()
+
 import bcrypt
 from fastapi import FastAPI, Request, HTTPException, Depends
 from pydantic import BaseModel
@@ -139,7 +142,7 @@ def get_avatar(user_id: int = Depends(get_current_user), db: Session = Depends(g
 
 
 # in cents
-stripe.appi_key = os.environ.get("STRIPE_PRIVATE_TEST_KEY")
+stripe.api_key = os.environ.get("STRIPE_PRIVATE_TEST_KEY")
 SUBSCRIPTION_COST = 2499
 
 class PaymentRequest(BaseModel):
@@ -153,6 +156,10 @@ def get_secret(body: PaymentRequest):
         currency="usd",
         payment_method=body.payment_id,
         confirm=True,
+        automatic_payment_methods={
+            "enabled": True,
+            "allow_redirects": "never"
+        },
     )
     if intent.status == "succeeded":
         return {"success": True }
