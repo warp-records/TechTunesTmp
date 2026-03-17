@@ -35,33 +35,36 @@ export default function Onboard() {
   }, [onboardData])
   
   function handleClick(formName, option, multiSelect) {
-    setOnboardData(prev => {
-      const next = { ...prev };
-      if (multiSelect) {
-        const arr = [...(prev[formName] || [])];
-        const idx = arr.indexOf(option);
-        if (idx === -1) {
-          arr.push(option);
-        } else {
-          arr.splice(idx, 1);
-        }
-        next[formName] = arr;
-      } else {
-        next[formName] = prev[formName] !== option ? option : null;
-      }
-      
-      return next;
-    });
+    const next = { ...onboardData };
+    if (multiSelect) {
+      const arr = [...(onboardData[formName] || [])];
+      const idx = arr.indexOf(option);
+      if (idx === -1) arr.push(option);
+      else arr.splice(idx, 1);
+      next[formName] = arr;
+    } else {
+      next[formName] = onboardData[formName] !== option ? option : null;
+    }
+    setOnboardData(next);
+
+    if (progIdx === 3) setCanContinue(next.skill !== null);
+    if (progIdx === 4) setCanContinue(next.guitarType !== null);
+    if (progIdx === 5) setCanContinue(next.useCase.length > 0);
+    
   }
   
   function checkCanContinue() {
-    if (progIdx < 2) {
-      return true;
-    }
-    if (progIdx == 2) {
-      return date != null;
-    }
+    if (progIdx < 2) return true;
+    if (progIdx == 2) return date != null;
+    if (progIdx == 3) return onboardData.skill != null;
+    if (progIdx == 4) return onboardData.guitarType != null;
+    if (progIdx == 5) return onboardData.useCase.length > 0;
+    return true;
   }
+  
+  useEffect(() => {
+    setCanContinue(checkCanContinue());
+  }, [progIdx])
   
   
   function handleContinue() {
@@ -70,7 +73,6 @@ export default function Onboard() {
       window.open('/pricing', '_self');
     } else {
       setProgIdx(progIdx + 1);
-      setCanContinue(checkCanContinue());
     }
   }
   
