@@ -190,6 +190,21 @@
   letter-spacing: 0.05em;
 }
 
+.payment-root .input-error {
+  border-color: rgba(255, 80, 80, 0.7) !important;
+}
+
+.payment-root .error-msg {
+  font-size: 0.75rem;
+  color: rgba(255, 100, 100, 0.9);
+}
+
+.payment-root .pay-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .payment-root .mono {
   font-size: 0.85rem;
   letter-spacing: 0.02em;

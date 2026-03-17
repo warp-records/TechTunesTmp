@@ -1,9 +1,31 @@
 import { useState } from "react";
+import valid from "card-validator";
+
+const cardIcons = import.meta.glob(
+  "/node_modules/payment-icons/min/flat/*.svg",
+  { eager: true, query: "?url", import: "default" }
+);
+
+const CARD_TYPE_TO_ICON = {
+  visa: "visa",
+  mastercard: "mastercard",
+  "american-express": "amex",
+  discover: "discover",
+  jcb: "jcb",
+  "diners-club": "diners",
+  maestro: "maestro",
+  unionpay: "unionpay",
+};
+
+function getCardLogo(cardType) {
+  const name = CARD_TYPE_TO_ICON[cardType] ?? "default";
+  return cardIcons[`/node_modules/payment-icons/min/flat/${name}.svg`];
+}
 import styles from "./Payment.module.css";
 import Pickbot, { Dialogue } from "../../components/Pickbot";
 import bitcoinLogo from "../../assets/Payment/bitcoin.svg";
 import BinaryRain from "./BinaryRain";
-import { MdQrCode2 } from "react-icons/md";
+import { MdQrCode2, MdContentCopy } from "react-icons/md";
 
 export default function Payment() {
   return (
@@ -28,6 +50,17 @@ function CreditCardBox() {
   const [cardNumber, setCardNumber] = useState("");
   const [expiry, setExpiry] = useState("");
   const [cvc, setCvc] = useState("");
+  const [touched, setTouched] = useState({ cardNumber: false, expiry: false, cvc: false });
+
+  const cardResult = valid.number(cardNumber);
+  const expiryResult = valid.expirationDate(expiry);
+  const cvcMaxLength = cardResult.card?.code?.size ?? 4;
+  const cvcResult = valid.cvv(cvc, cvcMaxLength);
+
+  const cardError = touched.cardNumber && cardNumber && !cardResult.isValid ? "Invalid card number" : null;
+  const expiryError = touched.expiry && expiry && !expiryResult.isValid ? "Invalid expiry" : null;
+  const cvcError = touched.cvc && cvc && !cvcResult.isValid ? "Invalid CVC" : null;
+  const allValid = cardResult.isValid && expiryResult.isValid && cvcResult.isValid;
 
   function handleCardNumber(e) {
     const digits = e.target.value.replace(/\D/g, "").slice(0, 16);
@@ -44,47 +77,65 @@ function CreditCardBox() {
   }
 
   function handleCvc(e) {
-    setCvc(e.target.value.replace(/\D/g, "").slice(0, 4));
+    setCvc(e.target.value.replace(/\D/g, "").slice(0, cvcMaxLength));
+  }
+
+  function blur(field) {
+    setTouched((t) => ({ ...t, [field]: true }));
   }
 
   return (
     <div className={styles["payment-box"]}>
       <div className={styles["box-title"]}>
         <span className={styles["stripe-title"]}>Credit Card</span>
-        <span className={styles["box-icon"]}>💳</span>
+        <span className={styles["box-icon"]}>
+          <img
+            src={getCardLogo(cardResult.card?.type)}
+            alt={cardResult.card?.niceType ?? "Card"}
+            className={styles["box-icon-img"]}
+          />
+        </span>
       </div>
       <div className={styles["box-content"]}>
         <div className={styles["field"]}>
           <label>Card Number</label>
           <input
-            className={styles["mock-input"]}
+            className={[styles["mock-input"], cardError ? styles["input-error"] : ""].join(" ")}
             type="text"
             value={cardNumber}
             placeholder="•••• •••• •••• ••••"
             onChange={handleCardNumber}
+            onBlur={() => blur("cardNumber")}
           />
+          {cardError && <span className={styles["error-msg"]}>{cardError}</span>}
         </div>
         <div className={styles["field"]}>
           <label>Expiry</label>
           <input
-            className={styles["mock-input"]}
+            className={[styles["mock-input"], expiryError ? styles["input-error"] : ""].join(" ")}
             type="text"
             value={expiry}
             placeholder="MM / YY"
             onChange={handleExpiry}
+            onBlur={() => blur("expiry")}
           />
+          {expiryError && <span className={styles["error-msg"]}>{expiryError}</span>}
         </div>
         <div className={styles["field"]}>
           <label>CVC</label>
           <input
-            className={styles["mock-input"]}
+            className={[styles["mock-input"], cvcError ? styles["input-error"] : ""].join(" ")}
             type="password"
             value={cvc}
             placeholder="•••"
             onChange={handleCvc}
+            onBlur={() => blur("cvc")}
           />
+          {cvcError && <span className={styles["error-msg"]}>{cvcError}</span>}
         </div>
-        <button className={styles["pay-button"]}>Subscribe - $24.99/mo</button>
+        <button className={styles["pay-button"]} disabled={!allValid}>
+          $24.99/mo
+        </button>
       </div>
     </div>
   );
@@ -108,7 +159,7 @@ function BitcoinBox() {
         <div className={styles["field"]}>
           <label>To address</label>
           <div className={styles["input-row"]}>
-            <div className={[styles["mock-input"], styles["mono"]].join(" ")} />
+            <div className={[styles["mock-input"], styles["mono"]].join(" ")}>&nbsp;</div>
             <button className={styles["qr-button"]}>
               <MdQrCode2 />
             </button>
