@@ -18,6 +18,8 @@ export default function Onboard() {
   const [date, setDate] = useState(new Date());
   const [calView, setCalView] = useState('month');
   
+  const [canContinue, setCanContinue] = useState(true);
+  
   const [onboardData, setOnboardData] = useState(() => {
     const saved = localStorage.getItem("onboardData");
     return saved ? JSON.parse(saved) : {
@@ -52,12 +54,23 @@ export default function Onboard() {
     });
   }
   
+  function checkCanContinue() {
+    if (progIdx < 2) {
+      return true;
+    }
+    if (progIdx == 2) {
+      return date != null;
+    }
+  }
+  
+  
   function handleContinue() {
     
     if (progIdx == numPages-1) {
       window.open('/pricing', '_self');
     } else {
       setProgIdx(progIdx + 1);
+      setCanContinue(checkCanContinue());
     }
   }
   
@@ -174,7 +187,13 @@ export default function Onboard() {
           
             {progIdx === 2 &&
               <div className={[onboardStyles['date-picker-wrapper'], calView === 'year' ? onboardStyles['cal-month-view'] : ''].filter(Boolean).join(' ')}>
-                <DatePicker onChange={setDate} value={date} maxDate={new Date()} maxDetail={"month"} calendarProps={{ onViewChange: ({ view }) => setCalView(view) }} />
+                <DatePicker onChange={(val) => { setDate(val); setCanContinue(val != null); }} value={date} maxDate={new Date()} maxDetail={"month"} calendarProps={{
+                  onViewChange: ({ view }) => {
+                    setCalView(view)
+                    console.log(date)
+                    
+                  }
+                }} />
               </div>
             }
             {progIdx === 3 && <ListSelect formName={"skill"} options={skillOptions} multiSelect={false} handleClick={handleClick} />}
@@ -185,7 +204,7 @@ export default function Onboard() {
             <ProgressDots pos={progIdx} />
             <div className={onboardStyles['continue-section']}>
 
-              <ContinueBtn text={continueBtnText} onContinue={handleContinue} />
+              <ContinueBtn text={continueBtnText} onContinue={handleContinue} disabled={!canContinue} />
             </div>
           </div>
         </main>
@@ -194,9 +213,9 @@ export default function Onboard() {
   )
 }
 
-function ContinueBtn({ text, onContinue }) {
+function ContinueBtn({ text, onContinue, disabled }) {
   return (
-    <button className={onboardStyles['continue-btn']} id="continue-btn" onClick={onContinue}>{text}</button>
+    <button className={onboardStyles['continue-btn']} id="continue-btn" onClick={onContinue} disabled={disabled}>{text}</button>
   )
 }
 
