@@ -29,7 +29,7 @@ import styles from "./Payment.module.css";
 import Pickbot, { Dialogue } from "../../components/Pickbot";
 import bitcoinLogo from "../../assets/Payment/bitcoin.svg";
 import BinaryRain from "./BinaryRain";
-import { MdQrCode2, MdContentCopy, MdCheck } from "react-icons/md";
+import { MdQrCode2, MdContentCopy, MdCheck, MdClose } from "react-icons/md";
 
 export default function Payment() {
   return (
@@ -72,7 +72,7 @@ function CreditCardBox() {
   const elements = useElements();
   const [cardBrand, setCardBrand] = useState(null);
   const [fieldState, setFieldState] = useState({ number: {}, expiry: {}, cvc: {} });
-  const [failedPay, setFailedPay] = useState(false);
+  const [payState, setPayState] = useState("idle"); // idle | loading | success | error
 
   const allValid = fieldState.number.complete && fieldState.expiry.complete && fieldState.cvc.complete;
 
@@ -83,15 +83,15 @@ function CreditCardBox() {
 
   async function makePayment() {
     if (!stripe || !elements) return;
+    setPayState("loading");
+
     const { paymentMethod, error } = await stripe.createPaymentMethod({
       type: "card",
       card: elements.getElement(CardNumberElement),
     });
-    
-    console.log(paymentMethod);
 
     if (error) {
-      setFailedPay(true);
+      setPayState("error");
       return;
     }
 
@@ -101,11 +101,7 @@ function CreditCardBox() {
       body: JSON.stringify({ payment_id: paymentMethod.id }),
     }).then((r) => r.json());
 
-    if (res.success) {
-      alert("Payment succeeded");
-    } else {
-      alert("Payment failed");
-    }
+    setPayState(res.success ? "success" : "error");
   }
 
   return (
@@ -142,8 +138,11 @@ function CreditCardBox() {
           </div>
           {fieldState.cvc.error && <span className={styles["error-msg"]}>{fieldState.cvc.error.message}</span>}
         </div>
-        <button className={styles["pay-button"]} disabled={!allValid} onClick={makePayment}>
-          $24.99/mo
+        <span className={payState === "success" ? styles["pay-status-success"] : payState === "error" ? styles["pay-status-error"] : styles["pay-status-hidden"]}>
+          {payState === "success" ? "Payment successful" : payState === "error" ? "Payment failed" : "\u00a0"}
+        </span>
+        <button className={styles["pay-button"]} disabled={!allValid || payState === "loading"} onClick={makePayment}>
+          {payState === "loading" ? <span className={styles["pay-spinner"]} /> : "$24.99/mo"}
         </button>
       </div>
     </div>
@@ -152,7 +151,7 @@ function CreditCardBox() {
 
 function BitcoinBox() {
   const [copied, setCopied] = useState(false);
-  const [address, setAddress] = useState("1XPTgDRhN8RFnzniWCddobD9iKZatrvH4");
+  const [address, setAddress] = useState("");
 
   function handleCopy() {
     navigator.clipboard.writeText(address);
