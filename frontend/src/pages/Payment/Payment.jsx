@@ -1,3 +1,4 @@
+import { useState } from "react";
 import styles from "./Payment.module.css";
 import Pickbot, { Dialogue } from "../../components/Pickbot";
 import bitcoinLogo from "../../assets/Payment/bitcoin.svg";
@@ -11,36 +12,11 @@ export default function Payment() {
         <div className={styles["payment-card"]}>
           <div className={styles["header-section"]}>
             <Pickbot />
-            <Dialogue
-              text={"You're one step away from unlocking everything!"}
-            />
+            <Dialogue text={"You're one step away from unlocking everything!"} />
           </div>
-
           <div className={styles["boxes-container"]}>
-            <PaymentBox
-              title="Credit Card"
-              titleClassName={styles["stripe-title"]}
-              icon="💳"
-              label="Pay through Stripe"
-              fields={[
-                { label: "Card Number", value: "•••• •••• •••• ••••" },
-                { label: "Expiry", value: "MM / YY" },
-                { label: "CVC", value: "•••" },
-              ]}
-              buttonText="Subscribe - $24.99/mo"
-            />
-            <PaymentBox
-              title="Bitcoin"
-              titleClassName={styles["btc-title"]}
-              icon={<img src={bitcoinLogo} alt="Bitcoin" className={styles["box-icon-img"]} />}
-              label="Pay with Bitcoin"
-              fields={[
-                { label: "Send exactly", value: "0.000097 BTC" },
-                { label: "To address", value: "bc1qxy2kgdygjrsqtzq2n0yrf24…", mono: true, qrButton: true },
-              ]}
-              buttonText="I've Sent Payment"
-              bgEffect={<BinaryRain />}
-            />
+            <CreditCardBox />
+            <BitcoinBox />
           </div>
         </div>
       </main>
@@ -48,31 +24,97 @@ export default function Payment() {
   );
 }
 
-function PaymentBox({ title, icon, fields, buttonText, titleClassName, bgEffect }) {
+function CreditCardBox() {
+  const [cardNumber, setCardNumber] = useState("");
+  const [expiry, setExpiry] = useState("");
+  const [cvc, setCvc] = useState("");
+
+  function handleCardNumber(e) {
+    const digits = e.target.value.replace(/\D/g, "").slice(0, 16);
+    setCardNumber(digits.replace(/(.{4})/g, "$1 ").trim());
+  }
+
+  function handleExpiry(e) {
+    const digits = e.target.value.replace(/\D/g, "").slice(0, 4);
+    if (digits.length >= 3) {
+      setExpiry(digits.slice(0, 2) + " / " + digits.slice(2));
+    } else {
+      setExpiry(digits);
+    }
+  }
+
+  function handleCvc(e) {
+    setCvc(e.target.value.replace(/\D/g, "").slice(0, 4));
+  }
+
   return (
     <div className={styles["payment-box"]}>
-      {bgEffect}
       <div className={styles["box-title"]}>
-        <span className={titleClassName}>{title}</span>
-        <span className={styles["box-icon"]}>{icon}</span>
+        <span className={styles["stripe-title"]}>Credit Card</span>
+        <span className={styles["box-icon"]}>💳</span>
       </div>
       <div className={styles["box-content"]}>
-        {fields.map(({ label: fieldLabel, value, mono, qrButton }) => (
-          <div key={fieldLabel} className={styles["field"]}>
-            <label>{fieldLabel}</label>
-            <div className={styles["input-row"]}>
-              <div className={[styles["mock-input"], mono ? styles["mono"] : ""].join(" ")}>
-                {value}
-              </div>
-              {qrButton && (
-                <button className={styles["qr-button"]}>
-                  <MdQrCode2 />
-                </button>
-              )}
-            </div>
+        <div className={styles["field"]}>
+          <label>Card Number</label>
+          <input
+            className={styles["mock-input"]}
+            type="text"
+            value={cardNumber}
+            placeholder="•••• •••• •••• ••••"
+            onChange={handleCardNumber}
+          />
+        </div>
+        <div className={styles["field"]}>
+          <label>Expiry</label>
+          <input
+            className={styles["mock-input"]}
+            type="text"
+            value={expiry}
+            placeholder="MM / YY"
+            onChange={handleExpiry}
+          />
+        </div>
+        <div className={styles["field"]}>
+          <label>CVC</label>
+          <input
+            className={styles["mock-input"]}
+            type="password"
+            value={cvc}
+            placeholder="•••"
+            onChange={handleCvc}
+          />
+        </div>
+        <button className={styles["pay-button"]}>Subscribe - $24.99/mo</button>
+      </div>
+    </div>
+  );
+}
+
+function BitcoinBox() {
+  return (
+    <div className={styles["payment-box"]}>
+      <BinaryRain />
+      <div className={styles["box-title"]}>
+        <span className={styles["btc-title"]}>Bitcoin</span>
+        <span className={styles["box-icon"]}>
+          <img src={bitcoinLogo} alt="Bitcoin" className={styles["box-icon-img"]} />
+        </span>
+      </div>
+      <div className={styles["box-content"]}>
+        <div className={styles["field"]}>
+          <label>Send exactly</label>
+          <div className={styles["mock-input"]}>0.000097 BTC</div>
+        </div>
+        <div className={styles["field"]}>
+          <label>To address</label>
+          <div className={styles["input-row"]}>
+            <div className={[styles["mock-input"], styles["mono"]].join(" ")} />
+            <button className={styles["qr-button"]}>
+              <MdQrCode2 />
+            </button>
           </div>
-        ))}
-        <button className={styles["pay-button"]}>{buttonText}</button>
+        </div>
+        <button className={styles["pay-button"]}>Generate Address</button>
       </div>
     </div>
   );

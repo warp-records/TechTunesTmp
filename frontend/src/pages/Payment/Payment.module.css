@@ -67,6 +67,29 @@
   z-index: 0;
 }
 
+.payment-root .payment-box:first-child::before {
+  content: "";
+  position: absolute;
+  inset: -50%;
+  background: conic-gradient(
+    from 0deg,
+    rgba(103, 114, 229, 0.35),
+    rgba(155, 143, 255, 0.25),
+    rgba(80, 40, 160, 0.3),
+    rgba(40, 80, 200, 0.2),
+    rgba(103, 114, 229, 0.35)
+  );
+  animation: ccGradientSpin 8s linear infinite;
+  z-index: -1;
+  border-radius: 50%;
+  filter: blur(30px);
+}
+
+@keyframes ccGradientSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
 .payment-root .payment-box:nth-child(2) {
   background: #422910;
 }
