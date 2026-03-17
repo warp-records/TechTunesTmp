@@ -268,6 +268,11 @@
   gap: 0.3rem;
 }
 
+.cal-month-view :global(.react-calendar__navigation__label) {
+  pointer-events: none;
+  cursor: default;
+}
+
 .date-picker-wrapper :global(.react-calendar__navigation__label) {
   background: transparent;
   border: none;
@@ -307,10 +312,17 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-.date-picker-wrapper :global(.react-calendar__navigation__arrow:disabled) {
+.date-picker-wrapper :global(.react-calendar__navigation__arrow:disabled),
+.date-picker-wrapper :global(.react-calendar__navigation button:disabled) {
+  background: linear-gradient(135deg, rgba(212, 158, 251, 0.9), rgba(212, 158, 251, 0.7));
   opacity: 0.3;
   cursor: default;
   transform: none;
+}
+
+.date-picker-wrapper :global(.react-calendar__month-view__days) {
+  min-height: 220px;
+  align-content: start;
 }
 
 .date-picker-wrapper :global(.react-calendar__month-view__weekdays) {

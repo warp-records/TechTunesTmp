@@ -16,6 +16,7 @@ const numPages = 7;
 export default function Onboard() {
   const [progIdx, setProgIdx] = useState(0);
   const [date, setDate] = useState(new Date());
+  const [calView, setCalView] = useState('month');
   
   const [onboardData, setOnboardData] = useState(() => {
     const saved = localStorage.getItem("onboardData");
@@ -172,8 +173,8 @@ export default function Onboard() {
             </div>
           
             {progIdx === 2 &&
-              <div className={onboardStyles['date-picker-wrapper']}>
-                <DatePicker onChange={setDate} value={date} />
+              <div className={[onboardStyles['date-picker-wrapper'], calView === 'year' ? onboardStyles['cal-month-view'] : ''].filter(Boolean).join(' ')}>
+                <DatePicker onChange={setDate} value={date} maxDate={new Date()} maxDetail={"month"} calendarProps={{ onViewChange: ({ view }) => setCalView(view) }} />
               </div>
             }
             {progIdx === 3 && <ListSelect formName={"skill"} options={skillOptions} multiSelect={false} handleClick={handleClick} />}
