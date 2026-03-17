@@ -1,6 +1,7 @@
 import styles from "./Payment.module.css";
-import Pickbot, { Dialogue } from "../components/Pickbot";
-import bitcoinLogo from "../assets/Payment/bitcoin.svg";
+import Pickbot, { Dialogue } from "../../components/Pickbot";
+import bitcoinLogo from "../../assets/Payment/bitcoin.svg";
+import BinaryRain from "./BinaryRain";
 
 export default function Payment() {
   return (
@@ -37,6 +38,7 @@ export default function Payment() {
                 { label: "To address", value: "bc1qxy2kgdygjrsqtzq2n0yrf24…", mono: true },
               ]}
               buttonText="I've Sent Payment"
+              bgEffect={<BinaryRain />}
             />
           </div>
         </div>
@@ -45,9 +47,10 @@ export default function Payment() {
   );
 }
 
-function PaymentBox({ title, icon, fields, buttonText, titleClassName }) {
+function PaymentBox({ title, icon, fields, buttonText, titleClassName, bgEffect }) {
   return (
     <div className={styles["payment-box"]}>
+      {bgEffect}
       <div className={styles["box-title"]}>
         <span className={titleClassName}>{title}</span>
         <span className={styles["box-icon"]}>{icon}</span>

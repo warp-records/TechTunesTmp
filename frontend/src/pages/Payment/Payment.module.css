@@ -52,21 +52,23 @@
 
 .payment-root .payment-box {
   flex: 1;
-  background: linear-gradient(135deg, rgba(40, 30, 80, 0.95), rgba(60, 40, 110, 0.95));
+  background: linear-gradient(135deg, rgb(40, 30, 80), rgb(60, 40, 110));
   color: #2d1b3d;
   border: var(--border-width) solid transparent;
   border-radius: var(--border-radius);
   padding: 2.5rem 2rem;
-  backdrop-filter: blur(10px);
   box-shadow: 0 8px 25px var(--shadow-light);
   animation: slideInUp 0.6s ease both;
   min-height: 320px;
   display: flex;
   flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  z-index: 0;
 }
 
 .payment-root .payment-box:nth-child(2) {
-  background: linear-gradient(135deg, rgba(60, 35, 10, 0.95), rgba(90, 50, 10, 0.95));
+  background: #422910;
 }
 
 .payment-root .box-title {
@@ -127,8 +129,8 @@
 }
 
 .payment-root .mock-input {
-  background: rgba(255, 255, 255, 0.18);
-  border: 2px solid rgba(255, 255, 255, 0.35);
+  background: rgb(0, 0, 0);
+  border: 2px solid rgba(255, 255, 255, 0.25);
   border-radius: 10px;
   padding: 0.7rem 1rem;
   font-size: 1rem;

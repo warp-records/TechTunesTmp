@@ -1,0 +1,32 @@
+.container {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.char {
+  position: absolute;
+  top: -1.5em;
+  font-family: monospace;
+  font-size: 14px;
+  font-weight: bold;
+  color: #F7931A;
+  animation: fall linear infinite;
+}
+
+@keyframes fall {
+  0% {
+    top: -1.5em;
+    opacity: 1;
+  }
+  70% {
+    opacity: 0.6;
+  }
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
