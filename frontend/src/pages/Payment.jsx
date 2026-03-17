@@ -16,9 +16,10 @@ export default function Payment() {
 
           <div className={styles["boxes-container"]}>
             <PaymentBox
-              title="Payment Details"
+              title="Credit Card"
+              titleClassName={styles["stripe-title"]}
               icon="💳"
-              label="Stripe Payment"
+              label="Pay through Stripe"
               fields={[
                 { label: "Card Number", value: "•••• •••• •••• ••••" },
                 { label: "Expiry", value: "MM / YY" },
@@ -27,9 +28,10 @@ export default function Payment() {
               buttonText="Subscribe — $9.99/mo"
             />
             <PaymentBox
-              title="Pay with Bitcoin"
+              title="Bitcoin"
+              titleClassName={styles["btc-title"]}
               icon={<img src={bitcoinLogo} alt="Bitcoin" className={styles["box-icon-img"]} />}
-              label="Bitcoin Payment"
+              label="Pay with Bitcoin"
               fields={[
                 { label: "Send exactly", value: "0.000097 BTC" },
                 { label: "To address", value: "bc1qxy2kgdygjrsqtzq2n0yrf24…", mono: true },
@@ -43,15 +45,14 @@ export default function Payment() {
   );
 }
 
-function PaymentBox({ title, icon, label, fields, buttonText }) {
+function PaymentBox({ title, icon, fields, buttonText, titleClassName }) {
   return (
     <div className={styles["payment-box"]}>
-      <div className={styles["box-title"]}>{title}</div>
+      <div className={styles["box-title"]}>
+        <span className={titleClassName}>{title}</span>
+        <span className={styles["box-icon"]}>{icon}</span>
+      </div>
       <div className={styles["box-content"]}>
-        <div className={styles["box-label"]}>
-          <span className={styles["box-icon"]}>{icon}</span>
-          <span>{label}</span>
-        </div>
         {fields.map(({ label: fieldLabel, value, mono }) => (
           <div key={fieldLabel} className={styles["field"]}>
             <label>{fieldLabel}</label>

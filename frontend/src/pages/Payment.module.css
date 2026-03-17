@@ -52,7 +52,7 @@
 
 .payment-root .payment-box {
   flex: 1;
-  background: linear-gradient(135deg, rgba(212, 158, 251, 0.9), rgba(212, 158, 251, 0.7));
+  background: linear-gradient(135deg, rgba(40, 30, 80, 0.95), rgba(60, 40, 110, 0.95));
   color: #2d1b3d;
   border: var(--border-width) solid transparent;
   border-radius: var(--border-radius);
@@ -61,42 +61,57 @@
   box-shadow: 0 8px 25px var(--shadow-light);
   animation: slideInUp 0.6s ease both;
   min-height: 320px;
+  display: flex;
+  flex-direction: column;
+}
+
+.payment-root .payment-box:nth-child(2) {
+  background: linear-gradient(135deg, rgba(60, 35, 10, 0.95), rgba(90, 50, 10, 0.95));
 }
 
 .payment-root .box-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
   font-size: 1.8rem;
   font-weight: 700;
   margin-bottom: 1.5rem;
-  text-align: center;
+}
+
+.payment-root .stripe-title {
+  background: linear-gradient(135deg, #6772E5, #9B8FFF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.payment-root .btc-title {
+  background: linear-gradient(135deg, #F7931A, #FFD27F);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.payment-root .box-icon {
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.payment-root .box-icon-img {
+  width: 36px;
+  height: 36px;
+  display: block;
 }
 
 .payment-root .box-content {
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
-}
-
-.payment-root .box-label {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-
-.payment-root .box-icon {
-  display: flex;
-  align-items: center;
-  font-size: 1.3rem;
-  line-height: 1;
-}
-
-.payment-root .box-icon-img {
-  width: 28px;
-  height: 28px;
-  display: block;
+  flex: 1;
+  justify-content: space-between;
 }
 
 .payment-root .field {
@@ -108,16 +123,16 @@
 .payment-root .field label {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #2d1b3d;
+  color: var(--white);
 }
 
 .payment-root .mock-input {
-  background: rgba(255, 255, 255, 0.6);
-  border: 2px solid rgba(45, 27, 61, 0.3);
+  background: rgba(255, 255, 255, 0.18);
+  border: 2px solid rgba(255, 255, 255, 0.35);
   border-radius: 10px;
   padding: 0.7rem 1rem;
   font-size: 1rem;
-  color: #2d1b3d;
+  color: var(--white);
   letter-spacing: 0.05em;
 }
 
@@ -127,8 +142,12 @@
   word-break: break-all;
 }
 
+.payment-root .payment-box:nth-child(2) .pay-button {
+  background: linear-gradient(135deg, #c47500, #F7931A);
+}
+
 .payment-root .pay-button {
-  background: linear-gradient(135deg, var(--dark-purple), var(--primary-purple));
+  background: linear-gradient(135deg, #6772E5, #9B8FFF);
   color: var(--white);
   border: none;
   border-radius: 15px;
