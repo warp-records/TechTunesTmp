@@ -198,10 +198,10 @@ export default function Onboard() {
                 }} />
               </div>
             }
-            {progIdx === 3 && <ListSelect formName={"skill"} options={skillOptions} multiSelect={false} handleClick={handleClick} />}
-            {progIdx === 4 && <RectSelect formName={"guitarType"} options={guitarTypes} emojis={guitarEmojis} descriptions={[]} multiSelect={false} handleClick={handleClick} />}
-            {progIdx === 5 && <ListSelect formName={"useCase"} options={useCases} multiSelect={true} handleClick={handleClick} />}
-            {progIdx === 6 && <RectSelect formName={"genres"} options={genres} emojis={genreEmojis} descriptions={genreDescs} multiSelect={true} handleClick={handleClick} />}
+            {progIdx === 3 && <ListSelect formName={"skill"} options={skillOptions} multiSelect={false} handleClick={handleClick} selected={onboardData.skill} />}
+            {progIdx === 4 && <RectSelect formName={"guitarType"} options={guitarTypes} emojis={guitarEmojis} descriptions={[]} multiSelect={false} handleClick={handleClick} selected={onboardData.guitarType} />}
+            {progIdx === 5 && <ListSelect formName={"useCase"} options={useCases} multiSelect={true} handleClick={handleClick} selected={onboardData.useCase} />}
+            {progIdx === 6 && <RectSelect formName={"genres"} options={genres} emojis={genreEmojis} descriptions={genreDescs} multiSelect={true} handleClick={handleClick} selected={onboardData.genres} />}
           
             <ProgressDots pos={progIdx} />
             <div className={onboardStyles['continue-section']}>
@@ -239,10 +239,11 @@ function QuestionTitle({ text }) {
   return (<h2 className={onboardStyles['question-title']}>{text}</h2>)
 }
 
-function ListSelect({ formName, options, multiSelect, handleClick }) {
-  const items = options.map((option, idx) =>
-    <div className={selectStyles['skill-option']} key={idx}>
-      <input type={multiSelect ? 'checkbox' : 'radio'} name="skillLevel" id={`skill-${idx}`} onChange={() => handleClick(formName, idx, multiSelect)} />
+function ListSelect({ formName, options, multiSelect, handleClick, selected }) {
+  const items = options.map((option, idx) => {
+    const isChecked = multiSelect ? (selected || []).includes(idx) : selected === idx;
+    return <div className={selectStyles['skill-option']} key={idx}>
+      <input type={multiSelect ? 'checkbox' : 'radio'} name="skillLevel" id={`skill-${idx}`} checked={isChecked} onChange={() => handleClick(formName, idx, multiSelect)} />
       <label htmlFor={`skill-${idx}`} className={[selectStyles['skill-label'], multiSelect ? selectStyles['has-checkbox'] : ''].filter(Boolean).join(' ')}>
         {multiSelect && (
           <div className={selectStyles['custom-checkbox']}>
@@ -253,8 +254,8 @@ function ListSelect({ formName, options, multiSelect, handleClick }) {
         )}
         <div>{option}</div>
       </label>
-    </div>
-  );
+    </div>;
+  });
 
   return (
     <div className={selectStyles['skill-options']}>
@@ -263,17 +264,18 @@ function ListSelect({ formName, options, multiSelect, handleClick }) {
   )
 }
 
-function RectSelect({ formName, options, emojis, descriptions, multiSelect, handleClick }) {
-  const items = options.map((option, idx) =>
-    <div className={rectSelectStyles['guitar-option']} key={idx}>
-      <input type={multiSelect ? 'checkbox' : 'radio'} name="rectSelect" id={`rect-${idx}`} value={option} />
-      <label htmlFor={`rect-${idx}`} className={rectSelectStyles['guitar-label']} onClick={() => handleClick(formName, idx, multiSelect)}>
+function RectSelect({ formName, options, emojis, descriptions, multiSelect, handleClick, selected }) {
+  const items = options.map((option, idx) => {
+    const isChecked = multiSelect ? (selected || []).includes(idx) : selected === idx;
+    return <div className={rectSelectStyles['guitar-option']} key={idx}>
+      <input type={multiSelect ? 'checkbox' : 'radio'} name="rectSelect" id={`rect-${idx}`} value={option} checked={isChecked} onChange={() => handleClick(formName, idx, multiSelect)} />
+      <label htmlFor={`rect-${idx}`} className={rectSelectStyles['guitar-label']}>
         <div className={rectSelectStyles['guitar-icon']}>{emojis[idx]}</div>
         <div>{option}</div>
         <div className={rectSelectStyles['genre-desc']}>{descriptions[idx]}</div>
       </label>
-    </div>
-  );
+    </div>;
+  });
 
   return (
     <div className={rectSelectStyles['guitar-options']}>
