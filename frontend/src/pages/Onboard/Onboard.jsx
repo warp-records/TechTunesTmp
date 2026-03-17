@@ -15,21 +15,23 @@ const numPages = 7;
 
 export default function Onboard() {
   const [progIdx, setProgIdx] = useState(0);
-  const [date, setDate] = useState(new Date());
   const [calView, setCalView] = useState('month');
-  
+
   const [canContinue, setCanContinue] = useState(true);
-  
+
   const [onboardData, setOnboardData] = useState(() => {
     const saved = localStorage.getItem("onboardData");
     return saved ? JSON.parse(saved) : {
+      "dob": null,
       "skill": null,
       "guitarType": null,
       "useCase": [],
       "genres": [],
     }
   });
-  
+
+  const date = onboardData.dob ? new Date(onboardData.dob) : null;
+
   useEffect(() => {
     localStorage.setItem("onboardData", JSON.stringify(onboardData));
   }, [onboardData])
@@ -55,7 +57,7 @@ export default function Onboard() {
   
   function checkCanContinue() {
     if (progIdx < 2) return true;
-    if (progIdx == 2) return date != null;
+    if (progIdx == 2) return onboardData.dob != null;
     if (progIdx == 3) return onboardData.skill != null;
     if (progIdx == 4) return onboardData.guitarType != null;
     if (progIdx == 5) return onboardData.useCase.length > 0;
@@ -189,7 +191,7 @@ export default function Onboard() {
           
             {progIdx === 2 &&
               <div className={[onboardStyles['date-picker-wrapper'], calView === 'year' ? onboardStyles['cal-month-view'] : ''].filter(Boolean).join(' ')}>
-                <DatePicker onChange={(val) => { setDate(val); setCanContinue(val != null); }} value={date} maxDate={new Date()} maxDetail={"month"} calendarProps={{
+                <DatePicker onChange={(val) => { setOnboardData(prev => ({ ...prev, dob: val ? val.toISOString() : null })); setCanContinue(val != null); }} value={date} maxDate={new Date()} maxDetail={"month"} calendarProps={{
                   onViewChange: ({ view }) => {
                     setCalView(view)
                     console.log(date)
