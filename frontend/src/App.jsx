@@ -16,6 +16,7 @@ import IslandSelect from './pages/IslandSelect'
 import GuitarIsland from './pages/Islands/GuitarIsland'
 import SongSearch from './pages/SongSearch'
 import Lesson from './pages/Lesson/Lesson'
+import Payment from './pages/Payment'
 import LessonIslandPage from './features/lesson-islands/pages/LessonIslandPage'
 import { LESSON_ISLAND_ROUTE_PATTERN } from './features/lesson-islands/constants/lessonIslandRoutes'
 
@@ -40,6 +41,7 @@ function App() {
         <Route path={LESSON_ISLAND_ROUTE_PATTERN} element={<LessonIslandPage />} />
         <Route path="/song_search" element={<SongSearch />} />
         <Route path="/lesson" element={<Lesson />} />
+        <Route path="/payment" element={<Payment />} />
       </Routes>
     </BrowserRouter>
   )
