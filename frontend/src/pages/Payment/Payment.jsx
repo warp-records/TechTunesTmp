@@ -32,6 +32,8 @@ import BinaryRain from "./BinaryRain";
 import { MdQrCode2, MdContentCopy, MdCheck, MdClose } from "react-icons/md";
 
 export default function Payment() {
+  const [showBtcPayment, setShowBtcPayment] = useState(false);
+
   return (
     <div className={styles["payment-root"]}>
       <main className={styles["main-container"]}>
@@ -41,10 +43,13 @@ export default function Payment() {
             <Dialogue text={"You're one step away from unlocking everything!"} />
           </div>
           <div className={styles["boxes-container"]}>
-            <Elements stripe={stripePromise} options={{ fonts: [{ cssSrc: "https://fonts.googleapis.com/css2?family=Poppins&display=swap" }] }}>
-              <CreditCardBox />
-            </Elements>
-            <BitcoinBox />
+            {showBtcPayment ? (
+              <BitcoinBox onSwitch={() => setShowBtcPayment(false)} />
+            ) : (
+              <Elements stripe={stripePromise} options={{ fonts: [{ cssSrc: "https://fonts.googleapis.com/css2?family=Poppins&display=swap" }] }}>
+                <CreditCardBox onSwitch={() => setShowBtcPayment(true)} />
+              </Elements>
+            )}
           </div>
         </div>
       </main>
@@ -67,7 +72,7 @@ const ELEMENT_OPTIONS = {
   },
 };
 
-function CreditCardBox() {
+function CreditCardBox({ onSwitch }) {
   const stripe = useStripe();
   const elements = useElements();
   const [cardBrand, setCardBrand] = useState(null);
@@ -105,7 +110,7 @@ function CreditCardBox() {
   }
 
   return (
-    <div className={styles["payment-box"]}>
+    <div className={[styles["payment-box"], styles["cc-box"]].join(" ")}>
       <div className={styles["box-title"]}>
         <span className={styles["stripe-title"]}>Credit Card</span>
         <span className={styles["box-icon"]}>
@@ -144,12 +149,16 @@ function CreditCardBox() {
         <button className={styles["pay-button"]} disabled={!allValid || payState === "loading"} onClick={makePayment}>
           {payState === "loading" ? <span className={styles["pay-spinner"]} /> : "$24.99/mo"}
         </button>
+        <button className={styles["btc-toggle"]} onClick={onSwitch}>
+          <img src={bitcoinLogo} alt="" className={styles["btc-toggle-icon"]} />
+          Pay with Bitcoin instead
+        </button>
       </div>
     </div>
   );
 }
 
-function BitcoinBox() {
+function BitcoinBox({ onSwitch }) {
   const [copied, setCopied] = useState(false);
   const [address, setAddress] = useState("");
 
@@ -160,7 +169,7 @@ function BitcoinBox() {
   }
 
   return (
-    <div className={styles["payment-box"]}>
+    <div className={[styles["payment-box"], styles["btc-box"]].join(" ")}>
       <BinaryRain />
       <div className={styles["box-title"]}>
         <span className={styles["btc-title"]}>Bitcoin</span>
@@ -188,6 +197,9 @@ function BitcoinBox() {
           </div>
         </div>
         <button className={styles["pay-button"]}>Generate Address</button>
+        <button className={styles["btc-toggle"]} onClick={onSwitch}>
+          💳 Pay with card instead
+        </button>
       </div>
     </div>
   );

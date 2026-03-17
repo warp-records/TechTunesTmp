@@ -22,6 +22,7 @@
 }
 
 .payment-root .payment-card {
+  align-self: stretch;
   background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(20px);
   border: 2px solid rgba(255, 255, 255, 0.2);
@@ -67,7 +68,7 @@
   z-index: 0;
 }
 
-.payment-root .payment-box:first-child::before {
+.payment-root .cc-box::before {
   content: "";
   position: absolute;
   inset: -50%;
@@ -90,7 +91,7 @@
   to   { transform: rotate(360deg); }
 }
 
-.payment-root .payment-box:nth-child(2) {
+.payment-root .btc-box {
   background: #422910;
 }
 
@@ -276,7 +277,7 @@
   word-break: break-all;
 }
 
-.payment-root .payment-box:nth-child(2) .pay-button {
+.payment-root .btc-box .pay-button {
   background: linear-gradient(135deg, #c47500, #F7931A);
 }
 
@@ -298,6 +299,31 @@
 .payment-root .pay-button:hover {
   transform: scale(1.03);
   box-shadow: 0 8px 20px var(--shadow-dark);
+}
+
+.payment-root .btc-toggle {
+  margin-top: auto;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.45);
+  font-family: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0 auto;
+  transition: color 0.2s;
+}
+
+.payment-root .btc-toggle:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.payment-root .btc-toggle-icon {
+  width: 16px;
+  height: 16px;
+  opacity: 0.6;
 }
 
 @media (max-width: 900px) {
