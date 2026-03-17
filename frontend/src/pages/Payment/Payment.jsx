@@ -25,7 +25,7 @@ import styles from "./Payment.module.css";
 import Pickbot, { Dialogue } from "../../components/Pickbot";
 import bitcoinLogo from "../../assets/Payment/bitcoin.svg";
 import BinaryRain from "./BinaryRain";
-import { MdQrCode2, MdContentCopy } from "react-icons/md";
+import { MdQrCode2, MdContentCopy, MdCheck } from "react-icons/md";
 
 export default function Payment() {
   return (
@@ -142,6 +142,15 @@ function CreditCardBox() {
 }
 
 function BitcoinBox() {
+  const [copied, setCopied] = useState(false);
+  const [address, setAddress] = useState("1XPTgDRhN8RFnzniWCddobD9iKZatrvH4");
+
+  function handleCopy() {
+    navigator.clipboard.writeText(address);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  }
+
   return (
     <div className={styles["payment-box"]}>
       <BinaryRain />
@@ -154,15 +163,15 @@ function BitcoinBox() {
       <div className={styles["box-content"]}>
         <div className={styles["field"]}>
           <label>Send exactly</label>
-          <div className={styles["mock-input"]}>0.000097 BTC</div>
+          <div className={styles["mock-input"]}>0.000013 BTC</div>
         </div>
         <div className={styles["field"]}>
           <label>To address</label>
           <div className={styles["input-row"]}>
             <div className={[styles["mock-input"], styles["mono"], styles["address-input"]].join(" ")}>
-              <span>bc1qmz7sgj4lym3pdp28m8qm70wj5w6g686p2yum98</span>
-              <button className={styles["copy-button"]}>
-                <MdContentCopy />
+              <span>{address}</span>
+              <button className={styles["copy-button"]} onClick={handleCopy}>
+                {copied ? <MdCheck style={{ color: "rgba(255,255,255,0.4)" }} /> : <MdContentCopy />}
               </button>
             </div>
             <button className={styles["qr-button"]}>
