@@ -285,6 +285,12 @@
   transition: color 0.2s ease;
 }
 
+.date-picker-wrapper :global(.react-calendar__navigation__label:enabled:focus),
+.date-picker-wrapper :global(.react-calendar__navigation__label:active) {
+  outline: none;
+  background-color: transparent;
+}
+
 .date-picker-wrapper :global(.react-calendar__navigation__label:hover) {
   background: linear-gradient(135deg, rgba(212, 158, 251, 0.9), rgba(212, 158, 251, 0.7));
   border-radius: 10px;
@@ -350,14 +356,15 @@
   font-family: inherit;
   padding: 0.45rem 0;
   cursor: pointer;
-  /*transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;*/
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .date-picker-wrapper :global(.react-calendar__tile:hover) {
   background: linear-gradient(135deg, rgba(212, 158, 251, 0.9), rgba(212, 158, 251, 0.7));
   color: #2d1b3d;
-  transform: translateY(-2px);
+  transform: scale(1.15);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  z-index: 1;
 }
 
 .date-picker-wrapper :global(.react-calendar__tile--now) {
