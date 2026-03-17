@@ -2,6 +2,7 @@ import styles from "./Payment.module.css";
 import Pickbot, { Dialogue } from "../../components/Pickbot";
 import bitcoinLogo from "../../assets/Payment/bitcoin.svg";
 import BinaryRain from "./BinaryRain";
+import { MdQrCode2 } from "react-icons/md";
 
 export default function Payment() {
   return (
@@ -26,7 +27,7 @@ export default function Payment() {
                 { label: "Expiry", value: "MM / YY" },
                 { label: "CVC", value: "•••" },
               ]}
-              buttonText="Subscribe — $9.99/mo"
+              buttonText="Subscribe - $24.99/mo"
             />
             <PaymentBox
               title="Bitcoin"
@@ -35,7 +36,7 @@ export default function Payment() {
               label="Pay with Bitcoin"
               fields={[
                 { label: "Send exactly", value: "0.000097 BTC" },
-                { label: "To address", value: "bc1qxy2kgdygjrsqtzq2n0yrf24…", mono: true },
+                { label: "To address", value: "bc1qxy2kgdygjrsqtzq2n0yrf24…", mono: true, qrButton: true },
               ]}
               buttonText="I've Sent Payment"
               bgEffect={<BinaryRain />}
@@ -56,11 +57,18 @@ function PaymentBox({ title, icon, fields, buttonText, titleClassName, bgEffect 
         <span className={styles["box-icon"]}>{icon}</span>
       </div>
       <div className={styles["box-content"]}>
-        {fields.map(({ label: fieldLabel, value, mono }) => (
+        {fields.map(({ label: fieldLabel, value, mono, qrButton }) => (
           <div key={fieldLabel} className={styles["field"]}>
             <label>{fieldLabel}</label>
-            <div className={[styles["mock-input"], mono ? styles["mono"] : ""].join(" ")}>
-              {value}
+            <div className={styles["input-row"]}>
+              <div className={[styles["mock-input"], mono ? styles["mono"] : ""].join(" ")}>
+                {value}
+              </div>
+              {qrButton && (
+                <button className={styles["qr-button"]}>
+                  <MdQrCode2 />
+                </button>
+              )}
             </div>
           </div>
         ))}
