@@ -1,3 +1,4 @@
+import os
 import uuid
 import json
 
@@ -7,9 +8,11 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from database import SessionLocal, init_db, UserDB, SessionDB, AvatarDB
+import stripe
 
 app = FastAPI()
 
+# initialie sql database
 init_db()
 
 
@@ -133,3 +136,27 @@ def get_avatar(user_id: int = Depends(get_current_user), db: Session = Depends(g
 #         raise HTTPException(status_code=401, detail="Unauthorized")
 
 #     return { "username": sessions[token] }
+
+
+# in cents
+stripe.appi_key = os.environ.get("STRIPE_PRIVATE_TEST_KEY")
+SUBSCRIPTION_COST = 2499
+
+class PaymentRequest(BaseModel):
+    payment_id: str
+
+@app.get("api/pay_secret")
+
+# create pay intent
+@app.post("/api/pay", tags=["payment"])
+def get_secret(body: PaymentRequest):
+    intent = stripe.PaymentIntent.create(
+        amount=SUBSCRIPTION_COST,
+        currency="usd",
+        payment_method=body.payment_id,
+        confirm=True,
+    )
+    if intent.status == "succeeded":
+        return {"success": True }
+    else:
+        return {"status_code": 400, "content": "error: Payment failed"}
