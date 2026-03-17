@@ -205,6 +205,44 @@
   transform: none;
 }
 
+.payment-root .address-input {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.payment-root .address-input span {
+  width: 0;
+  flex: 1;
+  overflow-x: auto;
+  white-space: nowrap;
+  cursor: text;
+  user-select: text;
+  scrollbar-width: none;
+}
+
+.payment-root .address-input span::-webkit-scrollbar {
+  display: none;
+}
+
+.payment-root .copy-button {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  padding: 0;
+  flex-shrink: 0;
+  transition: color 0.2s;
+}
+
+.payment-root .copy-button:hover {
+  color: var(--white);
+}
+
 .payment-root .mono {
   font-size: 0.85rem;
   letter-spacing: 0.02em;

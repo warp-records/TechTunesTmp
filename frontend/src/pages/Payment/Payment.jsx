@@ -159,7 +159,12 @@ function BitcoinBox() {
         <div className={styles["field"]}>
           <label>To address</label>
           <div className={styles["input-row"]}>
-            <div className={[styles["mock-input"], styles["mono"]].join(" ")}>&nbsp;</div>
+            <div className={[styles["mock-input"], styles["mono"], styles["address-input"]].join(" ")}>
+              <span>bc1qmz7sgj4lym3pdp28m8qm70wj5w6g686p2yum98</span>
+              <button className={styles["copy-button"]}>
+                <MdContentCopy />
+              </button>
+            </div>
             <button className={styles["qr-button"]}>
               <MdQrCode2 />
             </button>
