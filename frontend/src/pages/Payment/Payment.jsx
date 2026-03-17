@@ -1,5 +1,6 @@
 import { useState } from "react";
 import valid from "card-validator";
+import {loadStripe} from '@stripe/stripe-js'
 
 const cardIcons = import.meta.glob(
   "/node_modules/payment-icons/min/flat/*.svg",
@@ -46,11 +47,49 @@ export default function Payment() {
   );
 }
 
+
+
 function CreditCardBox() {
   const [cardNumber, setCardNumber] = useState("");
   const [expiry, setExpiry] = useState("");
   const [cvc, setCvc] = useState("");
+  const [failedPay, setFailedPay] = useState(false)
   const [touched, setTouched] = useState({ cardNumber: false, expiry: false, cvc: false });
+  
+  const public_test_key = "REMOVED"
+  const secret_key = "REMOVED"
+  
+  async function makePayment() {
+    const stripe = await loadStripe(public_test_key);
+    
+    // goes to stripes servers
+    const { paymentMethod, error } = await stripe.createPaymentMethod({
+      type: 'card',
+      card: {
+        number: cardNumber.replace(/\s/g, ''),
+          exp_month: parseInt(expiry.split(' / ')[0]),
+          exp_year: parseInt(expiry.split(' / ')[1]),
+          cvc: cvc,
+      },
+    })
+    
+    if (error) { 
+      setFailedPay(true)
+      return
+    }
+    
+    const res = await fetch("/api/pay", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ paymentMethodId: paymentMethod.id }),
+    }).then(r => r.json());
+    
+    if (res.success) {
+      alert("Payment succeeded");
+    } else {
+      alert("Payment failed")
+    }
+  }
 
   const cardResult = valid.number(cardNumber);
   const expiryResult = valid.expirationDate(expiry);

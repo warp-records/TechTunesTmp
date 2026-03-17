@@ -145,8 +145,6 @@ SUBSCRIPTION_COST = 2499
 class PaymentRequest(BaseModel):
     payment_id: str
 
-@app.get("api/pay_secret")
-
 # create pay intent
 @app.post("/api/pay", tags=["payment"])
 def get_secret(body: PaymentRequest):
