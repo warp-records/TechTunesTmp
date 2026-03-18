@@ -6,14 +6,34 @@ from dotenv import load_dotenv
 load_dotenv()
 
 import bcrypt
-from fastapi import FastAPI, Request, HTTPException, Depends
+from fastapi import FastAPI, Request, HTTPException, Depends, APIRouter, Header
 from pydantic import BaseModel
+
 from sqlalchemy.orm import Session
-
 from database import SessionLocal, init_db, UserDB, SessionDB, AvatarDB
-import stripe
 
+from datetime import datetime
+import stripe
+from schemas.webhooks import StripeWebhookEvent, StripeEventType
+from routers.webhooks import router as webhook_router
+from routers.subscriptions import router as subscription_router
+from services.subscription_service import (
+    handle_subscription_created,
+    handle_subscription_updated,
+    handle_subscription_deleted,
+    handle_subscription_paused,
+    handle_subscription_resumed,
+    handle_trial_ending,
+    handle_invoice_paid,
+    handle_invoice_payment_failed,
+)
+router = APIRouter(tags=["webhooks"])
+
+# initialize fastapi
 app = FastAPI()
+# for stripe webhooks
+app.include_router(webhook_router)
+app.include_router(subscription_router)
 
 # initialie sql database
 init_db()
@@ -150,10 +170,20 @@ class PaymentRequest(BaseModel):
 
 # create pay intent
 @app.post("/api/pay", tags=["payment"])
-def get_secret(body: PaymentRequest):
+def get_secret(body: PaymentRequest, user_id: int = Depends(), db: Session = Depends(get_db)):
+    db_user = db.query(UserDB).filter(UserDB.id == user_id)
+    
+    if not db_user.stripe_customer_id:
+        customer = stripe.Customer.create()
+        db_user.stripe_customer_id = customer.id
+        db.commit()
+        
+    stripe.PaymentMethod.attach(body.payment_id, customer=db_user.stripe_customer_id)
+    
     intent = stripe.PaymentIntent.create(
         amount=SUBSCRIPTION_COST,
         currency="usd",
+        customer=db_user.stripe_customer_id,
         payment_method=body.payment_id,
         confirm=True,
         automatic_payment_methods={
@@ -165,3 +195,43 @@ def get_secret(body: PaymentRequest):
         return {"success": True }
     else:
         return {"status_code": 400, "content": "error: Payment failed"}
+
+# stripe events
+@router.post("/webhook/stripe")
+async def stripe_webhook(
+        request: Request,
+        # double check that this is correct
+        signature: str = Header(..., alias="Stripe-Signature") ):
+    payload = await request.body()
+    
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, signature, WEBHOOK_SECRET
+        )
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid payload")
+    except stripe.error.SignatureVerificationError: 
+        raise HTTPException(status_code=400, detail="Invalid signature")
+        
+    parsed = StripeWebhookEvent(**event)
+    obj = parsed.data.object
+    
+    match parsed.type:
+        case StripeEventType.INVOICE_PAID:
+            await handle_invoice_paid(obj)
+        case _:
+            pass
+    
+    return {"received": True}
+                
+
+async def handle_invoice(invoice):
+    db = SessionLocal()
+    
+    user = db.query(UserDB).filter(UserDB.stripe_customer_id == invoice.customer).first()
+    # stripe payment periods are unix epoch format
+    dt = datetime.fromtimestamp(invoice.period_end)
+    user.subscription_end = dt
+    db.commit()
+    
+    

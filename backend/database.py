@@ -1,5 +1,5 @@
 
-from sqlalchemy import create_engine, Column, Integer, String, Text, ForeignKey
+from sqlalchemy import create_engine, Column, Integer, String, Text, ForeignKey, DateTime
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 DATABASE_URL = "sqlite:///techtunes.db"
@@ -15,6 +15,8 @@ class UserDB(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String, unique=True, nullable=False)
     password_hash = Column(String, nullable=False)
+    stripe_customer_id = Column(String, nullable=True)
+    subscription_end = Column(DateTime, nullable=True)
     
 class SessionDB(Base):
     __tablename__ = "sessions"
