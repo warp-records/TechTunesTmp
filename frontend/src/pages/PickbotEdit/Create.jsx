@@ -27,7 +27,7 @@ const TORSO_COLORS = [
 export default function PickbotEdit() {
   const [category, setCategory] = useState("")
   const [form, setForm] = useState(0)
-  const [bodyTexture, setBodyTexture] = useState("#FFFFFF")
+  const [bodyTexture, setBodyTexture] = useState(TORSO_COLORS[3].gradient)
   const [activeItems, setActiveItems] = useState({})
   
   const navigate = useNavigate();
@@ -49,24 +49,25 @@ export default function PickbotEdit() {
   return (
     <>
       <ChoiceFrame category={category} setCategory={setCategory} setActiveItems={setActiveItems} setBodyTexture={setBodyTexture} />
-      <div className={styles['mirror']}></div>
-      <div className={styles['light']}></div>
-      <div className={styles['stand']}></div>
+      <div className={styles['dressing-scene']}>
+        <div className={styles['light']}></div>
+        <div className={styles['mirror']}></div>
+        <div className={styles['stand']}></div>
+        <div className={styles['avatar-container']}>
+          <Avatar form={form} activeItems={activeItems} bodyTexture={bodyTexture}
+            onAccessoryDrag={(x, y) => setActiveItems(prev => ({
+              ...prev, accessory: { ...prev.accessory, x, y },
+            }))} />
+          <div className={styles['avatar-slider']}></div>
+        </div>
+        <div className={styles['arrow-back']} onClick={() => { setForm((form - 1 + avatarList.length) % avatarList.length) }}></div>
+        <div className={styles['arrow-forward']} onClick={() => { setForm((form + 1) % avatarList.length) }}></div>
+      </div>
       <div className={styles['action-buttons']}>
-          <button className={styles['save-button']} onClick={saveAvatar}>Save</button>
-        <button className={styles['reset-button']} onClick={() => { setActiveItems({}); setForm(0); setBodyTexture("#FFFFFF"); } }>
+        <button className={styles['save-button']} onClick={saveAvatar}>Save</button>
+        <button className={styles['reset-button']} onClick={() => { setActiveItems({}); setForm(0); setBodyTexture(TORSO_COLORS[3].gradient); } }>
           Reset
         </button>
-      </div>
-      <div className={styles['arrow-back']} onClick={() => { setForm((form - 1 + avatarList.length) % avatarList.length) }}></div>
-      <div className={styles['arrow-forward']} onClick={() => { setForm((form + 1) % avatarList.length) }}></div>
-      <div className={styles['avatar-container']}>
-        <Avatar form={form} activeItems={activeItems} bodyTexture={bodyTexture}
-          onAccessoryDrag={(x, y) => setActiveItems(prev => ({
-            ...prev, accessory: { ...prev.accessory, x, y },
-          }))} />
-        <div className={styles['avatar-slider']}>
-        </div>
       </div>
 
       <div className={styles['floor']}></div>

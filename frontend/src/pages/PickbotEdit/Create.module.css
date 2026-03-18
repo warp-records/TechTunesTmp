@@ -29,11 +29,19 @@
     overflow: visible;
 }
 
-.mirror {
+.dressing-scene {
     position: fixed;
     left: 5%;
-    top: 50%;
-    transform: translateY(-60%);
+    bottom: 50px;
+    width: 700px;
+    height: 750px;
+    z-index: 20;
+}
+
+.mirror {
+    position: absolute;
+    bottom: 150px;
+    left: 5px;
     width: 600px;
     height: 400px;
     background-image: url('../../assets/DressingRoom/Dressing/Mirror.png');
@@ -44,10 +52,9 @@
 }
 
 .light {
-    position: fixed;
-    left: 5%;
-    top: 50%;
-    transform: translateY(-120%);
+    position: absolute;
+    bottom: 325px;
+    left: 10px;
     width: 600px;
     height: 300px;
     background-image: url('../../assets/DressingRoom/Light.png');
@@ -58,10 +65,9 @@
 }
 
 .stand {
-    position: fixed;
-    left: 22%;
-    top: 50%;
-    transform: translateY(15%);
+    position: absolute;
+    bottom: 0;
+    left: 240px;
     width: 200px;
     height: 250px;
     background-image: url('../../assets/DressingRoom/Stand.png');
@@ -72,10 +78,9 @@
 }
 
 .arrow-back {
-    position: fixed;
-    left: 15%;
-    top: 50%;
-    transform: translateY(calc(15% + 30px));
+    position: absolute;
+    bottom: 120px;
+    left: 155px;
     width: 40px;
     height: 40px;
     background-image: url('../../assets/DressingRoom/BackArrow.png');
@@ -87,10 +92,9 @@
 }
 
 .arrow-forward {
-    position: fixed;
-    left: 35%;
-    top: 50%;
-    transform: translateY(calc(15% + 30px));
+    position: absolute;
+    bottom: 120px;
+    left: 450px;
     width: 40px;
     height: 40px;
     background-image: url('../../assets/DressingRoom/ForwardArrow.png');
@@ -102,10 +106,9 @@
 }
 
 .avatar-container {
-    position: fixed;
-    left: calc(22% - 43px);
-    top: 50%;
-    transform: translateY(calc(15% - 240px));
+    position: absolute;
+    bottom: 178px;
+    left: 197px;
     width: 200px;
     height: 300px;
     z-index: 35;
