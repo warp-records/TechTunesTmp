@@ -202,7 +202,7 @@ def get_secret(body: PaymentRequest, user_id: int = Depends(get_current_user), d
         return {"status_code": 400, "content": "error: Payment failed"}
 
 # stripe events
-@router.post("/webhook/stripe")
+@app.post("/webhook/stripe")
 async def stripe_webhook(
         request: Request,
         # double check that this is correct
@@ -218,14 +218,8 @@ async def stripe_webhook(
     except stripe.error.SignatureVerificationError: 
         raise HTTPException(status_code=400, detail="Invalid signature")
         
-    parsed = StripeWebhookEvent(**event)
-    obj = parsed.data.object
-    
-    match parsed.type:
-        case StripeEventType.INVOICE_PAID:
-            await handle_invoice_paid(obj)
-        case _:
-            pass
+    if event["type"] == "charge.succeeded":
+        await handle_invoice(event["data"]["object"])
     
     return {"received": True}
                 
