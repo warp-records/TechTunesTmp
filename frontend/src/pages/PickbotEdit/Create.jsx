@@ -10,6 +10,7 @@ import eyesBtn from '../../assets/DressingRoom/Dressing/Eyes Button.png'
 import mouthBtn from '../../assets/DressingRoom/Dressing/Mouth Button.png'
 import accessoryBtn from '../../assets/DressingRoom/Dressing/AccessoryButton.png'
 import bodyBtn from '../../assets/DressingRoom/Dressing/Body Button.png'
+import padlock from '../../assets/DressingRoom/Dressing/lock.png'
 
 
 const TORSO_COLORS = [
@@ -332,7 +333,9 @@ export function Spinner({ setBodyTexture }) {
               className={styles['texture-cell']}
               style={{ backgroundImage: `url(${url})` }}
               onClick={() => setBodyTexture(name)}
-            />
+            >
+              <img src={padlock} className={styles['texture-padlock']} alt="locked" />
+            </div>
           ))}
         </div>
       )}
