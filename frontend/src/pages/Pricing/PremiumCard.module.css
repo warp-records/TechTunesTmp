@@ -1,5 +1,7 @@
 .card {
-  flex: 1;
+  width: calc(50% - 1rem);
+  flex-shrink: 0;
+  min-width: 0;
   background: linear-gradient(135deg, var(--accent-yellow), #fff3a0);
   color: #2d1b3d;
   border: var(--border-width) solid var(--dark-purple);
@@ -37,6 +39,15 @@
   display: none;
 }
 
+.card.no-banner:hover {
+  transform: none;
+  box-shadow: 0 8px 25px var(--shadow-light);
+}
+
+.card.no-banner:hover .button {
+  transform: none;
+}
+
 .card:hover {
   transform: translateY(-10px);
   box-shadow: 0 15px 40px var(--shadow-dark);
@@ -46,6 +57,10 @@
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 1rem;
+  background: linear-gradient(135deg, #4a0080, #9b1dcd);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .description {

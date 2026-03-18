@@ -34,6 +34,7 @@ import { MdQrCode2, MdContentCopy, MdCheck, MdClose } from "react-icons/md";
 
 export default function Payment() {
   const [showBtcPayment, setShowBtcPayment] = useState(false);
+  const [payState, setPayState] = useState("idle");
 
   return (
     <div className={styles["payment-root"]}>
@@ -48,11 +49,11 @@ export default function Payment() {
               <div className={styles["flip-inner"]}>
                 <div className={styles["flip-front"]}>
                   <Elements stripe={stripePromise} options={{ fonts: [{ cssSrc: "https://fonts.googleapis.com/css2?family=Poppins&display=swap" }] }}>
-                    <CreditCardBox onSwitch={() => setShowBtcPayment(true)} />
+                    <CreditCardBox onSwitch={() => setShowBtcPayment(true)} payState={payState} setPayState={setPayState} />
                   </Elements>
                 </div>
                 <div className={styles["flip-back"]}>
-                  <BitcoinBox onSwitch={() => setShowBtcPayment(false)} />
+                  <BitcoinBox onSwitch={() => setShowBtcPayment(false)} payState={payState} />
                 </div>
               </div>
             </div>
@@ -79,12 +80,11 @@ const ELEMENT_OPTIONS = {
   },
 };
 
-function CreditCardBox({ onSwitch }) {
+function CreditCardBox({ onSwitch, payState, setPayState }) {
   const stripe = useStripe();
   const elements = useElements();
   const [cardBrand, setCardBrand] = useState(null);
   const [fieldState, setFieldState] = useState({ number: {}, expiry: {}, cvc: {} });
-  const [payState, setPayState] = useState("idle"); // idle | loading | success | error
 
   const allValid = fieldState.number.complete && fieldState.expiry.complete && fieldState.cvc.complete;
 
@@ -156,9 +156,9 @@ function CreditCardBox({ onSwitch }) {
           {fieldState.cvc.error && <span className={styles["error-msg"]}>{fieldState.cvc.error.message}</span>}
         </div>
         <span className={payState === "success" ? styles["pay-status-success"] : payState === "error" ? styles["pay-status-error"] : styles["pay-status-hidden"]}>
-          {payState === "success" ? "Payment successful" : payState === "error" ? "Payment failed" : "\u00a0"}
+          {payState === "success" ? "Payment successful :D" : payState === "error" ? "Payment failed" : "\u00a0"}
         </span>
-        <button className={styles["pay-button"]} disabled={!allValid || payState === "loading"} onClick={makePayment}>
+        <button className={styles["pay-button"]} disabled={!allValid || payState === "loading" || payState === "success"} onClick={makePayment}>
           {payState === "loading" ? <span className={styles["pay-spinner"]} /> : "$24.99/mo"}
         </button>
         <button className={styles["btc-toggle"]} onClick={onSwitch}>
@@ -170,7 +170,7 @@ function CreditCardBox({ onSwitch }) {
   );
 }
 
-function BitcoinBox({ onSwitch }) {
+function BitcoinBox({ onSwitch, payState }) {
   const [copied, setCopied] = useState(false);
   const [address, setAddress] = useState("");
 
@@ -208,7 +208,7 @@ function BitcoinBox({ onSwitch }) {
             </button>
           </div>
         </div>
-        <button className={styles["pay-button"]}>Generate Address</button>
+        <button className={styles["pay-button"]} disabled={payState === "loading" || payState === "success"}>Generate Address</button>
         <button className={styles["btc-toggle"]} onClick={onSwitch}>
           💳 Pay with card instead
         </button>

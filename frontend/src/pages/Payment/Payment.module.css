@@ -52,7 +52,8 @@
 }
 
 .payment-root .flip-container {
-  flex: 1;
+  width: calc(50% - 1rem);
+  flex-shrink: 0;
   perspective: 1400px;
 }
 
