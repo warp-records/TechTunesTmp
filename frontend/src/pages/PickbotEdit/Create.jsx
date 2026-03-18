@@ -305,36 +305,36 @@ export function Spinner({ setBodyTexture }) {
 
   return (
     <div className={styles['body-options']}>
-      <div className={styles['color-wheel-container']}>
-        <div
-          ref={wheelRef}
-          className={[styles['color-wheel'], isDragging ? styles['dragging'] : ''].filter(Boolean).join(' ')}
-          style={{ transform: `rotate(${rotation}deg)` }}
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-          onPointerCancel={handlePointerUp}
-        ></div>
-        <div className={[styles['wheel-pointer'], selectedColor ? styles[selectedColor.glowClass] : ''].filter(Boolean).join(' ')}
-             style={selectedColor ? { borderTopColor: selectedColor.hex } : {}}></div>
-      </div>
-      <div className={styles['body-right-col']}>
+      <div className={styles['body-left-col']}>
         <div className={[styles['spin-button'], spinning ? styles['disabled'] : ''].filter(Boolean).join(' ')} onClick={spin}>
           {spinning ? 'SPINNING...' : 'SPIN'}
         </div>
-        {Object.entries(bodyTextureAssets).length > 0 && (
-          <div className={styles['texture-grid']}>
-            {Object.entries(bodyTextureAssets).map(([name, url]) => (
-              <div
-                key={name}
-                className={styles['texture-cell']}
-                style={{ backgroundImage: `url(${url})` }}
-                onClick={() => setBodyTexture(name)}
-              />
-            ))}
-          </div>
-        )}
+        <div className={styles['color-wheel-container']}>
+          <div
+            ref={wheelRef}
+            className={[styles['color-wheel'], isDragging ? styles['dragging'] : ''].filter(Boolean).join(' ')}
+            style={{ transform: `rotate(${rotation}deg)` }}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={handlePointerUp}
+          ></div>
+          <div className={[styles['wheel-pointer'], selectedColor ? styles[selectedColor.glowClass] : ''].filter(Boolean).join(' ')}
+               style={selectedColor ? { borderTopColor: selectedColor.hex } : {}}></div>
+        </div>
       </div>
+      {Object.entries(bodyTextureAssets).length > 0 && (
+        <div className={styles['texture-grid']}>
+          {Object.entries(bodyTextureAssets).map(([name, url]) => (
+            <div
+              key={name}
+              className={styles['texture-cell']}
+              style={{ backgroundImage: `url(${url})` }}
+              onClick={() => setBodyTexture(name)}
+            />
+          ))}
+        </div>
+      )}
     </div>
   )
 }
