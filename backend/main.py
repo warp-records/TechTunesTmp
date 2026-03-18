@@ -154,7 +154,14 @@ def get_avatar(user_id: int = Depends(get_current_user), db: Session = Depends(g
             "activeItems": json.loads(db_avatar.active_items),
         }
     }
-    
+
+@app.get("/api/check-premium")
+def check_premium(user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
+    user_db = db.query(UserDB).filter(UserDB.id == user_id).first()
+    subscription_end = user_db.subscription_end
+    is_premium = subscription_end and subscription_end > datetime.utcnow()
+    return {"is_premium": bool(is_premium)}
+
 
 # @app.get("/api/profile")
 # def profileData(token: str):

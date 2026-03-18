@@ -4,6 +4,7 @@ import { Route, Link, useNavigate } from 'react-router-dom'
 
 import Avatar from "../components/Avatar"
 import styles from './Userpage.module.css'
+import premiumImg from '../assets/Payment/premium.png'
 
 const suggestedSongs = [
   { title: "Get Got", subtitle: "Death Grips", stars: 5, },
@@ -41,6 +42,7 @@ const genres = [
 
 export default function Userpage() {
   let [username, setUsername] = useState("");
+  let [isPremium, setIsPremium] = useState(false)
   
   const friends = [
     { "name": "Alexa", "online": true, },
@@ -79,7 +81,22 @@ export default function Userpage() {
         setAvatarData(data.avatar);
       }
     }
+
+    async function checkPremium() {
+      const res = await fetch("/api/check-premium", {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        }
+      })
+      if (res.ok) {
+        const data = await res.json();
+        setIsPremium(data.is_premium)
+      }
+    }
+
     getAvatar();
+    checkPremium();
     
     setUsername(localStorage.getItem("username"));
   }, []);
@@ -115,9 +132,10 @@ export default function Userpage() {
     <section id="avatar" aria-labelledby="avatar-title">
         <div className={styles['avatar-welcome']}>
           <h2 id="avatar-title" className={styles['avatar-welcome-title']}>Welcome to TuneVerse</h2>
-          <div className={styles['pickbot-speech-bubble']}>
-              Hello, <span id="username-display">{username}</span>!
-                </div>
+          <div className={[styles['pickbot-speech-bubble'], isPremium ? styles['pickbot-speech-bubble-premium'] : ''].join(' ')}>
+            <span>Hello, <span id="username-display">{username}</span>!</span>
+            {isPremium && <img src={premiumImg} alt="Premium" />}
+          </div>
                 
               <div className={styles['userpage-avatar']}>
                 {avatarData && <Avatar form={avatarData["form"]} activeItems={avatarData["activeItems"]} bodyTexture={avatarData["bodyTexture"]} />}
