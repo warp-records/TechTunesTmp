@@ -215,7 +215,7 @@ async def stripe_webhook(
     except stripe.error.SignatureVerificationError: 
         raise HTTPException(status_code=400, detail="Invalid signature")
         
-    if event["type"] == "charge.succeeded":
+    if event["type"] == "invoice.finalized":
         await handle_invoice(event["data"]["object"])
     
     return {"received": True}
@@ -224,9 +224,9 @@ async def stripe_webhook(
 async def handle_invoice(invoice):
     db = SessionLocal()
     
-    user = db.query(UserDB).filter(UserDB.stripe_customer_id == invoice.customer).first()
+    user = db.query(UserDB).filter(UserDB.stripe_customer_id == invoice["customer"]).first()
     # stripe payment periods are unix epoch format
-    dt = datetime.fromtimestamp(invoice.period_end)
+    dt = datetime.fromtimestamp(invoice["lines"]["data"][0]["period"]["end"])
     user.subscription_end = dt
     db.commit()
     
