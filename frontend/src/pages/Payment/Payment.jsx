@@ -29,6 +29,7 @@ import styles from "./Payment.module.css";
 import Pickbot, { Dialogue } from "../../components/Pickbot";
 import bitcoinLogo from "../../assets/Payment/bitcoin.svg";
 import BinaryRain from "./BinaryRain";
+import PremiumCard from "../Pricing/PremiumCard";
 import { MdQrCode2, MdContentCopy, MdCheck, MdClose } from "react-icons/md";
 
 export default function Payment() {
@@ -55,6 +56,7 @@ export default function Payment() {
                 </div>
               </div>
             </div>
+            <PremiumCard />
           </div>
         </div>
       </main>
