@@ -506,14 +506,15 @@
     border: 3px solid #000;
     position: relative;
     background: conic-gradient(
-    #FFFF00 0deg 45deg,
-    #008B8B 45deg 90deg,
-    #8A2BE2 90deg 135deg,
-    #FFFFFF 135deg 180deg,
-    #FF0000 180deg 225deg,
-    #32CD32 225deg 270deg,
-    #0000FF 270deg 315deg,
-    #FF8C00 315deg 360deg
+      #FFFF00 0deg 40deg,
+      #008B8B 40deg 80deg,
+      #8A2BE2 80deg 120deg,
+      #FFFFFF 120deg 160deg,
+      #FF0000 160deg 200deg,
+      #32CD32 200deg 240deg,
+      #0000FF 240deg 280deg,
+      #FF8C00 280deg 320deg,
+      #FF69B4 320deg 360deg
     );
     transition: transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     cursor: grab;
@@ -550,6 +551,7 @@
 .wheel-pointer.glow-blue { filter: drop-shadow(0 0 20px rgba(0, 0, 255, 1)) drop-shadow(0 0 30px rgba(0, 0, 255, 0.8)); }
 .wheel-pointer.glow-yellow { filter: drop-shadow(0 0 20px rgba(255, 255, 0, 1)) drop-shadow(0 0 30px rgba(255, 255, 0, 0.8)); }
 .wheel-pointer.glow-teal { filter: drop-shadow(0 0 20px rgba(0, 139, 139, 1)) drop-shadow(0 0 30px rgba(0, 139, 139, 0.8)); }
+.wheel-pointer.glow-pink { filter: drop-shadow(0 0 20px rgba(255, 105, 180, 1)) drop-shadow(0 0 30px rgba(255, 20, 147, 0.8)); }
 
 .spin-button {
     background: linear-gradient(135deg, #8A2BE2, #4169E1);

@@ -13,14 +13,15 @@ import bodyBtn from '../../assets/DressingRoom/Dressing/Body Button.png'
 
 
 const TORSO_COLORS = [
-  { name: 'yellow', hex: '#FFFF00', glowClass: 'glow-yellow' },
-  { name: 'teal', hex: '#008B8B', glowClass: 'glow-teal' },
-  { name: 'purple', hex: '#8A2BE2', glowClass: 'glow-purple' },
-  { name: 'white', hex: '#FFFFFF', glowClass: 'glow-white' },
-  { name: 'red', hex: '#FF0000', glowClass: 'glow-red' },
-  { name: 'green', hex: '#32CD32', glowClass: 'glow-green' },
-  { name: 'blue', hex: '#0000FF', glowClass: 'glow-blue' },
-  { name: 'orange', hex: '#FF8C00', glowClass: 'glow-orange' },
+  { name: 'yellow', hex: '#FFD700', gradient: 'linear-gradient(135deg, #FFFF66, #FFD000)', glowClass: 'glow-yellow' },
+  { name: 'teal', hex: '#008B8B', gradient: 'linear-gradient(135deg, #00FFFF, #005555)', glowClass: 'glow-teal' },
+  { name: 'purple', hex: '#8A2BE2', gradient: 'linear-gradient(135deg, #DA70D6, #2E0854)', glowClass: 'glow-purple' },
+  { name: 'white', hex: '#D0D0D0', gradient: 'linear-gradient(135deg, #FFFFFF 50%, #A0C4FF)', glowClass: 'glow-white' },
+  { name: 'red', hex: '#FF2200', gradient: 'linear-gradient(135deg, #FF6666, #8B0000)', glowClass: 'glow-red' },
+  { name: 'green', hex: '#32CD32', gradient: 'linear-gradient(135deg, #90EE90, #006400)', glowClass: 'glow-green' },
+  { name: 'blue', hex: '#4169E1', gradient: 'linear-gradient(135deg, #6495ED, #0000CD)', glowClass: 'glow-blue' },
+  { name: 'orange', hex: '#FF8C00', gradient: 'linear-gradient(135deg, #FFB300, #FF6600)', glowClass: 'glow-orange' },
+  { name: 'pink', hex: '#FF69B4', gradient: 'linear-gradient(135deg, #FFB6C1, #FF1493)', glowClass: 'glow-pink' },
 ]
 
 export default function PickbotEdit() {
@@ -192,7 +193,7 @@ export function Spinner({ setBodyTexture }) {
     (rotationValue) => {
       const color = getColorForRotation(rotationValue)
       setSelectedColor(color)
-      setBodyTexture(color.hex)
+      setBodyTexture(color.gradient)
     },
     [getColorForRotation, setBodyTexture]
   )

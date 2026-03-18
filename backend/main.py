@@ -212,6 +212,7 @@ async def stripe_webhook(
         # double check that this is correct
         signature: str = Header(..., alias="Stripe-Signature") ):
     payload = await request.body()
+    print(payload)
     
     try:
         event = stripe.Webhook.construct_event(
