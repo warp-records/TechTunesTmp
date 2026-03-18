@@ -195,6 +195,7 @@ def create_subscription(body: PaymentRequest, user_id: int = Depends(get_current
         expand=["latest_invoice"],
     )
 
+    print(subscription.latest_invoice.ConfirmationSecret)
     return {"client_secret": subscription.latest_invoice.ConfirmationSecret}
 
 # stripe events
