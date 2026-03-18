@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import confetti from "canvas-confetti";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, CardNumberElement, CardExpiryElement, CardCvcElement, useStripe, useElements } from "@stripe/react-stripe-js";
 
@@ -35,14 +36,35 @@ import { MdQrCode2, MdContentCopy, MdCheck, MdClose } from "react-icons/md";
 export default function Payment() {
   const [showBtcPayment, setShowBtcPayment] = useState(false);
   const [payState, setPayState] = useState("idle");
+  
+  // make sure the confetti displays on top of everything else
+  const canvasRef = useRef(null);
+  const confettiInstance = useRef(null);
+
+  // fire confetti on successful purchase
+  useEffect(() => {
+    if (payState !== "success" || !canvasRef.current) return;
+    if (!confettiInstance.current) {
+      confettiInstance.current = confetti.create(canvasRef.current, { resize: true });
+    }
+    const fire = (origin, angle) => confettiInstance.current({
+      particleCount: 80,
+      angle,
+      spread: 100,
+      origin,
+    });
+    fire({ x: 0, y: 0.6 }, 60);
+    fire({ x: 1, y: 0.6 }, 120);
+  }, [payState]);
 
   return (
     <div className={styles["payment-root"]}>
+      <canvas ref={canvasRef} className={styles["confetti-canvas"]} />
       <main className={styles["main-container"]}>
         <div className={styles["payment-card"]}>
           <div className={styles["header-section"]}>
             <Pickbot />
-            <Dialogue text={"You're one step away from unlocking everything!"} />
+            <Dialogue text={payState === "success" ? "Thank you for purchasing! Enjoy your premium!" : "You're one step away from unlocking everything!"} />
           </div>
           <div className={styles["boxes-container"]}>
             <div className={[styles["flip-container"], showBtcPayment ? styles["flipped"] : ""].join(" ")}>
@@ -57,7 +79,7 @@ export default function Payment() {
                 </div>
               </div>
             </div>
-            <PremiumCard />
+            <PremiumCard greenList={payState === "success"} />
           </div>
         </div>
       </main>
@@ -85,6 +107,7 @@ function CreditCardBox({ onSwitch, payState, setPayState }) {
   const elements = useElements();
   const [cardBrand, setCardBrand] = useState(null);
   const [fieldState, setFieldState] = useState({ number: {}, expiry: {}, cvc: {} });
+
 
   const allValid = fieldState.number.complete && fieldState.expiry.complete && fieldState.cvc.complete;
 

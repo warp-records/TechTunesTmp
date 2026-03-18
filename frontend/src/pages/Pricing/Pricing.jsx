@@ -41,6 +41,7 @@ export default function Pricing() {
                 'Add & Battle your friends!'
               ]}
               isPremium={true}
+              routeToPay={true}
             />
           </div>
         </div>
@@ -49,13 +50,14 @@ export default function Pricing() {
   )
 }
 
-export function PlanCard({ title, desc, features, startText, isPremium }) {
-  
+export function PlanCard({ title, desc, features, startText, isPremium, routeToPay }) {
+
   const list = features.map((feature, idx) => <li key={idx}>{feature}</li>)
-  
+  const destination = isPremium && routeToPay ? '/payment' : '/account_create'
+
   return (
     <>
-      
+
       <div className={styles['pricing-options']}>
         <div className={[styles['plan-card'], isPremium ? styles['premium-card'] : ''].filter(Boolean).join(' ')}>
           <div className={styles['plan-title']}>{title}</div>
@@ -63,7 +65,7 @@ export function PlanCard({ title, desc, features, startText, isPremium }) {
           <ul className={styles['plan-features']}>
             {list}
           </ul>
-          <Link to="/account_create">
+          <Link to={destination}>
             <button className={styles['plan-button']}>
               {startText}
             </button>

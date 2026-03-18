@@ -1,14 +1,14 @@
 import { Link } from 'react-router-dom';
 import styles from './PremiumCard.module.css';
 
-export default function PremiumCard({ onPricingPage = false }) {
+export default function PremiumCard({ onPricingPage = false, greenList = false }) {
   return (
     <div className={[styles.card, onPricingPage ? "" : styles["no-banner"]].join(" ")}>
       <div className={styles.title}>Premium</div>
       <div className={styles.description}>
         Everything you need plus exclusive features and content
       </div>
-      <ul className={styles.features}>
+      <ul className={[styles.features, greenList ? styles["green-list"] : ""].join(" ")}>
         <li>All premium lessons</li>
         <li>Complete song library</li>
         <li>Personal chatbot</li>

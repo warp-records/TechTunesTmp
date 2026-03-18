@@ -4,7 +4,7 @@
   min-width: 0;
   background: linear-gradient(135deg, var(--accent-yellow), #fff3a0);
   color: #2d1b3d;
-  border: var(--border-width) solid var(--dark-purple);
+  border: none;
   border-radius: var(--border-radius);
   padding: 2.5rem 2rem;
   text-align: center;
@@ -13,7 +13,7 @@
   position: relative;
   overflow: hidden;
   backdrop-filter: blur(10px);
-  box-shadow: 0 8px 25px var(--shadow-light);
+  box-shadow: 0 8px 25px var(--shadow-light), 0 0 20px rgba(255, 210, 0, 0.35), 0 0 45px rgba(255, 180, 0, 0.15);
   animation: slideInUp 0.6s ease both;
   display: flex;
   flex-direction: column;
@@ -41,7 +41,7 @@
 
 .card.no-banner:hover {
   transform: none;
-  box-shadow: 0 8px 25px var(--shadow-light);
+  box-shadow: 0 8px 25px var(--shadow-light), 0 0 20px rgba(255, 210, 0, 0.35), 0 0 45px rgba(255, 180, 0, 0.15);
 }
 
 .card.no-banner:hover .button {
@@ -50,7 +50,7 @@
 
 .card:hover {
   transform: translateY(-10px);
-  box-shadow: 0 15px 40px var(--shadow-dark);
+  box-shadow: 0 15px 40px var(--shadow-dark), 0 0 30px rgba(255, 210, 0, 0.5), 0 0 60px rgba(255, 180, 0, 0.25);
 }
 
 .title {
@@ -90,6 +90,11 @@
   font-weight: bold;
   margin-right: 0.5rem;
   font-size: 1.2rem;
+  transition: color 0.3s ease;
+}
+
+.green-list li::before {
+  color: #22c55e;
 }
 
 .button {
