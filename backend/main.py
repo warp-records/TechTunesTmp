@@ -167,39 +167,35 @@ def get_avatar(user_id: int = Depends(get_current_user), db: Session = Depends(g
 # in cents
 stripe.api_key = os.environ.get("STRIPE_PRIVATE_TEST_KEY")
 WEBHOOK_SECRET = os.environ.get("WEBHOOK_SECRET")
-SUBSCRIPTION_COST = 2499
+STRIPE_PRICE_ID = os.environ.get("STRIPE_PRICE_ID")
 
 class PaymentRequest(BaseModel):
     payment_id: str
 
-# create pay intent
 @app.post("/api/pay", tags=["payment"])
-def get_secret(body: PaymentRequest, user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
+def create_subscription(body: PaymentRequest, user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
     db_user = db.query(UserDB).filter(UserDB.id == user_id).first()
-    
+
     if not db_user.stripe_customer_id:
         customer = stripe.Customer.create()
         db_user.stripe_customer_id = customer.id
         db.commit()
-        
-    # stripe.PaymentMethod.attach(body.payment_id, customer=db_user.stripe_customer_id)
-    
-    intent = stripe.PaymentIntent.create(
-        amount=SUBSCRIPTION_COST,
-        currency="usd",
-        # customer=db_user.stripe_customer_id,
-        payment_method=body.payment_id,
-        confirm=True,
-        automatic_payment_methods={
-            "enabled": True,
-            "allow_redirects": "never"
+
+    stripe.PaymentMethod.attach(body.payment_id, customer=db_user.stripe_customer_id)
+    stripe.Customer.modify(db_user.stripe_customer_id, invoice_settings={"default_payment_method": body.payment_id})
+
+    subscription = stripe.Subscription.create(
+        customer=db_user.stripe_customer_id,
+        items=[{"price": STRIPE_PRICE_ID}],
+        payment_behavior="default_incomplete",
+        payment_settings={
+            "payment_method_types": ["card"],
+            "save_default_payment_method": "on_subscription",
         },
+        expand=["latest_invoice"],
     )
-    
-    if intent.status == "succeeded":
-        return {"success": True }
-    else:
-        return {"status_code": 400, "content": "error: Payment failed"}
+
+    return {"client_secret": subscription.latest_invoice.ConfirmationSecret}
 
 # stripe events
 @app.post("/webhook/stripe")

@@ -122,7 +122,21 @@ function CreditCardBox({ onSwitch, payState, setPayState }) {
 
     try {
       const data = await res.json();
-      setPayState(data.success ? "success" : "error");
+      console.log(data)
+      if (!data.client_secret) { setPayState("error"); return; }
+
+      const { paymentIntent, error: confirmError } = await stripe.confirmCardPayment(data.client_secret, {
+        payment_method: paymentMethod.id,
+      });
+      
+      console.log(paymentIntent)
+      console.log(confirmError)
+
+      if (confirmError || paymentIntent.status !== "succeeded") {
+        setPayState("error");
+      } else {
+        setPayState("success");
+      }
     } catch {
       setPayState("error");
     }
