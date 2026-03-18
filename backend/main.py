@@ -1,6 +1,7 @@
 import os
 import uuid
 import json
+from enum import Enum
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -14,26 +15,14 @@ from database import SessionLocal, init_db, UserDB, SessionDB, AvatarDB
 
 from datetime import datetime
 import stripe
-from schemas.webhooks import StripeWebhookEvent, StripeEventType
-from routers.webhooks import router as webhook_router
-from routers.subscriptions import router as subscription_router
-from services.subscription_service import (
-    handle_subscription_created,
-    handle_subscription_updated,
-    handle_subscription_deleted,
-    handle_subscription_paused,
-    handle_subscription_resumed,
-    handle_trial_ending,
-    handle_invoice_paid,
-    handle_invoice_payment_failed,
-)
+
 router = APIRouter(tags=["webhooks"])
 
 # initialize fastapi
 app = FastAPI()
 # for stripe webhooks
-app.include_router(webhook_router)
-app.include_router(subscription_router)
+# app.include_router(webhook_router)
+# app.include_router(subscription_router)
 
 # initialie sql database
 init_db()
@@ -47,6 +36,20 @@ class Avatar(BaseModel):
     form: int
     bodyTexture: str
     activeItems: dict
+
+
+# for webhooks
+class StripeEventType(str, Enum):
+    INVOICE_PAID           = "invoice.paid"
+    SUB_DELETED            = "customer.subscription.deleted"
+
+class StripeEventData(BaseModel):
+    object: dict[str, Any]
+
+class StripeWebhookEvent(BaseModel):
+    id: str
+    type: str
+    data: StripeEventData
 
 def get_db():
     db = SessionLocal()
@@ -163,6 +166,7 @@ def get_avatar(user_id: int = Depends(get_current_user), db: Session = Depends(g
 
 # in cents
 stripe.api_key = os.environ.get("STRIPE_PRIVATE_TEST_KEY")
+WEBHOOK_SECRET = os.environ.get("WEBHOOK_SECRET")
 SUBSCRIPTION_COST = 2499
 
 class PaymentRequest(BaseModel):
@@ -170,20 +174,20 @@ class PaymentRequest(BaseModel):
 
 # create pay intent
 @app.post("/api/pay", tags=["payment"])
-def get_secret(body: PaymentRequest, user_id: int = Depends(), db: Session = Depends(get_db)):
-    db_user = db.query(UserDB).filter(UserDB.id == user_id)
+def get_secret(body: PaymentRequest, user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
+    db_user = db.query(UserDB).filter(UserDB.id == user_id).first()
     
     if not db_user.stripe_customer_id:
         customer = stripe.Customer.create()
         db_user.stripe_customer_id = customer.id
         db.commit()
         
-    stripe.PaymentMethod.attach(body.payment_id, customer=db_user.stripe_customer_id)
+    # stripe.PaymentMethod.attach(body.payment_id, customer=db_user.stripe_customer_id)
     
     intent = stripe.PaymentIntent.create(
         amount=SUBSCRIPTION_COST,
         currency="usd",
-        customer=db_user.stripe_customer_id,
+        # customer=db_user.stripe_customer_id,
         payment_method=body.payment_id,
         confirm=True,
         automatic_payment_methods={
@@ -191,6 +195,7 @@ def get_secret(body: PaymentRequest, user_id: int = Depends(), db: Session = Dep
             "allow_redirects": "never"
         },
     )
+    
     if intent.status == "succeeded":
         return {"success": True }
     else:

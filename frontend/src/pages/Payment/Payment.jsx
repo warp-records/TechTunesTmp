@@ -94,6 +94,9 @@ function CreditCardBox({ onSwitch, payState, setPayState }) {
   }
 
   async function makePayment() {
+    // live private key for receiving payments
+    const STRIKE_PRIVATE_KEY = "REMOVED";
+    
     if (!stripe || !elements) return;
     setPayState("loading");
 
@@ -107,9 +110,13 @@ function CreditCardBox({ onSwitch, payState, setPayState }) {
       return;
     }
 
+    const token = localStorage.getItem("token")
     const res = await fetch("/api/pay", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token,
+      },
       body: JSON.stringify({ payment_id: paymentMethod.id }),
     });
 
