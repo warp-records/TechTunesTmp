@@ -83,7 +83,7 @@ def me(user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
         return {
             # either the user wasn't underage
             # or there exists a payment which verifies them
-            "basic_access": (not user.underage) or user.stripe_customer_id is not None,
+            "needs_verification": user.underage and user.stripe_customer_id is None,
             "admin": user.admin,
         }
     else:

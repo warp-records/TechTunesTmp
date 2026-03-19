@@ -30,24 +30,29 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LogoLink />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/start" element={<Start />} />
-        <Route path="/onboard" element={<Onboard />} />
-        <Route path="/pricing" element={<Pricing />} />
-        <Route path="/account_create" element={<AccountCreate />} />
+        {/* only accessible if not logged in */}
+        <Route element={<ProtectedRoute isAllowed={user => !user} redirectPath="/userpage" />}>
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/start" element={<Start />} />
+          <Route path="/onboard" element={<Onboard />} />
+          <Route path="/pricing" element={<Pricing />} />
+          <Route path="/account_create" element={<AccountCreate />} />
+        </Route>
         
         {/* require account to be registered and have parents permission if necessary*/}
-        <Route element={<ProtectedRoute isAllowed={user => user?.basic_access} />}>
-          <Route path="/pickbot_edit" element={<PickbotEdit />} />
-          <Route path="/userpage" element={<Userpage />} />
-          <Route path="/homepage" element={<Homepage />} />
-          <Route path="/guitar_tuner" element={<GuitarTuner />} />
-          <Route path="/impact" element={<Impact />} />
-          <Route path="/island_select" element={<IslandSelect />} />
-          <Route path="/guitar_island" element={<GuitarIsland />} />
-          <Route path={LESSON_ISLAND_ROUTE_PATTERN} element={<LessonIslandPage />} />
-          <Route path="/song_search" element={<SongSearch />} />
-          <Route path="/lesson" element={<Lesson />} />
+        <Route element={<ProtectedRoute isAllowed={user => !!user} />}>
+          <Route element={<ProtectedRoute isAllowed={user => !user.needs_verification} redirectPath="/parent_permission" />}>
+            <Route path="/pickbot_edit" element={<PickbotEdit />} />
+            <Route path="/userpage" element={<Userpage />} />
+            <Route path="/homepage" element={<Homepage />} />
+            <Route path="/guitar_tuner" element={<GuitarTuner />} />
+            <Route path="/impact" element={<Impact />} />
+            <Route path="/island_select" element={<IslandSelect />} />
+            <Route path="/guitar_island" element={<GuitarIsland />} />
+            <Route path={LESSON_ISLAND_ROUTE_PATTERN} element={<LessonIslandPage />} />
+            <Route path="/song_search" element={<SongSearch />} />
+            <Route path="/lesson" element={<Lesson />} />
+          </Route>
         </Route>
         
         <Route path="/login" element={<Login />} />
