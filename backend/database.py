@@ -17,6 +17,7 @@ class UserDB(Base):
     password_hash = Column(String, nullable=False)
     stripe_customer_id = Column(String, nullable=True)
     subscription_end = Column(DateTime, nullable=True)
+    auto_donate = Column(String, nullable=True)
     
 class SessionDB(Base):
     __tablename__ = "sessions"

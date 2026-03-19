@@ -176,6 +176,28 @@ def check_premium(user_id: int = Depends(get_current_user), db: Session = Depend
     return {"is_premium": is_premium(user_id, db)}
 
 
+class AutoDonateRequest(BaseModel):
+    charity: str
+
+@app.post("/api/set-auto-donate")
+def set_auto_donate(body: AutoDonateRequest, user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
+    if not is_premium(user_id, db):
+        raise HTTPException(status_code=403, detail="Premium required")
+        
+    db_user = db.query(UserDB).filter(UserDB.id == user_id).first()
+    db_user.auto_donate = body.charity
+    db.commit()
+    return {"auto_donate": db_user.auto_donate}
+
+@app.get("/api/get-auto-donate")
+def get_auto_donate(user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
+    if not is_premium(user_id, db):
+        raise HTTPException(status_code=403, detail="Premium required")
+        
+    db_user = db.query(UserDB).filter(UserDB.id == user_id).first()
+    return {"auto_donate": db_user.auto_donate}
+
+
 # @app.get("/api/profile")
 # def profileData(token: str):
 #     if token not in sessions:

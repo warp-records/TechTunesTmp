@@ -277,15 +277,26 @@
   outline-offset: 2px;
 }
 
-.impact-root .action-btn-selected {
+.impact-root .action-btn-donate {
   border-color: #6c3bff99;
-  background: linear-gradient(180deg, rgba(108, 59, 255, 0.18), rgba(108, 59, 255, 0.08));
+  background: linear-gradient(180deg, rgba(108, 59, 255, 0.25), rgba(108, 59, 255, 0.12));
   color: #c4aaff;
 }
 
-.impact-root .program-card-selected {
-  border-color: #6c3bff66;
-  box-shadow: var(--shadow), 0 0 24px rgba(108, 59, 255, 0.35);
+.impact-root .action-btn-donate:hover {
+  border-color: #6c3bffcc;
+  box-shadow: 0 6px 16px rgba(108, 59, 255, 0.35);
+}
+
+.impact-root .action-btn-selected {
+  border-color: #22c55e99;
+  background: linear-gradient(180deg, rgba(34, 197, 94, 0.22), rgba(34, 197, 94, 0.10));
+  color: #86efac;
+}
+
+.impact-root .action-btn-selected:hover {
+  border-color: #22c55ecc;
+  box-shadow: 0 6px 16px rgba(34, 197, 94, 0.3);
 }
 
 /* ================= GLOWING HEADER ================= */

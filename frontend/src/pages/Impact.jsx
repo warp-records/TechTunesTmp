@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import styles from './Impact.module.css'
 import HomeButton from '../components/HomeButton'
@@ -10,6 +11,28 @@ export default function Impact() {
   const [openDropdown, setOpenDropdown] = useState(null)
   const [selectedOrg, setSelectedOrg] = useState(null)
   const filtersRef = useRef(null)
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (!token) return
+    fetch('/api/get-auto-donate', { headers: { 'Authorization': 'Bearer ' + token } })
+      .then(res => res.ok ? res.json() : null)
+      .then(data => { if (data?.auto_donate) setSelectedOrg(data.auto_donate) })
+  }, [])
+
+  function selectOrg(name) {
+    const token = localStorage.getItem('token')
+    if (!token) { navigate('/payment'); return }
+    fetch('/api/set-auto-donate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ charity: name }),
+    }).then(res => {
+      if (res.status === 403) { navigate('/payment'); return }
+      setSelectedOrg(name)
+    })
+  }
 
   const cityOptions = Object.keys(CITY_REGIONS)
   const regionOptions = CITY_REGIONS[selectedCity] ?? []
@@ -103,7 +126,7 @@ export default function Impact() {
             desc={program.desc}
             actions={program.actions}
             isSelected={selectedOrg === program.title}
-            onSelectOrg={() => setSelectedOrg(program.title)}
+            onSelectOrg={() => selectOrg(program.title)}
           />
         ))}
       </main>
@@ -213,7 +236,7 @@ export function ProgramCard({ title, desc, actions, isSelected, onSelectOrg }) {
           )
         })}
         <button
-          className={[styles['action-btn'], isSelected ? styles['action-btn-selected'] : ''].filter(Boolean).join(' ')}
+          className={[styles['action-btn'], isSelected ? styles['action-btn-selected'] : styles['action-btn-donate']].join(' ')}
           type="button"
           onClick={onSelectOrg}
         >
