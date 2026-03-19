@@ -124,7 +124,13 @@ def login(user: User, db: Session = Depends(get_db)):
 
 @app.post("/api/save-avatar/", tags=["avatar"])
 def save_avatar(avatar: Avatar, user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
+    if not avatar.bodyTexture.isnumeric() and not is_premium(user_id, db):
+        raise HTTPException(status_code=403, detail="Premium required to use textures")
+        
     db_avatar = db.query(AvatarDB).filter(AvatarDB.user_id == user_id).first()
+    # solid colors use a numeric index, textures use a filename string
+    user_db = db.query(UserDB).filter(UserDB.id == user_id).first()
+
 
     if db_avatar:
         db_avatar.form = avatar.form
@@ -155,12 +161,14 @@ def get_avatar(user_id: int = Depends(get_current_user), db: Session = Depends(g
         }
     }
 
-@app.get("/api/check-premium")
-def check_premium(user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
+def is_premium(user_id: int, db: Session):
     user_db = db.query(UserDB).filter(UserDB.id == user_id).first()
     subscription_end = user_db.subscription_end
-    is_premium = subscription_end and subscription_end > datetime.utcnow()
-    return {"is_premium": bool(is_premium)}
+    return subscription_end and subscription_end > datetime.utcnow()
+
+@app.get("/api/check-premium")
+def check_premium(user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
+    return {"is_premium": is_premium(user_id, db)}
 
 
 # @app.get("/api/profile")

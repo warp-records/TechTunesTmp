@@ -30,8 +30,17 @@ export default function PickbotEdit() {
   const [form, setForm] = useState(0)
   const [bodyTexture, setBodyTexture] = useState(TORSO_COLORS[3].gradient)
   const [activeItems, setActiveItems] = useState({})
-  
+  const [isPremium, setIsPremium] = useState(false)
+
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token")
+    if (!token) return
+    fetch("/api/check-premium", {
+      headers: { 'Authorization': 'Bearer ' + token }
+    }).then(res => res.json()).then(data => setIsPremium(data.is_premium))
+  }, [])
   
   function saveAvatar() {
     const token = localStorage.getItem("token")
@@ -49,7 +58,7 @@ export default function PickbotEdit() {
   
   return (
     <>
-      <ChoiceFrame category={category} setCategory={setCategory} setActiveItems={setActiveItems} setBodyTexture={setBodyTexture} />
+      <ChoiceFrame category={category} setCategory={setCategory} setActiveItems={setActiveItems} setBodyTexture={setBodyTexture} isPremium={isPremium} />
       <div className={styles['dressing-scene']}>
         <div className={styles['light']}></div>
         <div className={styles['mirror']}></div>
@@ -87,7 +96,7 @@ export default function PickbotEdit() {
  * @param {(color: string|undefined) => void} props.setBodyTexture Body color setter.
  * @returns {JSX.Element}
  */
-export function ChoiceFrame({ category, setCategory, setActiveItems, setBodyTexture }) {
+export function ChoiceFrame({ category, setCategory, setActiveItems, setBodyTexture, isPremium }) {
   
   const categoryAssets = {
     "eye": Object.entries(eyeAssets),
@@ -120,7 +129,7 @@ export function ChoiceFrame({ category, setCategory, setActiveItems, setBodyText
 
       <div className={styles['choice-frame']}>
         {category === "body" ? (
-          <Spinner key="body" setBodyTexture={setBodyTexture} />
+          <BodyTexturePicker key="body" setBodyTexture={setBodyTexture} isPremium={isPremium} />
         ) : (
           <div key={category} className={styles[`${category}-options`]}>
             {rows.map((rowElems, rowIdx) => (
@@ -164,7 +173,7 @@ export function Item({ category, img, onClick }) {
  * @param {(color: string) => void} props.setBodyTexture Body color setter.
  * @returns {JSX.Element}
  */
-export function Spinner({ setBodyTexture }) {
+export function BodyTexturePicker({ setBodyTexture, isPremium }) {
   const [spinning, setSpinning] = useState(false)
   const [rotation, setRotation] = useState(0)
   const [selectedColor, setSelectedColor] = useState(null)
@@ -334,7 +343,7 @@ export function Spinner({ setBodyTexture }) {
               style={{ backgroundImage: `url(${url})` }}
               onClick={() => setBodyTexture(name)}
             >
-              <img src={padlock} className={styles['texture-padlock']} alt="locked" />
+              {!isPremium && <img src={padlock} className={styles['texture-padlock']} alt="locked" />}
             </div>
           ))}
         </div>
