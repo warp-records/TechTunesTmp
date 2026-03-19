@@ -84,7 +84,7 @@ export default function AccountCreate() {
     const data = await response.json();
     if (response.ok) {
       localStorage.setItem("token", data.token)
-      navigate(underage ? '/parent_permission' : '/pickbot_edit');
+      setTimeout(() => navigate(underage ? '/parent_permission' : '/pickbot_edit'), 1000);
     }
   }
   

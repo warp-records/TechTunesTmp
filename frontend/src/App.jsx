@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Link, Navigate, Outlet } from 'react-router-dom'
 import Logo from './components/Logo'
+import serverRackFall from './assets/Badpage/server_rack_fall.jpg'
 import './App.css'
 import Signup from './pages/Signup'
 import Start from './pages/Start'
@@ -24,6 +25,7 @@ import { LESSON_ISLAND_ROUTE_PATTERN } from './features/lesson-islands/constants
 
 function App() {
   return (
+    <AuthProvider>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LogoLink />} />
@@ -32,24 +34,28 @@ function App() {
         <Route path="/onboard" element={<Onboard />} />
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/account_create" element={<AccountCreate />} />
-        <Route path="/pickbot_edit" element={<PickbotEdit />} />
+        
+        {/* require account to be registered and have parents permission if necessary*/}
         <Route element={<ProtectedRoute isAllowed={user => user?.basic_access} />}>
+          <Route path="/pickbot_edit" element={<PickbotEdit />} />
           <Route path="/userpage" element={<Userpage />} />
           <Route path="/homepage" element={<Homepage />} />
           <Route path="/guitar_tuner" element={<GuitarTuner />} />
           <Route path="/impact" element={<Impact />} />
+          <Route path="/island_select" element={<IslandSelect />} />
+          <Route path="/guitar_island" element={<GuitarIsland />} />
+          <Route path={LESSON_ISLAND_ROUTE_PATTERN} element={<LessonIslandPage />} />
+          <Route path="/song_search" element={<SongSearch />} />
+          <Route path="/lesson" element={<Lesson />} />
         </Route>
+        
         <Route path="/login" element={<Login />} />
-        <Route path="/island_select" element={<IslandSelect />} />
-        <Route path="/guitar_island" element={<GuitarIsland />} />
-        <Route path={LESSON_ISLAND_ROUTE_PATTERN} element={<LessonIslandPage />} />
-        <Route path="/song_search" element={<SongSearch />} />
-        <Route path="/lesson" element={<Lesson />} />
         <Route path="/payment" element={<Payment />} />
         <Route path="/parent_permission" element={<ParentPermission />} />
-        <Route path="/*" element={<Unknown />}></Route>
+        <Route path="/*" element={<BadPage />}></Route>
       </Routes>
     </BrowserRouter>
+    </AuthProvider>
   )
 }
 
@@ -63,8 +69,22 @@ function LogoLink() {
   )
 }
 
-function Unknown() { 
-  return <p style={{ "color": "white", "font-size": "50px" }}>Page not found rip</p>
+function BadPage() {
+  const user = useAuth();
+  const loggedOut = !user;
+  return (
+    <div style={{ "color": "white", "display": "flex", "flexDirection": "column", "alignItems": "center", "gap": "20px", "paddingTop": "60px" }}>
+      <p style={{ "font-size": "50px" }}>Page not found rip</p>
+      <p style={{ "font-size": "20px" }}>Either you're not authorized or we messed up really bad</p>
+      <br></br>
+      <p>
+        Maybe try <Link to="/login" style={{
+          textDecoration: "none", borderBottom: "1px solid white", color: "white"
+        }}>logging in</Link>?
+      </p>
+      <img src={serverRackFall} alt="server rack fall" />
+    </div>
+  )
 }
 
 
@@ -77,7 +97,7 @@ function AuthProvider({ children }) {
     const token = localStorage.getItem("token");
     if (!token) { setUser(null); return; }
     
-    fetch("/api/me", { headrs: { Authorization: "Bearer " + token } })
+    fetch("/api/me", { headers: { Authorization: "Bearer " + token } })
       .then(r => r.ok ? r.json() : null)
       .then(data => setUser(data))
       .catch(() => setUser(null));
@@ -87,7 +107,7 @@ function AuthProvider({ children }) {
 }
 const useAuth = () => useContext(AuthContext)
 
-function ProtectedRoute({ isAllowed, redirectPath="/unauthorized", children }) {
+function ProtectedRoute({ isAllowed, redirectPath="/bad_page", children }) {
   const user = useAuth();
   
   // when fetching page
