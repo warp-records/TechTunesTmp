@@ -28,7 +28,15 @@ export default function AccountCreate() {
   const [usernameTaken, setUsernameTaken] = useState(false);
   
   const validName = username.length >= 3;
-  
+
+  const navigate = useNavigate();
+  const { fetchUser } = useContext(AuthContext);
+
+  useEffect(() => {
+    if (!localStorage.getItem("onboardData")) navigate("/onboard");
+    if (localStorage.getItem("underAge") === "true") navigate("/payment");
+  }, []);
+
   useEffect(() => {
     if (!validName) return;
     
@@ -70,9 +78,6 @@ export default function AccountCreate() {
     return true;
   }
   
-  const navigate = useNavigate();
-  const { fetchUser } = useContext(AuthContext);
-
   async function register() {
     const underage = localStorage.getItem("underAge") === "true";
 

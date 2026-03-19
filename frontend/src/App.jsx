@@ -36,8 +36,8 @@ function App() {
           <Route path="/start" element={<Start />} />
           <Route path="/onboard" element={<Onboard />} />
           <Route path="/pricing" element={<Pricing />} />
-          <Route path="/account_create" element={<AccountCreate />} />
         </Route>
+        <Route path="/account_create" element={<AccountCreate />} />
         
         {/* require account to be registered and have parents permission if necessary*/}
         <Route element={<ProtectedRoute isAllowed={user => !!user} />}>
@@ -59,6 +59,10 @@ function App() {
         <Route path="/payment" element={<Payment />} />
         <Route path="/parent_permission" element={<ParentPermission />} />
         <Route path="/*" element={<BadPage />}></Route>
+        
+          <Route element={<ProtectedRoute isAllowed={user => user?.admin} />}>
+            
+          </Route>
       </Routes>
     </BrowserRouter>
     </AuthProvider>

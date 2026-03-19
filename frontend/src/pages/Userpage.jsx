@@ -1,6 +1,7 @@
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { Route, Link, useNavigate } from 'react-router-dom'
+import { AuthContext } from '../App'
 
 import Avatar from "../components/Avatar"
 import { resolveBodyBg } from "../components/avatarData"
@@ -68,9 +69,11 @@ export default function Userpage() {
   
   const [avatarData, setAvatarData] = useState(null);
   const navigate = useNavigate();
-  
-  function logout() {
+  const { fetchUser } = useContext(AuthContext);
+
+  async function logout() {
     localStorage.clear();
+    await fetchUser();
     navigate('/login');
   }
 
