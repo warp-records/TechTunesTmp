@@ -78,14 +78,14 @@ def get_current_user(request: Request, db: Session = Depends(get_db)) -> int:
         
     
 @app.post("/api/register")
-def register(user: User, db: Session = Depends(get_db)):
+def register(user: User, underage: bool, db: Session = Depends(get_db)):
     existing = db.query(UserDB).filter(UserDB.username == user.username).first()
     if existing:
         raise HTTPException(status_code=409, detail="UsernameTaken")
     
     hashed = bcrypt.hashpw(user.password.encode(), bcrypt.gensalt())    
     
-    db_user = UserDB(username=user.username, password_hash=hashed.decode())
+    db_user = UserDB(username=user.username, password_hash=hashed.decode(), underage=underage)
     db.add(db_user)
     db.flush()
     

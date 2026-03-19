@@ -72,17 +72,19 @@ export default function AccountCreate() {
   const navigate = useNavigate();
   
   async function register() {
-    const response = await fetch('/api/register', {
+    const underage = localStorage.getItem("underAge") === "true";
+
+    const response = await fetch(`/api/register?underage=${underage}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password })
       }
     )
-    
+
     const data = await response.json();
     if (response.ok) {
       localStorage.setItem("token", data.token)
-      navigate('/pickbot_edit');
+      navigate(underage ? '/parent_permission' : '/pickbot_edit');
     }
   }
   

@@ -80,8 +80,7 @@ export default function Onboard() {
     }
 
     if (progIdx == numPages-1) {
-      const dest = localStorage.getItem("underAge") === "true" ? '/parent_permission' : '/pricing';
-      window.open(dest, '_self');
+      window.open("account_create", '_self');
     } else {
       setProgIdx(progIdx + 1);
     }
