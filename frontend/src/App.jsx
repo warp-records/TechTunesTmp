@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Link, Navigate, Outlet } from 'react-router-dom'
 import Logo from './components/Logo'
 import serverRackFall from './assets/Badpage/server_rack_fall.jpg'
+import thisIsFine from './assets/Badpage/thisisfine.jpg'
 import './App.css'
 import Signup from './pages/Signup'
 import Start from './pages/Start'
@@ -70,46 +71,48 @@ function LogoLink() {
 }
 
 function BadPage() {
-  const user = useAuth();
+  const { user } = useAuth();
   const loggedOut = !user;
   return (
     <div style={{ "color": "white", "display": "flex", "flexDirection": "column", "alignItems": "center", "gap": "20px", "paddingTop": "60px" }}>
       <p style={{ "font-size": "50px" }}>Page not found rip</p>
-      <p style={{ "font-size": "20px" }}>Either you're not authorized or we messed up really bad</p>
+      <p style={{ "font-size": "20px" }}>Either you're not authorized to see this page,
+        or our servers like exploded or something</p>
       <br></br>
-      <p>
-        Maybe try <Link to="/login" style={{
-          textDecoration: "none", borderBottom: "1px solid white", color: "white"
-        }}>logging in</Link>?
-      </p>
-      <img src={serverRackFall} alt="server rack fall" />
+      {loggedOut
+        ? <p>Maybe try <Link to="/login" style={{ textDecoration: "none", borderBottom: "1px solid white", color: "white" }}>logging in</Link>?</p>
+        : <p>Maybe try rice?</p>
+      }
+      <img src={serverRackFall} alt="its fine" />
     </div>
   )
 }
 
 
-const AuthContext = createContext(null);
+export const AuthContext = createContext(null);
 
 function AuthProvider({ children }) {
   const [user, setUser] = useState(undefined);
-  
-  useEffect(() => {
+
+  function fetchUser() {
     const token = localStorage.getItem("token");
-    if (!token) { setUser(null); return; }
-    
-    fetch("/api/me", { headers: { Authorization: "Bearer " + token } })
+    if (!token) { setUser(null); return Promise.resolve(); }
+
+    return fetch("/api/me", { headers: { Authorization: "Bearer " + token } })
       .then(r => r.ok ? r.json() : null)
       .then(data => setUser(data))
       .catch(() => setUser(null));
-  }, []);
-  
-  return <AuthContext.Provider value={user}>{children}</AuthContext.Provider>
+  }
+
+  useEffect(() => { fetchUser(); }, []);
+
+  return <AuthContext.Provider value={{ user, fetchUser }}>{children}</AuthContext.Provider>
 }
 const useAuth = () => useContext(AuthContext)
 
 function ProtectedRoute({ isAllowed, redirectPath="/bad_page", children }) {
-  const user = useAuth();
-  
+  const { user } = useAuth();
+
   // when fetching page
   if (user === undefined) return null;
   if (!isAllowed(user)) return <Navigate to={redirectPath} replace />;

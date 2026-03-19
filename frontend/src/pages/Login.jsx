@@ -1,6 +1,7 @@
 
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import { useNavigate, Link } from 'react-router-dom';
+import { AuthContext } from '../App';
 import styles from './Login.module.css'
 
 export default function Login() {
@@ -9,23 +10,24 @@ export default function Login() {
   const [password, setPassword] = useState("");
   
   const navigate = useNavigate();
-  
+  const { fetchUser } = useContext(AuthContext);
+
   async function login() {
     const res = await fetch('/api/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password })
     })
-    
+
     if (!res.ok) {
       setBadLogin(true)
     } else {
       const data = await res.json();
       localStorage.setItem('token', data.token);
       localStorage.setItem('username', data.username);
+      await fetchUser();
       navigate('/userpage');
     }
-    
   }
   
   return (

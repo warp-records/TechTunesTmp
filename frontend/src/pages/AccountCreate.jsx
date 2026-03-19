@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import { Route, Link, useNavigate } from 'react-router-dom'
+import { AuthContext } from '../App'
 import styles from './AccountCreate.module.css'
 import { useEffect } from 'react';
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
@@ -70,7 +71,8 @@ export default function AccountCreate() {
   }
   
   const navigate = useNavigate();
-  
+  const { fetchUser } = useContext(AuthContext);
+
   async function register() {
     const underage = localStorage.getItem("underAge") === "true";
 
@@ -84,7 +86,8 @@ export default function AccountCreate() {
     const data = await response.json();
     if (response.ok) {
       localStorage.setItem("token", data.token)
-      setTimeout(() => navigate(underage ? '/parent_permission' : '/pickbot_edit'), 1000);
+      await fetchUser();
+      navigate(underage ? '/parent_permission' : '/pickbot_edit');
     }
   }
   
