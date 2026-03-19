@@ -20,8 +20,13 @@ export default function PickbotEdit() {
   const [bodyBg, setBodyBg] = useState({ isTexture: false, colorIdx: 3 })
   const [activeItems, setActiveItems] = useState({})
   const [isPremium, setIsPremium] = useState(false)
+  const [premiumPopupVisible, setPremiumPopupVisible] = useState(false)
 
   const navigate = useNavigate();
+  
+  useEffect(() => {
+    setPremiumPopupVisible(false)
+  }, [category])
 
   useEffect(() => {
     const token = localStorage.getItem("token")
@@ -47,7 +52,11 @@ export default function PickbotEdit() {
   
   return (
     <>
-      <ChoiceFrame category={category} setCategory={setCategory} setActiveItems={setActiveItems} setBodyBg={setBodyBg} isPremium={isPremium} />
+      <ChoiceFrame category={category} setCategory={setCategory} setActiveItems={setActiveItems} setBodyBg={setBodyBg} isPremium={isPremium} onPremiumRequired={() => setPremiumPopupVisible(true)} onPremiumDismissed={() => setPremiumPopupVisible(false)} />
+      <div className={[styles['premium-popup'], premiumPopupVisible ? styles['premium-popup-visible'] : ''].join(' ')}>
+        <p>Go premium to unlock this skin!</p>
+        <button onClick={() => navigate('/payment')}>Go Premium</button>
+      </div>
       <div className={styles['dressing-scene']}>
         <div className={styles['light']}></div>
         <div className={styles['mirror']}></div>
@@ -63,7 +72,11 @@ export default function PickbotEdit() {
         <div className={styles['arrow-forward']} onClick={() => { setForm((form + 1) % avatarList.length) }}></div>
       </div>
       <div className={styles['action-buttons']}>
-        <button className={styles['save-button']} onClick={saveAvatar}>Save</button>
+        <button
+          className={[styles['save-button'], bodyBg.isTexture && !isPremium ? styles['save-button-locked'] : ''].join(' ')}
+          disabled={bodyBg.isTexture && !isPremium}
+          onClick={saveAvatar}
+        >Save</button>
         <button className={styles['reset-button']} onClick={() => { setActiveItems({}); setForm(0); setBodyBg({ isTexture: false, colorIdx: 3 }); } }>
           Reset
         </button>
@@ -85,7 +98,7 @@ export default function PickbotEdit() {
  * @param {(color: string|undefined) => void} props.setBodyTexture Body color setter.
  * @returns {JSX.Element}
  */
-export function ChoiceFrame({ category, setCategory, setActiveItems, setBodyBg, isPremium }) {
+export function ChoiceFrame({ category, setCategory, setActiveItems, setBodyBg, isPremium, onPremiumRequired, onPremiumDismissed }) {
   
   const categoryAssets = {
     "eye": Object.entries(eyeAssets),
@@ -118,7 +131,7 @@ export function ChoiceFrame({ category, setCategory, setActiveItems, setBodyBg, 
 
       <div className={styles['choice-frame']}>
         {category === "body" ? (
-          <BodyTexturePicker key="body" setBodyBg={setBodyBg} isPremium={isPremium} />
+          <BodyTexturePicker key="body" setBodyBg={setBodyBg} isPremium={isPremium} onPremiumRequired={onPremiumRequired} onPremiumDismissed={onPremiumDismissed} />
         ) : (
           <div key={category} className={styles[`${category}-options`]}>
             {rows.map((rowElems, rowIdx) => (
@@ -162,7 +175,7 @@ export function Item({ category, img, onClick }) {
  * @param {(color: string) => void} props.setBodyTexture Body color setter.
  * @returns {JSX.Element}
  */
-export function BodyTexturePicker({ setBodyBg, isPremium }) {
+export function BodyTexturePicker({ setBodyBg, isPremium, onPremiumRequired, onPremiumDismissed }) {
   const [spinning, setSpinning] = useState(false)
   const [rotation, setRotation] = useState(0)
   const [selectedColor, setSelectedColor] = useState(null)
@@ -194,6 +207,7 @@ export function BodyTexturePicker({ setBodyBg, isPremium }) {
       const { color, idx } = getColorForRotation(rotationValue)
       setSelectedColor(color)
       setBodyBg({ isTexture: false, colorIdx: idx })
+      onPremiumDismissed?.()
     },
     [getColorForRotation, setBodyBg]
   )
@@ -330,7 +344,7 @@ export function BodyTexturePicker({ setBodyBg, isPremium }) {
               key={name}
               className={styles['texture-cell']}
               style={{ backgroundImage: `url(${url})` }}
-              onClick={() => setBodyBg({ isTexture: true, bgSrc: name })}
+              onClick={() => { setBodyBg({ isTexture: true, bgSrc: name }); if (!isPremium) onPremiumRequired(); }}
             >
               {!isPremium && <img src={padlock} className={styles['texture-padlock']} alt="locked" />}
             </div>

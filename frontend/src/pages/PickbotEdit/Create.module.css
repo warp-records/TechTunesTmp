@@ -329,6 +329,53 @@
     box-shadow: 0 0 20px rgba(138, 43, 226, 0.8), 0 0 40px rgba(138, 43, 226, 0.6);
 }
 
+.premium-popup {
+    position: fixed;
+    right: 0;
+    top: 50%;
+    transform: translateY(-90%) translateX(100%);
+    width: 10%;
+    height: 300px;
+    background: linear-gradient(135deg, var(--accent-yellow), #fff3a0);
+    color: #2d1b3d;
+    border-radius: 16px 0 0 16px;
+    padding: 1.2rem 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 700;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    z-index: 1000;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.premium-popup-visible {
+    transform: translateY(-90%) translateX(0);
+    filter: drop-shadow(-4px 0 10px rgba(255, 210, 0, 0.6));
+}
+
+.premium-popup button {
+    background: linear-gradient(135deg, #4a0080, #9b1dcd);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 0.6rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.save-button-locked {
+    background: linear-gradient(135deg, #555, #333);
+    box-shadow: none;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
 .reset-button:active {
     transform: translateY(calc(-20% + 150px)) scale(0.95);
     box-shadow: 0 0 20px rgba(138, 43, 226, 0.8), 0 0 40px rgba(138, 43, 226, 0.6);
