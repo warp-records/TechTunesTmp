@@ -33,7 +33,8 @@ export default function Onboard() {
   const date = onboardData.dob ? new Date(onboardData.dob) : null;
 
   useEffect(() => {
-    localStorage.setItem("onboardData", JSON.stringify(onboardData));
+    const { dob, ...rest } = onboardData;
+    localStorage.setItem("onboardData", JSON.stringify(rest));
   }, [onboardData])
   
   function handleClick(formName, option, multiSelect) {
@@ -70,9 +71,17 @@ export default function Onboard() {
   
   
   function handleContinue() {
-    
+    if (progIdx === 2 && onboardData.dob) {
+      const dob = new Date(onboardData.dob);
+      const today = new Date();
+      const age = today.getFullYear() - dob.getFullYear() -
+        (today < new Date(today.getFullYear(), dob.getMonth(), dob.getDate()) ? 1 : 0);
+      localStorage.setItem("underAge", age < 13 ? "true" : "false");
+    }
+
     if (progIdx == numPages-1) {
-      window.open('/pricing', '_self');
+      const dest = localStorage.getItem("underAge") === "true" ? '/parent_permission' : '/pricing';
+      window.open(dest, '_self');
     } else {
       setProgIdx(progIdx + 1);
     }
