@@ -1,0 +1,170 @@
+.admin-root {
+  min-height: 100vh;
+  background: #0a0a0a;
+  padding: 40px;
+  box-sizing: border-box;
+}
+
+.dashboard {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.welcome {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #cc88ff;
+  text-shadow: 0 0 8px #cc88ff, 0 0 20px #aa44ff, 0 0 40px #8800ff;
+  margin-bottom: 40px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.card {
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card-mod {
+  border-color: #1a2a4a;
+}
+
+.card-icon {
+  font-size: 2rem;
+}
+
+.card-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+}
+
+.card-desc {
+  font-size: 0.875rem;
+  color: #888;
+  margin: 0;
+  flex: 1;
+}
+
+.card-btn {
+  margin-top: 8px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-default {
+  background: #7722cc;
+  color: #fff;
+}
+
+.btn-default:hover {
+  background: #9933ee;
+}
+
+.btn-mod {
+  background: #1a2a4a;
+  color: #66aaff;
+}
+
+.btn-mod:hover {
+  background: #2a3a6a;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.mod-panel {
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  padding: 28px;
+  width: 480px;
+  max-width: 90vw;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.mod-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff;
+}
+
+.mod-header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.close-btn:hover {
+  color: #fff;
+}
+
+.search-input {
+  background: #1e1e1e;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: #fff;
+  font-size: 0.95rem;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.search-input:focus {
+  border-color: #66aaff;
+}
+
+.results {
+  min-height: 80px;
+}
+
+.no-results {
+  color: #555;
+  font-size: 0.875rem;
+  text-align: center;
+  margin-top: 16px;
+}
+
+.result-row {
+  padding: 10px 12px;
+  border-radius: 6px;
+  color: #ccc;
+  font-size: 0.9rem;
+  border-bottom: 1px solid #222;
+}
+
+.result-row:hover {
+  background: #1e1e1e;
+}

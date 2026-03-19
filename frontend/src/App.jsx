@@ -21,6 +21,7 @@ import SongSearch from './pages/SongSearch'
 import Lesson from './pages/Lesson/Lesson'
 import Payment from './pages/Payment/Payment'
 import ParentPermission from './pages/ParentPermission/ParentPermission'
+import Admin from './pages/Admin'
 import LessonIslandPage from './features/lesson-islands/pages/LessonIslandPage'
 import { LESSON_ISLAND_ROUTE_PATTERN } from './features/lesson-islands/constants/lessonIslandRoutes'
 
@@ -61,7 +62,7 @@ function App() {
         <Route path="/*" element={<BadPage />}></Route>
         
           <Route element={<ProtectedRoute isAllowed={user => user?.admin} />}>
-            
+            <Route path="/admin" element={<Admin />} />
           </Route>
       </Routes>
     </BrowserRouter>
