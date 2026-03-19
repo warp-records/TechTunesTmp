@@ -6,7 +6,7 @@ import { AuthContext } from '../App'
 import Avatar from "../components/Avatar"
 import { resolveBodyBg } from "../components/avatarData"
 import styles from './Userpage.module.css'
-import premiumImg from '../assets/Payment/premium.png'
+import PremiumBadge from '../components/PremiumBadge'
 import NotificationBell from '../components/NotificationBell'
 
 const suggestedSongs = [
@@ -152,7 +152,7 @@ export default function Userpage() {
           <h2 id="avatar-title" className={styles['avatar-welcome-title']}>Welcome to TuneVerse</h2>
           <div className={[styles['pickbot-speech-bubble'], isPremium ? styles['pickbot-speech-bubble-premium'] : ''].join(' ')}>
             <span>Hello, <span id="username-display">{username}</span>!</span>
-            {isPremium && <img src={premiumImg} alt="Premium" />}
+            {isPremium && <PremiumBadge />}
           </div>
                 
               <div className={styles['userpage-avatar']}>
