@@ -19,6 +19,7 @@ class UserDB(Base):
     subscription_end = Column(DateTime, nullable=True)
     auto_donate = Column(String, nullable=True)
     underage = Column(Boolean, nullable=False)
+    is_admin = Column(Boolean, nullable=False)
     
 class SessionDB(Base):
     __tablename__ = "sessions"

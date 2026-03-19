@@ -76,6 +76,19 @@ def get_current_user(request: Request, db: Session = Depends(get_db)) -> int:
         
     return session.user_id
         
+@app.get("/api/me")
+def me(user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
+    user = db.query(UserDB).filter(UserDB.id == user_id).first()
+    if user is not None:
+        return {
+            # either the user wasn't underage
+            # or there exists a payment which verifies them
+            "basic_access": (not user.underage) or user.stripe_customer_id is not None,
+            "admin": user.admin,
+        }
+    else:
+        raise HTTPException(status_code=404, detail="User not found")
+    
     
 @app.post("/api/register")
 def register(user: User, underage: bool, db: Session = Depends(get_db)):
@@ -85,7 +98,12 @@ def register(user: User, underage: bool, db: Session = Depends(get_db)):
     
     hashed = bcrypt.hashpw(user.password.encode(), bcrypt.gensalt())    
     
-    db_user = UserDB(username=user.username, password_hash=hashed.decode(), underage=underage)
+    db_user = UserDB(
+        username=user.username, 
+        password_hash=hashed.decode(), 
+        underage=underage, 
+        admin=False
+    )
     db.add(db_user)
     db.flush()
     

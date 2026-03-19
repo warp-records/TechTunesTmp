@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
+import { createContext, useContext, useEffect, useState } from 'react';
+import { BrowserRouter, Routes, Route, Link, Navigate, Outlet } from 'react-router-dom'
 import Logo from './components/Logo'
 import './App.css'
 import Signup from './pages/Signup'
@@ -32,10 +33,12 @@ function App() {
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/account_create" element={<AccountCreate />} />
         <Route path="/pickbot_edit" element={<PickbotEdit />} />
-        <Route path="/userpage" element={<Userpage />} />
-        <Route path="/homepage" element={<Homepage />} />
-        <Route path="/guitar_tuner" element={<GuitarTuner />} />
-        <Route path="/impact" element={<Impact />} />
+        <Route element={<ProtectedRoute isAllowed={user => user?.basic_access} />}>
+          <Route path="/userpage" element={<Userpage />} />
+          <Route path="/homepage" element={<Homepage />} />
+          <Route path="/guitar_tuner" element={<GuitarTuner />} />
+          <Route path="/impact" element={<Impact />} />
+        </Route>
         <Route path="/login" element={<Login />} />
         <Route path="/island_select" element={<IslandSelect />} />
         <Route path="/guitar_island" element={<GuitarIsland />} />
@@ -44,6 +47,7 @@ function App() {
         <Route path="/lesson" element={<Lesson />} />
         <Route path="/payment" element={<Payment />} />
         <Route path="/parent_permission" element={<ParentPermission />} />
+        <Route path="/*" element={<Unknown />}></Route>
       </Routes>
     </BrowserRouter>
   )
@@ -57,4 +61,37 @@ function LogoLink() {
       <Logo />
     </Link>
   )
+}
+
+function Unknown() { 
+  return <p style={{ "color": "white", "font-size": "50px" }}>Page not found rip</p>
+}
+
+
+const AuthContext = createContext(null);
+
+function AuthProvider({ children }) {
+  const [user, setUser] = useState(undefined);
+  
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) { setUser(null); return; }
+    
+    fetch("/api/me", { headrs: { Authorization: "Bearer " + token } })
+      .then(r => r.ok ? r.json() : null)
+      .then(data => setUser(data))
+      .catch(() => setUser(null));
+  }, []);
+  
+  return <AuthContext.Provider value={user}>{children}</AuthContext.Provider>
+}
+const useAuth = () => useContext(AuthContext)
+
+function ProtectedRoute({ isAllowed, redirectPath="/unauthorized", children }) {
+  const user = useAuth();
+  
+  // when fetching page
+  if (user === undefined) return null;
+  if (!isAllowed(user)) return <Navigate to={redirectPath} replace />;
+  return children ? children : <Outlet />;
 }
