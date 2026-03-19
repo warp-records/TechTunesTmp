@@ -8,6 +8,7 @@ export default function Impact() {
   const [selectedCity, setSelectedCity] = useState('Philadelphia')
   const [selectedRegionId, setSelectedRegionId] = useState('')
   const [openDropdown, setOpenDropdown] = useState(null)
+  const [selectedOrg, setSelectedOrg] = useState(null)
   const filtersRef = useRef(null)
 
   const cityOptions = Object.keys(CITY_REGIONS)
@@ -101,6 +102,8 @@ export default function Impact() {
             title={program.title}
             desc={program.desc}
             actions={program.actions}
+            isSelected={selectedOrg === program.title}
+            onSelectOrg={() => setSelectedOrg(program.title)}
           />
         ))}
       </main>
@@ -179,9 +182,9 @@ export function FilterDropdown({
   )
 }
 
-export function ProgramCard({ title, desc, actions }) {
+export function ProgramCard({ title, desc, actions, isSelected, onSelectOrg }) {
   return (
-    <section className={styles['program-card']}>
+    <section className={[styles['program-card'], isSelected ? styles['program-card-selected'] : ''].filter(Boolean).join(' ')}>
       <header className={styles['program-header']}>
         <h2>{title}</h2>
         <p className={styles['program-subtitle']}>{desc}</p>
@@ -209,6 +212,13 @@ export function ProgramCard({ title, desc, actions }) {
             </a>
           )
         })}
+        <button
+          className={[styles['action-btn'], isSelected ? styles['action-btn-selected'] : ''].filter(Boolean).join(' ')}
+          type="button"
+          onClick={onSelectOrg}
+        >
+          {isSelected ? '✓ Auto Donate Selected' : 'Select Auto Donate'}
+        </button>
       </div>
     </section>
   )

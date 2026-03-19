@@ -117,7 +117,7 @@ export default function Userpage() {
               <summary className={styles['chip']} role="button" aria-haspopup="menu">☰ Settings ▾</summary>
               <div className={styles['menu']} role="menu">
                 <a role="menuitem">Add Friends</a>
-                <a role="menuitem">Edit PickBot</a>
+                <Link to="/pickbot_edit">Edit PickBot</Link>
                 <a role="menuitem">Privacy Settings</a>
                 <a role="menuitem">Add Spotify</a>
                 <a role="menuitem">Add Apple Music</a>

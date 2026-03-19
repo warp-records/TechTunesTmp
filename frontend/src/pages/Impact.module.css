@@ -277,6 +277,17 @@
   outline-offset: 2px;
 }
 
+.impact-root .action-btn-selected {
+  border-color: #6c3bff99;
+  background: linear-gradient(180deg, rgba(108, 59, 255, 0.18), rgba(108, 59, 255, 0.08));
+  color: #c4aaff;
+}
+
+.impact-root .program-card-selected {
+  border-color: #6c3bff66;
+  box-shadow: var(--shadow), 0 0 24px rgba(108, 59, 255, 0.35);
+}
+
 /* ================= GLOWING HEADER ================= */
 .impact-root .impact-header {
   text-align: center;
