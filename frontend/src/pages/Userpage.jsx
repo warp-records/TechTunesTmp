@@ -45,6 +45,7 @@ const genres = [
 export default function Userpage() {
   let [username, setUsername] = useState("");
   let [isPremium, setIsPremium] = useState(false)
+  const [selectedMenu, setSelectedMenu] = useState(null)
   const [notifications, setNotifications] = useState([
     { title: "Donation", subtext: "$5 was just donated to your select charity, Generation Music!" },
     { title: "New song unlocked", subtext: "Sweet Child O' Mine is now available." },
@@ -120,10 +121,15 @@ export default function Userpage() {
           </div>
           <div className={styles['logo']}>🎧 TuneVerse 🎶</div>
           <div className={styles['nav-right']}>
-            <NotificationBell notifications={notifications} onClearAll={() => setNotifications([])} />
-            <details className={styles['settings']}>
-              <summary className={styles['chip']} role="button" aria-haspopup="menu">☰ Settings ▾</summary>
-              <div className={styles['menu']} role="menu">
+            <NotificationBell
+              notifications={notifications}
+              onClearAll={() => setNotifications([])}
+              open={selectedMenu === 'notifications'}
+              onToggle={() => setSelectedMenu(prev => prev === 'notifications' ? null : 'notifications')}
+            />
+            <div className={styles['settings']}>
+              <div className={styles['chip']} role="button" aria-haspopup="menu" onClick={() => setSelectedMenu(prev => prev === 'settings' ? null : 'settings')}>☰ Settings ▾</div>
+              <div className={[styles['menu'], selectedMenu === 'settings' ? styles['menu-open'] : ''].filter(Boolean).join(' ')} role="menu">
                 <a role="menuitem">Add Friends</a>
                 <Link to="/pickbot_edit">Edit PickBot</Link>
                 <a role="menuitem">Privacy Settings</a>
@@ -132,7 +138,7 @@ export default function Userpage() {
                 <a role="menuitem">SongBook</a>
                 <a role="menuitem" className={styles['logout']} onClick={logout}>Log out</a>
               </div>
-            </details>
+            </div>
           </div>
         </nav>
       </header>

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef } from 'react'
 import styles from './NotificationBell.module.css'
 
 /**
@@ -7,23 +7,12 @@ import styles from './NotificationBell.module.css'
  * @param {Object} props
  * @param {Array<{title: string, subtext?: string}>} props.notifications List of notification objects.
  */
-export default function NotificationBell({ notifications = [], onClearAll }) {
-  const [open, setOpen] = useState(false)
+export default function NotificationBell({ notifications = [], onClearAll, open, onToggle }) {
   const wrapRef = useRef(null)
-
-  useEffect(() => {
-    function handlePointerDown(e) {
-      if (wrapRef.current && !wrapRef.current.contains(e.target)) {
-        setOpen(false)
-      }
-    }
-    document.addEventListener('pointerdown', handlePointerDown)
-    return () => document.removeEventListener('pointerdown', handlePointerDown)
-  }, [])
 
   return (
     <div className={styles.wrap} ref={wrapRef}>
-      <div className={styles.bell} onClick={() => setOpen(prev => !prev)} role="button" aria-label="Notifications">
+      <div className={styles.bell} onClick={onToggle} role="button" aria-label="Notifications">
         🔔
       </div>
       {notifications.length > 0 && (

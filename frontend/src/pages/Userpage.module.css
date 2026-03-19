@@ -112,19 +112,13 @@
 }
 
 /* Settings dropdown */
-details.settings {
+.settings {
     position: relative;
-}
-details.settings > summary {
-    list-style: none;
-}
-details.settings > summary::-webkit-details-marker {
-    display: none;
 }
 .menu {
     position: absolute;
     right: 0;
-    top: 150%;
+    top: calc(100% + 10px);
     min-width: 220px;
     background: var(--card);
     border: 1px solid rgba(255, 255, 255, 0.08);
@@ -133,6 +127,16 @@ details.settings > summary::-webkit-details-marker {
     padding: 8px;
     display: grid;
     gap: 6px;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-6px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.menu-open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
 }
 .menu a {
     padding: 10px 12px;
