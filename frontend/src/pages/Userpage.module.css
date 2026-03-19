@@ -25,8 +25,8 @@
     color: var(--white);
 }
 
-.logout {
-    color: #ff4444;
+.logout, .menu a.logout {
+    color: #ff4444 !important;
 }
 
 .userpage-root::before {

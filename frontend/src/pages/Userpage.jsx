@@ -6,6 +6,7 @@ import Avatar from "../components/Avatar"
 import { resolveBodyBg } from "../components/avatarData"
 import styles from './Userpage.module.css'
 import premiumImg from '../assets/Payment/premium.png'
+import NotificationBell from '../components/NotificationBell'
 
 const suggestedSongs = [
   { title: "Get Got", subtitle: "Death Grips", stars: 5, },
@@ -44,6 +45,12 @@ const genres = [
 export default function Userpage() {
   let [username, setUsername] = useState("");
   let [isPremium, setIsPremium] = useState(false)
+  const [notifications, setNotifications] = useState([
+    { title: "Donation", subtext: "$5 was just donated to your select charity, Generation Music!" },
+    { title: "New song unlocked", subtext: "Sweet Child O' Mine is now available." },
+    { title: "Friend request", subtext: "Alexa wants to connect." },
+    { title: "Streak reminder", subtext: "Keep your 7-day streak going!" },
+  ])
   
   const friends = [
     { "name": "Alexa", "online": true, },
@@ -113,6 +120,7 @@ export default function Userpage() {
           </div>
           <div className={styles['logo']}>🎧 TuneVerse 🎶</div>
           <div className={styles['nav-right']}>
+            <NotificationBell notifications={notifications} onClearAll={() => setNotifications([])} />
             <details className={styles['settings']}>
               <summary className={styles['chip']} role="button" aria-haspopup="menu">☰ Settings ▾</summary>
               <div className={styles['menu']} role="menu">
@@ -203,7 +211,7 @@ export default function Userpage() {
         
         <SongRow title={"Songs from Spotify"} songs={spotifySongs} />
         <SongRow title={"Pick Your Genre"} songs={genres} />
-        
+
   </main>
   </div>
   )
