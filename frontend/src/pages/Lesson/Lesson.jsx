@@ -25,6 +25,7 @@ import Countdown1 from '../../assets/Lesson Page Assets/Countdown 1.png'
 import Countdown2 from '../../assets/Lesson Page Assets/Countdown 2.png'
 import Countdown3 from '../../assets/Lesson Page Assets/Countdown 3.png'
 import Avatar from '../../components/Avatar'
+import { resolveBodyBg } from '../../components/avatarData'
 
 const noteImages = import.meta.glob(
   '../../assets/Lesson Page Assets/Notes/**/*.png',
@@ -302,7 +303,7 @@ export function PickbotButton({ gameOver }) {
       <img src={PickbotImg} className={styles['pickbot-button-bg']} />
       {avatarData && (
         <div className={styles['pickbot-button-avatar']}>
-          <Avatar form={avatarData.form} activeItems={avatarData.activeItems} bodyTexture={avatarData.bodyTexture} />
+          <Avatar form={avatarData.form} activeItems={avatarData.activeItems} bodyTexture={resolveBodyBg(avatarData.bodyBg)} />
         </div>
       )}
     </div>

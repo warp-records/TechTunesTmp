@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { Route, Link, useNavigate } from 'react-router-dom'
 
 import Avatar from "../components/Avatar"
+import { resolveBodyBg } from "../components/avatarData"
 import styles from './Userpage.module.css'
 import premiumImg from '../assets/Payment/premium.png'
 
@@ -138,7 +139,7 @@ export default function Userpage() {
           </div>
                 
               <div className={styles['userpage-avatar']}>
-                {avatarData && <Avatar form={avatarData["form"]} activeItems={avatarData["activeItems"]} bodyTexture={avatarData["bodyTexture"]} />}
+                {avatarData && <Avatar form={avatarData["form"]} activeItems={avatarData["activeItems"]} bodyTexture={resolveBodyBg(avatarData["bodyBg"])} />}
               </div>
         </div>
       </section>

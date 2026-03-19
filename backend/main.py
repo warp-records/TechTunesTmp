@@ -32,9 +32,14 @@ class User(BaseModel):
     username: str
     password: str
     
+class BodyBg(BaseModel):
+    isTexture: bool
+    colorIdx: int | None = None
+    bgSrc: str | None = None
+
 class Avatar(BaseModel):
     form: int
-    bodyTexture: str
+    bodyBg: BodyBg
     activeItems: dict
 
 
@@ -124,7 +129,7 @@ def login(user: User, db: Session = Depends(get_db)):
 
 @app.post("/api/save-avatar/", tags=["avatar"])
 def save_avatar(avatar: Avatar, user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
-    if not avatar.bodyTexture.isnumeric() and not is_premium(user_id, db):
+    if avatar.bodyBg.isTexture and not is_premium(user_id, db):
         raise HTTPException(status_code=403, detail="Premium required to use textures")
         
     db_avatar = db.query(AvatarDB).filter(AvatarDB.user_id == user_id).first()
@@ -134,13 +139,13 @@ def save_avatar(avatar: Avatar, user_id: int = Depends(get_current_user), db: Se
 
     if db_avatar:
         db_avatar.form = avatar.form
-        db_avatar.bodyTexture = avatar.bodyTexture
+        db_avatar.bodyTexture = json.dumps(avatar.bodyBg.model_dump())
         db_avatar.active_items = json.dumps(avatar.activeItems)
     else:
         db_avatar = AvatarDB(
             user_id=user_id,
             form=avatar.form,
-            bodyTexture=avatar.bodyTexture,
+            bodyTexture=json.dumps(avatar.bodyBg.model_dump()),
             active_items=json.dumps(avatar.activeItems),
         )
         db.add(db_avatar)
@@ -156,7 +161,7 @@ def get_avatar(user_id: int = Depends(get_current_user), db: Session = Depends(g
     return {
         "avatar": {
             "form": db_avatar.form,
-            "bodyTexture": db_avatar.bodyTexture,
+            "bodyBg": json.loads(db_avatar.bodyTexture),
             "activeItems": json.loads(db_avatar.active_items),
         }
     }

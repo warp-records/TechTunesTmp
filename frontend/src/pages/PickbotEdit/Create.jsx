@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 
 import styles from './Create.module.css'
 import Avatar from '../../components/Avatar'
-import { avatarList, serializeAvatar } from '../../components/avatarData'
+import { avatarList, serializeAvatar, resolveBodyBg, TORSO_COLORS } from '../../components/avatarData'
 import { eyeAssets, mouthAssets, accessoryAssets, bodyTextureAssets } from '../../assetRegistry'
 import eyesBtn from '../../assets/DressingRoom/Dressing/Eyes Button.png'
 import mouthBtn from '../../assets/DressingRoom/Dressing/Mouth Button.png'
@@ -13,22 +13,11 @@ import bodyBtn from '../../assets/DressingRoom/Dressing/Body Button.png'
 import padlock from '../../assets/DressingRoom/Dressing/lock.png'
 
 
-const TORSO_COLORS = [
-  { name: 'yellow', hex: '#FFD700', gradient: 'linear-gradient(135deg, #FFFF66, #FFD000)', glowClass: 'glow-yellow' },
-  { name: 'teal', hex: '#008B8B', gradient: 'linear-gradient(135deg, #00FFFF, #005555)', glowClass: 'glow-teal' },
-  { name: 'purple', hex: '#8A2BE2', gradient: 'linear-gradient(135deg, #DA70D6, #2E0854)', glowClass: 'glow-purple' },
-  { name: 'white', hex: '#D0D0D0', gradient: 'linear-gradient(135deg, #FFFFFF 50%, #A0C4FF)', glowClass: 'glow-white' },
-  { name: 'red', hex: '#FF2200', gradient: 'linear-gradient(135deg, #FF6666, #8B0000)', glowClass: 'glow-red' },
-  { name: 'green', hex: '#32CD32', gradient: 'linear-gradient(135deg, #90EE90, #006400)', glowClass: 'glow-green' },
-  { name: 'blue', hex: '#4169E1', gradient: 'linear-gradient(135deg, #6495ED, #0000CD)', glowClass: 'glow-blue' },
-  { name: 'orange', hex: '#FF8C00', gradient: 'linear-gradient(135deg, #FFB300, #FF6600)', glowClass: 'glow-orange' },
-  { name: 'pink', hex: '#FF69B4', gradient: 'linear-gradient(135deg, #FFB6C1, #FF1493)', glowClass: 'glow-pink' },
-]
 
 export default function PickbotEdit() {
   const [category, setCategory] = useState("")
   const [form, setForm] = useState(0)
-  const [bodyTexture, setBodyTexture] = useState(TORSO_COLORS[3].gradient)
+  const [bodyBg, setBodyBg] = useState({ isTexture: false, colorIdx: 3 })
   const [activeItems, setActiveItems] = useState({})
   const [isPremium, setIsPremium] = useState(false)
 
@@ -50,7 +39,7 @@ export default function PickbotEdit() {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + token
       },
-      body: serializeAvatar({ form, bodyTexture, activeItems })
+      body: serializeAvatar({ form, bodyBg, activeItems })
     })
     
     navigate('/userpage')
@@ -58,13 +47,13 @@ export default function PickbotEdit() {
   
   return (
     <>
-      <ChoiceFrame category={category} setCategory={setCategory} setActiveItems={setActiveItems} setBodyTexture={setBodyTexture} isPremium={isPremium} />
+      <ChoiceFrame category={category} setCategory={setCategory} setActiveItems={setActiveItems} setBodyBg={setBodyBg} isPremium={isPremium} />
       <div className={styles['dressing-scene']}>
         <div className={styles['light']}></div>
         <div className={styles['mirror']}></div>
         <div className={styles['stand']}></div>
         <div className={styles['avatar-container']}>
-          <Avatar form={form} activeItems={activeItems} bodyTexture={bodyTexture}
+          <Avatar form={form} activeItems={activeItems} bodyTexture={resolveBodyBg(bodyBg)}
             onAccessoryDrag={(x, y) => setActiveItems(prev => ({
               ...prev, accessory: { ...prev.accessory, x, y },
             }))} />
@@ -75,7 +64,7 @@ export default function PickbotEdit() {
       </div>
       <div className={styles['action-buttons']}>
         <button className={styles['save-button']} onClick={saveAvatar}>Save</button>
-        <button className={styles['reset-button']} onClick={() => { setActiveItems({}); setForm(0); setBodyTexture(TORSO_COLORS[3].gradient); } }>
+        <button className={styles['reset-button']} onClick={() => { setActiveItems({}); setForm(0); setBodyBg({ isTexture: false, colorIdx: 3 }); } }>
           Reset
         </button>
       </div>
@@ -96,7 +85,7 @@ export default function PickbotEdit() {
  * @param {(color: string|undefined) => void} props.setBodyTexture Body color setter.
  * @returns {JSX.Element}
  */
-export function ChoiceFrame({ category, setCategory, setActiveItems, setBodyTexture, isPremium }) {
+export function ChoiceFrame({ category, setCategory, setActiveItems, setBodyBg, isPremium }) {
   
   const categoryAssets = {
     "eye": Object.entries(eyeAssets),
@@ -129,7 +118,7 @@ export function ChoiceFrame({ category, setCategory, setActiveItems, setBodyText
 
       <div className={styles['choice-frame']}>
         {category === "body" ? (
-          <BodyTexturePicker key="body" setBodyTexture={setBodyTexture} isPremium={isPremium} />
+          <BodyTexturePicker key="body" setBodyBg={setBodyBg} isPremium={isPremium} />
         ) : (
           <div key={category} className={styles[`${category}-options`]}>
             {rows.map((rowElems, rowIdx) => (
@@ -173,7 +162,7 @@ export function Item({ category, img, onClick }) {
  * @param {(color: string) => void} props.setBodyTexture Body color setter.
  * @returns {JSX.Element}
  */
-export function BodyTexturePicker({ setBodyTexture, isPremium }) {
+export function BodyTexturePicker({ setBodyBg, isPremium }) {
   const [spinning, setSpinning] = useState(false)
   const [rotation, setRotation] = useState(0)
   const [selectedColor, setSelectedColor] = useState(null)
@@ -194,19 +183,19 @@ export function BodyTexturePicker({ setBodyTexture, isPremium }) {
     (rotationValue) => {
       const finalAngle = normalizeAngle(rotationValue)
       const pointerAngle = normalizeAngle(360 - finalAngle)
-      const selectedSegment = Math.floor(pointerAngle / segmentAngle) % TORSO_COLORS.length
-      return TORSO_COLORS[selectedSegment]
+      const idx = Math.floor(pointerAngle / segmentAngle) % TORSO_COLORS.length
+      return { color: TORSO_COLORS[idx], idx }
     },
     [normalizeAngle, segmentAngle]
   )
 
   const applyColorForRotation = useCallback(
     (rotationValue) => {
-      const color = getColorForRotation(rotationValue)
+      const { color, idx } = getColorForRotation(rotationValue)
       setSelectedColor(color)
-      setBodyTexture(color.gradient)
+      setBodyBg({ isTexture: false, colorIdx: idx })
     },
-    [getColorForRotation, setBodyTexture]
+    [getColorForRotation, setBodyBg]
   )
 
   const getPointerAngle = useCallback((clientX, clientY) => {
@@ -341,7 +330,7 @@ export function BodyTexturePicker({ setBodyTexture, isPremium }) {
               key={name}
               className={styles['texture-cell']}
               style={{ backgroundImage: `url(${url})` }}
-              onClick={() => setBodyTexture(name)}
+              onClick={() => setBodyBg({ isTexture: true, bgSrc: name })}
             >
               {!isPremium && <img src={padlock} className={styles['texture-padlock']} alt="locked" />}
             </div>
