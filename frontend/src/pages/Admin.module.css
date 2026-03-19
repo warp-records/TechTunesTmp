@@ -184,9 +184,22 @@
   text-decoration: line-through;
 }
 
+.ban-until {
+  font-size: 0.75rem;
+  color: #ff6666;
+  opacity: 0.7;
+}
+
 .result-actions {
   display: flex;
   gap: 8px;
+  width: 140px;
+  justify-content: flex-end;
+}
+
+.result-actions button {
+  flex: 1;
+  text-align: center;
 }
 
 .btn-restrict:disabled, .btn-ban:disabled {
@@ -220,6 +233,20 @@
 
 .btn-ban:hover {
   background: #4a2a2a;
+}
+
+.btn-unban {
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: none;
+  background: #1a2a4a;
+  color: #66aaff;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.btn-unban:hover {
+  background: #2a3a6a;
 }
 
 .ban-dialog {

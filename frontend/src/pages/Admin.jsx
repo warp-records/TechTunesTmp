@@ -68,6 +68,16 @@ function ModPanel({ onClose }) {
       .then(data => setUsers(data));
   }
 
+  async function handleUnban(u) {
+    if (!confirm(`Unban ${u.username}?`)) return;
+    const token = localStorage.getItem("token");
+    await fetch(`/api/unban?ban_user_id=${u.id}`, {
+      method: "POST",
+      headers: { Authorization: "Bearer " + token },
+    });
+    fetchUsers();
+  }
+
   const results = query
     ? users.filter(u => u.username.toLowerCase().includes(query.toLowerCase()))
     : users;
@@ -94,10 +104,20 @@ function ModPanel({ onClose }) {
                 <div className={styles['result-name']}>
                   <span className={u.banned && new Date() < new Date(u.banned) ? styles['banned-name'] : ''}>{u.username}</span>
                   {u.subscription_end && new Date() < new Date(u.subscription_end) && <PremiumBadge />}
+                  {u.banned && new Date() < new Date(u.banned) && (
+                    <span className={styles['ban-until']}>
+                      {new Date(u.banned).getFullYear() === 9999
+                        ? "permanently banned"
+                        : `banned until ${new Date(u.banned).toLocaleDateString()}`}
+                    </span>
+                  )}
                 </div>
                 <div className={styles['result-actions']}>
                   <button className={styles['btn-restrict']}>Restrict</button>
-                  <button className={styles['btn-ban']} onClick={() => setBanTarget(u)}>Ban</button>
+                  {u.banned && new Date() < new Date(u.banned)
+                    ? <button className={styles['btn-unban']} onClick={() => handleUnban(u)}>Unban</button>
+                    : <button className={styles['btn-ban']} onClick={() => setBanTarget(u)}>Ban</button>
+                  }
                 </div>
               </div>
             ))
