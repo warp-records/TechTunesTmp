@@ -209,13 +209,15 @@ def get_auto_donate(user_id: int = Depends(get_current_user), db: Session = Depe
 # in cents
 stripe.api_key = os.environ.get("STRIPE_PRIVATE_TEST_KEY")
 WEBHOOK_SECRET = os.environ.get("WEBHOOK_SECRET")
-STRIPE_PRICE_ID = os.environ.get("STRIPE_PRICE_ID")
+STRIPE_SUB_PRICE_ID = os.environ.get("STRIPE_SUB_PRICE_ID")
+STRIPE_VERIFY_PRICE_ID = os.environ.get("STRIPE_VERIFY_PRICE_ID")
 
 class PaymentRequest(BaseModel):
     payment_id: str
 
-@app.post("/api/pay", tags=["payment"])
-def create_subscription(body: PaymentRequest, user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
+# pay_type is either "subscription" or "verification"
+@app.post("/api/pay/{pay_type}", tags=["payment"])
+def create_subscription(body: PaymentRequest, pay_type: str, user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
     db_user = db.query(UserDB).filter(UserDB.id == user_id).first()
 
     if not db_user.stripe_customer_id:
@@ -226,18 +228,29 @@ def create_subscription(body: PaymentRequest, user_id: int = Depends(get_current
     stripe.PaymentMethod.attach(body.payment_id, customer=db_user.stripe_customer_id)
     stripe.Customer.modify(db_user.stripe_customer_id, invoice_settings={"default_payment_method": body.payment_id})
 
-    subscription = stripe.Subscription.create(
-        customer=db_user.stripe_customer_id,
-        items=[{"price": STRIPE_PRICE_ID}],
-        payment_behavior="default_incomplete",
-        payment_settings={
-            "payment_method_types": ["card"],
-            "save_default_payment_method": "on_subscription",
-        },
-        expand=["latest_invoice"],
-    )
-
-    return {"client_secret": subscription.latest_invoice.ConfirmationSecret}
+    match pay_type:
+        case "subscription":
+            subscription = stripe.Subscription.create(
+                customer=db_user.stripe_customer_id,
+                items=[{"price": STRIPE_SUB_PRICE_ID}],
+                payment_behavior="default_incomplete",
+                payment_settings={
+                    "payment_method_types": ["card"],
+                    "save_default_payment_method": "on_subscription",
+                },
+                expand=["latest_invoice"],
+            )
+        
+            return {"client_secret": subscription.latest_invoice.ConfirmationSecret}
+        case "verify":
+            price = stripe.Price.create(
+                product=STRIPE_VERIFY_PRICE_ID,
+                currency="usd",
+                unit_amount=0,
+            )
+            return {}
+        case _:
+            raise HTTPException(status_code=403, detail="Invalid payment type")
 
 # stripe events
 @app.post("/webhook/stripe")

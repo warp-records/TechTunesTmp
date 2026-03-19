@@ -1,0 +1,26 @@
+.boxes-container-centered {
+  justify-content: center;
+}
+
+.root :global(.payment-card) {
+  gap: 0.5rem;
+}
+
+.root :global(.header-section) {
+  margin-bottom: 0;
+}
+
+.card-wrapper {
+  width: 50%;
+}
+
+.charge-notice {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  padding: 0.6rem 1rem;
+  margin-bottom: 0.75rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.75);
+}
