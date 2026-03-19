@@ -20,6 +20,9 @@ class UserDB(Base):
     auto_donate = Column(String, nullable=True)
     underage = Column(Boolean, nullable=False)
     admin = Column(Boolean, nullable=False)
+    restricted = Column(DateTime, nullable=True)
+    banned = Column(DateTime, nullable=True)
+    ban_message = Column(String, nullable=True)
     
 class SessionDB(Base):
     __tablename__ = "sessions"

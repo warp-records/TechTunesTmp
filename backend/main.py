@@ -85,6 +85,8 @@ def me(user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
             # or there exists a payment which verifies them
             "needs_verification": user.underage and user.stripe_customer_id is None,
             "admin": user.admin,
+            "restricted": user.restricted,
+            "banned": user.banned,
         }
     else:
         raise HTTPException(status_code=404, detail="User not found")
@@ -216,6 +218,7 @@ def get_auto_donate(user_id: int = Depends(get_current_user), db: Session = Depe
     return {"auto_donate": db_user.auto_donate}
 
 
+
 # @app.get("/api/profile")
 # def profileData(token: str):
 #     if token not in sessions:
@@ -224,7 +227,10 @@ def get_auto_donate(user_id: int = Depends(get_current_user), db: Session = Depe
 #     return { "username": sessions[token] }
 
 
-# in cents
+# PAYMENT
+# 
+# 
+# 
 stripe.api_key = os.environ.get("STRIPE_PRIVATE_TEST_KEY")
 WEBHOOK_SECRET = os.environ.get("WEBHOOK_SECRET")
 STRIPE_SUB_PRICE_ID = os.environ.get("STRIPE_SUB_PRICE_ID")
@@ -302,4 +308,66 @@ async def handle_invoice(invoice):
     user.subscription_end = dt
     db.commit()
     
-    
+
+# ADMIN
+# 
+# 
+# 
+
+class BanRequest(BaseModel):
+    ban_user_id: int
+    ban_time: datetime
+    ban_message: str | None = None
+
+@app.post("/api/ban", tags=["admin"])
+def ban_user(body: BanRequest, user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
+    admin = db.query(UserDB).filter(UserDB.id == user_id).first()
+    if not admin.admin:
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    target = db.query(UserDB).filter(UserDB.id == body.ban_user_id).first()
+    if not target:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    target.banned = body.ban_time
+    target.ban_message = body.ban_message
+    db.commit()
+    return {"ok": True}
+
+@app.post("/api/unban", tags=["admin"])
+def unban_user(ban_user_id: int, user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
+    admin = db.query(UserDB).filter(UserDB.id == user_id).first()
+    if not admin.admin:
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    target = db.query(UserDB).filter(UserDB.id == ban_user_id).first()
+    if not target:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    target.banned = None
+    target.ban_message = None
+    db.commit()
+    return {"ok": True}
+
+@app.get("/api/fetch_user_list", tags=["admin"])
+def fetch_user_list(user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
+    admin = db.query(UserDB).filter(UserDB.id == user_id).first()
+    if not admin.admin:
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    users = db.query(UserDB).all()
+    return [
+        {
+            "id": u.id,
+            "username": u.username,
+            "stripe_customer_id": u.stripe_customer_id,
+            "subscription_end": u.subscription_end,
+            "auto_donate": u.auto_donate,
+            "underage": u.underage,
+            "admin": u.admin,
+            "restricted": u.restricted,
+            "banned": u.banned,
+            "ban_message": u.ban_message,
+        }
+        for u in users
+    ]
