@@ -39,6 +39,7 @@ function AddSongCard() {
   const [file, setFile] = useState(null);
   const [status, setStatus] = useState('idle'); // idle | uploading | success | error
   const [errorMsg, setErrorMsg] = useState('');
+  const [warnMsg, setWarnMsg] = useState('');
   const inputRef = useRef(null);
 
   const busy = status === 'uploading';
@@ -63,7 +64,37 @@ function AddSongCard() {
     if (!file || busy) return;
     setStatus('uploading');
     setErrorMsg('');
-    // TODO: implement upload
+    setWarnMsg('');
+    const formData = new FormData();
+    formData.append('song_file', file);
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch('/api/upload_song', {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + token },
+        body: formData,
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setStatus('error');
+        setErrorMsg(data.detail || 'Upload failed');
+      } else {
+        const data = await res.json();
+        setStatus('success');
+        if (data.skipped_notes) {
+          setWarnMsg(`Some notes in this song were unplayable; ${data.skipped_notes} notes skipped`);
+        }
+      }
+    } catch {
+      setStatus('error');
+      setErrorMsg('Network error');
+    }
+    setFile(null);
+    setTimeout(() => {
+      setStatus('idle');
+      setErrorMsg('');
+      setWarnMsg('');
+    }, 5000);
   }
 
   const btnClass = [
@@ -122,6 +153,9 @@ function AddSongCard() {
       </button>
       {status === 'error' && errorMsg && (
         <p className={styles['upload-error']}>{errorMsg}</p>
+      )}
+      {status === 'success' && warnMsg && (
+        <p className={styles['upload-warn']}>{warnMsg}</p>
       )}
     </div>
   )

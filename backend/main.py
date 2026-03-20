@@ -4,6 +4,8 @@ import json
 import io
 from enum import Enum
 
+import xml_parse
+
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -374,9 +376,9 @@ def fetch_user_list(user_id: int = Depends(get_current_user), db: Session = Depe
 @app.post("/api/upload_song", tags=["admin"])
 # music xml ".xml" file format
 async def upload_song(song_file: UploadFile, _: None = Depends(is_admin)):
-    if not song_file.filename.endswith(".xml"):
-        raise HTTPException(status_code=400, detil="bad_file_extension")
-    
     contents = await song_file.read()
-        
-        
+    try:
+        result, skipped = xml_parse.parse_song(io.BytesIO(contents), allow_unplayable=True)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    return { "data": result, "skipped_notes": skipped }

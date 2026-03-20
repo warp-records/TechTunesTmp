@@ -323,6 +323,13 @@
   text-align: center;
 }
 
+.upload-warn {
+  font-size: 0.8rem;
+  color: #ffcc44;
+  margin: 0;
+  text-align: center;
+}
+
 .spinner {
   display: inline-block;
   width: 14px;
