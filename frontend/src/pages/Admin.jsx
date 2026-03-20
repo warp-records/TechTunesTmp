@@ -37,23 +37,54 @@ export default function Admin() {
 function AddSongCard() {
   const [dragOver, setDragOver] = useState(false);
   const [file, setFile] = useState(null);
+  const [status, setStatus] = useState('idle'); // idle | uploading | success | error
+  const [errorMsg, setErrorMsg] = useState('');
   const inputRef = useRef(null);
 
+  const busy = status === 'uploading';
+
   function handleFile(f) {
-    if (f) setFile(f);
+    if (f && !busy) {
+      setFile(f);
+      setStatus('idle');
+      setErrorMsg('');
+    }
   }
 
   function handleDrop(e) {
     e.preventDefault();
     setDragOver(false);
+    if (busy) return;
     const f = e.dataTransfer.files[0];
     if (f) handleFile(f);
   }
 
+  async function handleUpload() {
+    if (!file || busy) return;
+    setStatus('uploading');
+    setErrorMsg('');
+    // TODO: implement upload
+  }
+
+  const btnClass = [
+    styles['card-btn'],
+    status === 'success' ? styles['btn-success']
+      : status === 'error' ? styles['btn-error']
+      : styles['btn-default'],
+  ].join(' ');
+
+  const btnLabel = status === 'uploading' ? <span className={styles['spinner']} />
+    : status === 'success' ? '✔ Uploaded'
+    : status === 'error' ? '✖ Failed'
+    : file ? 'Upload' : 'Choose File';
+
   return (
     <div
-      className={[styles['card'], styles['song-card'], dragOver ? styles['song-card-over'] : ''].filter(Boolean).join(' ')}
-      onDragOver={e => { e.preventDefault(); setDragOver(true); }}
+      className={[
+        styles['card'], styles['song-card'],
+        dragOver && !busy ? styles['song-card-over'] : '',
+      ].filter(Boolean).join(' ')}
+      onDragOver={e => { e.preventDefault(); if (!busy) setDragOver(true); }}
       onDragLeave={() => setDragOver(false)}
       onDrop={handleDrop}
     >
@@ -77,11 +108,21 @@ function AddSongCard() {
         onChange={e => handleFile(e.target.files[0])}
       />
       <button
-        className={[styles['card-btn'], styles['btn-default']].join(' ')}
-        onClick={() => inputRef.current.click()}
+        className={btnClass}
+        disabled={busy}
+        onClick={() => {
+          if (!file || status === 'success') {
+            inputRef.current.click();
+          } else {
+            handleUpload();
+          }
+        }}
       >
-        {file ? 'Change File' : 'Choose File'}
+        {btnLabel}
       </button>
+      {status === 'error' && errorMsg && (
+        <p className={styles['upload-error']}>{errorMsg}</p>
+      )}
     </div>
   )
 }

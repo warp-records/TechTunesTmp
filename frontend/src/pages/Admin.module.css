@@ -298,6 +298,46 @@
   word-break: break-all;
 }
 
+.btn-success {
+  background: #1a4a2a;
+  color: #66ff99;
+}
+
+.btn-success:hover {
+  background: #2a5a3a;
+}
+
+.btn-error {
+  background: #4a1a1a;
+  color: #ff6666;
+}
+
+.btn-error:hover {
+  background: #5a2a2a;
+}
+
+.upload-error {
+  font-size: 0.8rem;
+  color: #ff6666;
+  margin: 0;
+  text-align: center;
+}
+
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 .ban-label {
   color: #ccc;
   font-size: 0.875rem;
