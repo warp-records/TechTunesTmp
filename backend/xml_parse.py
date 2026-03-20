@@ -4,6 +4,7 @@ from multiprocessing import Value
 import zipfile
 import json
 import xml.etree.ElementTree as ET
+import sys
 
 
 # mapping to each string as encoded in the json
@@ -89,7 +90,7 @@ class Note:
 # string is one of 'E', 'A', 'D', 'G', 'B', 'E_HIGH'
 # E3, A3, D4, G4, B4, E5
 # fret is from 0..=5
-def parse_song(file: BytesIO):
+def parse_song(file: BytesIO, ignore_unplayable: bool = False):
     # unzip
     xml = None
     try:
@@ -103,7 +104,7 @@ def parse_song(file: BytesIO):
     except zipfile.BadZipfile:
         raise ValueError("BAD_ZIP")
     
-    tree = ET.parse(xml)
+    tree = ET.parse(BytesIO(xml))
     root = tree.getroot()
     
     if root.tag != "score-partwise":
@@ -157,6 +158,9 @@ def parse_song(file: BytesIO):
 
             n = Note(step, octave, alter)
             if n.getString() is None:
+                if ignore_unplayable:
+                    print(f"Warning: skipping unplayable note {step}{octave} at beat {curr_time}")
+                    continue
                 raise ValueError(f"Note {step}{octave} is outside playable range")
             output_note = {
                 'beat_time': curr_time,
@@ -167,3 +171,13 @@ def parse_song(file: BytesIO):
 
     return json.dumps({ 'bpm': bpm, 'notes': output })
 
+
+if __name__ == "__main__":
+    if len(sys.argv) < 3:
+        print("Usage: python xml_parse.py <input.mxl> <output.json> [--ignore-unplayable]")
+        sys.exit(1)
+    ignore_unplayable = "--ignore-unplayable" in sys.argv
+    with open(sys.argv[1], "rb") as f:
+        result = parse_song(BytesIO(f.read()), ignore_unplayable=ignore_unplayable)
+    with open(sys.argv[2], "w") as f:
+        f.write(result)
