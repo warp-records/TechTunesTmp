@@ -1,4 +1,7 @@
 
+from io import BytesIO
+from multiprocessing import Value
+import zipfile
 import json
 import xml.etree.ElementTree as ET
 
@@ -71,25 +74,50 @@ class Note:
         
 # 
 # output:
-# [{ beat_time, string, fret }]
+# {"bpm": float,
+#     [
+#         { 
+#           beat_time: int, 
+#           string: str, 
+#           fret: int 
+#         },
+#         ...
+#     ]
+# }
+# 
 # beat_time is how many beats into the song when the note occurs
 # string is one of 'E', 'A', 'D', 'G', 'B', 'E_HIGH'
 # E3, A3, D4, G4, B4, E5
 # fret is from 0..=5
-def parse_song(filename: str):
-    tree = ET.parse(filename)
+def parse_song(file: BytesIO):
+    # unzip
+    xml = None
+    try:
+        with zipfile.ZipFile(file) as zf:
+            # xml file is the last file in zip of .mxl zip file
+            xml_name = zf.namelist()[-1]
+            if not xml_name.endswith(".xml"):
+                return ValueError("XML_NOT_FOUND")
+            xml = zf.read(xml_name)
+            
+    except zipfile.BadZipfile:
+        raise ValueError("BAD_ZIP")
+    
+    tree = ET.parse(xml)
     root = tree.getroot()
     
     if root.tag != "score-partwise":
-        raise ValueError("Score must be partwise")
+        raise ValueError("NOT_PARTWISE")
 
     sound = root.find(".//sound[@tempo]")
     if sound is None:
         raise ValueError("No BPM found in file")
     bpm = float(sound.get("tempo"))  # type: ignore[arg-type]
 
+    # time in score in beats
     curr_time = 0
     prev_beat_len = 0
+    # the number of divisions in the current score part
     divisions = 1
 
     output = []
@@ -139,6 +167,3 @@ def parse_song(filename: str):
 
     return json.dumps({ 'bpm': bpm, 'notes': output })
 
-
-with open("assets/songs/canon_in_d_nobassclef.json", "w") as f:
-    f.write(parse_song("assets/songs/canon_in_d_nobassclef.xml"))

@@ -1,13 +1,14 @@
 import os
 import uuid
 import json
+import io
 from enum import Enum
 
 from dotenv import load_dotenv
 load_dotenv()
 
 import bcrypt
-from fastapi import FastAPI, Request, HTTPException, Depends, APIRouter, Header
+from fastapi import FastAPI, Request, HTTPException, Depends, APIRouter, Header, UploadFile
 from pydantic import BaseModel
 
 from sqlalchemy.orm import Session
@@ -315,16 +316,19 @@ async def handle_invoice(invoice):
 # 
 # 
 
+
+def is_admin(user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
+    user = db.query(UserDB).filter(UserDB.id == user_id).first()
+    if not user or not user.admin:
+        raise HTTPException(status_code=403, detail="Forbidden")
+
 class BanRequest(BaseModel):
     ban_user_id: int
     ban_time: datetime
     ban_message: str | None = None
 
 @app.post("/api/ban", tags=["admin"])
-def ban_user(body: BanRequest, user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
-    admin = db.query(UserDB).filter(UserDB.id == user_id).first()
-    if not admin.admin:
-        raise HTTPException(status_code=403, detail="Forbidden")
+def ban_user(body: BanRequest, user_id: int = Depends(get_current_user), db: Session = Depends(get_db), _: None = Depends(is_admin)):
 
     target = db.query(UserDB).filter(UserDB.id == body.ban_user_id).first()
     if not target:
@@ -336,10 +340,7 @@ def ban_user(body: BanRequest, user_id: int = Depends(get_current_user), db: Ses
     return {"ok": True}
 
 @app.post("/api/unban", tags=["admin"])
-def unban_user(ban_user_id: int, user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
-    admin = db.query(UserDB).filter(UserDB.id == user_id).first()
-    if not admin.admin:
-        raise HTTPException(status_code=403, detail="Forbidden")
+def unban_user(ban_user_id: int, user_id: int = Depends(get_current_user), db: Session = Depends(get_db), _: None = Depends(is_admin)):
 
     target = db.query(UserDB).filter(UserDB.id == ban_user_id).first()
     if not target:
@@ -351,10 +352,7 @@ def unban_user(ban_user_id: int, user_id: int = Depends(get_current_user), db: S
     return {"ok": True}
 
 @app.get("/api/fetch_user_list", tags=["admin"])
-def fetch_user_list(user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
-    admin = db.query(UserDB).filter(UserDB.id == user_id).first()
-    if not admin.admin:
-        raise HTTPException(status_code=403, detail="Forbidden")
+def fetch_user_list(user_id: int = Depends(get_current_user), db: Session = Depends(get_db), _: None = Depends(is_admin)):
 
     users = db.query(UserDB).all()
     return [
@@ -372,3 +370,13 @@ def fetch_user_list(user_id: int = Depends(get_current_user), db: Session = Depe
         }
         for u in users
     ]
+
+@app.post("/api/upload_song", tags=["admin"])
+# music xml ".xml" file format
+async def upload_song(song_file: UploadFile, _: None = Depends(is_admin)):
+    if not song_file.filename.endswith(".xml"):
+        raise HTTPException(status_code=400, detil="bad_file_extension")
+    
+    contents = await song_file.read()
+        
+        
