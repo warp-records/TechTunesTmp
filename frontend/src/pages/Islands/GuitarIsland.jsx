@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 
 import styles from './GuitarIsland.module.css'
 import BackgroundImg from '../../assets/Homepage/LessonIsland/Background@4x.png'
@@ -66,6 +66,8 @@ const buildDifficultyNodes = (styles) => [
 
 export default function GuitarIsland() {
   const [showModal, setShowModal] = useState(false)
+  const [searchParams] = useSearchParams()
+  const assignLessonId = searchParams.get('assignLessonId')
   const difficultyNodes = buildDifficultyNodes(styles)
 
   return (
@@ -76,7 +78,7 @@ export default function GuitarIsland() {
         style={{ backgroundImage: `url(${BackgroundImg})` }}
       >
         {difficultyNodes.map((node) => (
-          <DifficultyNode key={node.id} node={node} />
+          <DifficultyNode key={node.id} node={node} assignLessonId={assignLessonId} />
         ))}
 
         <button
@@ -95,12 +97,13 @@ export default function GuitarIsland() {
   )
 }
 
-function DifficultyNode({ node }) {
+function DifficultyNode({ node, assignLessonId }) {
   if (node.href) {
+    const to = assignLessonId ? `${node.href}?assignLessonId=${assignLessonId}` : node.href
     return (
       <>
         <Link
-          to={node.href}
+          to={to}
           className={styles['difficulty-link']}
           aria-hidden="true"
           tabIndex={-1}
@@ -109,7 +112,7 @@ function DifficultyNode({ node }) {
         </Link>
 
         <Link
-          to={node.href}
+          to={to}
           className={styles['difficulty-link']}
           aria-label={`Open ${node.label} lesson island`}
           title={`Open ${node.label} lesson island`}

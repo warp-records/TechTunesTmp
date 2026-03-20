@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import styles from './Admin.module.css'
 import PremiumBadge from '../components/PremiumBadge'
 
@@ -184,20 +185,23 @@ function DashCard({ title, description, icon, action, mod, onClick }) {
   )
 }
 
+const DIFFICULTY_LABELS = ['Easy', 'Medium', 'Hard', 'Expert']
+
 const SONGS = [
-  { name: "Canon in D",              difficulty: "easy",   tile: 1 },
-  { name: "Happy Birthday",          difficulty: "easy",   tile: 2 },
-  { name: "Fur Elise",               difficulty: "medium", tile: 3 },
-  { name: "Moonlight Sonata",        difficulty: "hard",   tile: 4 },
-  { name: "Ode to Joy",              difficulty: "easy",   tile: 5 },
-  { name: "Greensleeves",            difficulty: "medium", tile: 6 },
-  { name: "Scarborough Fair",        difficulty: "medium", tile: 7 },
-  { name: "House of the Rising Sun", difficulty: "expert", tile: 8 },
+  { id: 1, name: "Canon in D",              difficulty: 0, tile: 1 },
+  { id: 2, name: "Happy Birthday",          difficulty: 0, tile: 2 },
+  { id: 3, name: "Fur Elise",               difficulty: 1, tile: 3 },
+  { id: 4, name: "Moonlight Sonata",        difficulty: 2, tile: 4 },
+  { id: 5, name: "Ode to Joy",              difficulty: 0, tile: 5 },
+  { id: 6, name: "Greensleeves",            difficulty: 1, tile: 6 },
+  { id: 7, name: "Scarborough Fair",        difficulty: 1, tile: 7 },
+  { id: 8, name: "House of the Rising Sun", difficulty: 3, tile: 8 },
 ]
 
 function LessonPanel({ onClose }) {
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState(null);
+  const navigate = useNavigate();
 
   const results = query
     ? SONGS.filter(s => s.name.toLowerCase().includes(query.toLowerCase()))
@@ -232,7 +236,7 @@ function LessonPanel({ onClose }) {
                 onClick={() => setSelected(song)}
               >
                 <span>{song.name}</span>
-                <span className={styles['song-difficulty']}>{song.difficulty}</span>
+                <span className={styles['song-difficulty']}>{DIFFICULTY_LABELS[song.difficulty]}</span>
                 <span>{song.tile}</span>
               </div>
             ))
@@ -242,6 +246,7 @@ function LessonPanel({ onClose }) {
           className={[styles['card-btn'], styles['btn-default']].join(' ')}
           disabled={!selected}
           style={{ opacity: selected ? 1 : 0.4 }}
+          onClick={() => selected && navigate(`/guitar_island?assignLessonId=${selected.id}`)}
         >
           {selected ? `Assign lesson for "${selected.name}"` : 'Select a song'}
         </button>
