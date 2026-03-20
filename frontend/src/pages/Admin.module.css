@@ -173,6 +173,56 @@
   background: #1e1e1e;
 }
 
+.result-row-selected {
+  background: #1e1030;
+  color: #cc88ff;
+}
+
+.lesson-panel {
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  padding: 28px;
+  width: 620px;
+  max-width: 95vw;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.song-table-header {
+  display: grid;
+  grid-template-columns: 3fr 2fr 1fr;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid #222;
+}
+
+.song-row {
+  display: grid;
+  grid-template-columns: 3fr 2fr 1fr;
+  padding: 10px 12px;
+  border-radius: 6px;
+  color: #ccc;
+  font-size: 0.875rem;
+  border-bottom: 1px solid #222;
+  cursor: pointer;
+  align-items: center;
+}
+
+.song-row:hover {
+  background: #1e1e1e;
+}
+
+.song-difficulty {
+  color: #888;
+  font-size: 0.8rem;
+  text-transform: capitalize;
+}
+
 .result-name {
   display: flex;
   align-items: center;

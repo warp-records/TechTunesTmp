@@ -5,6 +5,7 @@ import PremiumBadge from '../components/PremiumBadge'
 export default function Admin() {
   const username = localStorage.getItem("username");
   const [showModPanel, setShowModPanel] = useState(false);
+  const [showLessonPanel, setShowLessonPanel] = useState(false);
 
   return (
     <div className={styles['admin-root']}>
@@ -13,10 +14,11 @@ export default function Admin() {
         <div className={styles['grid']}>
           <AddSongCard />
           <DashCard
-            title="Add Lesson"
+            title="Assign Lesson"
             description="Create a new lesson for students using a song from the song database"
             icon="📖"
-            action="Add Lesson"
+            action="Assign Lesson"
+            onClick={() => setShowLessonPanel(true)}
           />
           <DashCard
             title="Moderation"
@@ -29,6 +31,7 @@ export default function Admin() {
         </div>
       </div>
 
+      {showLessonPanel && <LessonPanel onClose={() => setShowLessonPanel(false)} />}
       {showModPanel && <ModPanel onClose={() => setShowModPanel(false)} />}
     </div>
   )
@@ -177,6 +180,72 @@ function DashCard({ title, description, icon, action, mod, onClick }) {
       <button onClick={onClick} className={[styles['card-btn'], mod ? styles['btn-mod'] : styles['btn-default']].filter(Boolean).join(' ')}>
         {action}
       </button>
+    </div>
+  )
+}
+
+const SONGS = [
+  { name: "Canon in D",              difficulty: "easy",   tile: 1 },
+  { name: "Happy Birthday",          difficulty: "easy",   tile: 2 },
+  { name: "Fur Elise",               difficulty: "medium", tile: 3 },
+  { name: "Moonlight Sonata",        difficulty: "hard",   tile: 4 },
+  { name: "Ode to Joy",              difficulty: "easy",   tile: 5 },
+  { name: "Greensleeves",            difficulty: "medium", tile: 6 },
+  { name: "Scarborough Fair",        difficulty: "medium", tile: 7 },
+  { name: "House of the Rising Sun", difficulty: "expert", tile: 8 },
+]
+
+function LessonPanel({ onClose }) {
+  const [query, setQuery] = useState('');
+  const [selected, setSelected] = useState(null);
+
+  const results = query
+    ? SONGS.filter(s => s.name.toLowerCase().includes(query.toLowerCase()))
+    : SONGS;
+
+  return (
+    <div className={styles['overlay']} onClick={onClose}>
+      <div className={styles['lesson-panel']} onClick={e => e.stopPropagation()}>
+        <div className={styles['mod-header']}>
+          <h2>Assign Lesson</h2>
+          <button className={styles['close-btn']} onClick={onClose}>✕</button>
+        </div>
+        <input
+          className={styles['search-input']}
+          placeholder="Search by song..."
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+          autoFocus
+        />
+        <div className={styles['results']}>
+          <div className={styles['song-table-header']}>
+            <span>Song</span>
+            <span>Difficulty</span>
+            <span>Tile</span>
+          </div>
+          {results.length === 0
+            ? <p className={styles['no-results']}>No songs found</p>
+            : results.map(song => (
+              <div
+                key={song.name}
+                className={[styles['song-row'], selected === song ? styles['result-row-selected'] : ''].filter(Boolean).join(' ')}
+                onClick={() => setSelected(song)}
+              >
+                <span>{song.name}</span>
+                <span className={styles['song-difficulty']}>{song.difficulty}</span>
+                <span>{song.tile}</span>
+              </div>
+            ))
+          }
+        </div>
+        <button
+          className={[styles['card-btn'], styles['btn-default']].join(' ')}
+          disabled={!selected}
+          style={{ opacity: selected ? 1 : 0.4 }}
+        >
+          {selected ? `Assign lesson for "${selected.name}"` : 'Select a song'}
+        </button>
+      </div>
     </div>
   )
 }
