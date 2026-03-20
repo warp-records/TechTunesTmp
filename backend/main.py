@@ -87,6 +87,7 @@ def me(user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
             "admin": user.admin,
             "restricted": user.restricted,
             "banned": user.banned,
+            "ban_message": user.ban_message,
         }
     else:
         raise HTTPException(status_code=404, detail="User not found")

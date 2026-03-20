@@ -1,5 +1,5 @@
 
-import { useState, useContext } from 'react'
+import { useState, useContext, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../App';
 import styles from './Login.module.css'
@@ -11,6 +11,11 @@ export default function Login() {
   
   const navigate = useNavigate();
   const { fetchUser } = useContext(AuthContext);
+
+  useEffect(() => {
+    localStorage.clear();
+    fetchUser();
+  }, []);
 
   async function login() {
     const res = await fetch('/api/login', {

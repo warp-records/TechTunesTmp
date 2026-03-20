@@ -34,7 +34,6 @@ export default function AccountCreate() {
 
   useEffect(() => {
     if (!localStorage.getItem("onboardData")) navigate("/onboard");
-    if (localStorage.getItem("underAge") === "true") navigate("/payment");
   }, []);
 
   useEffect(() => {

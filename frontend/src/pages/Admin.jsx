@@ -113,7 +113,6 @@ function ModPanel({ onClose }) {
                   )}
                 </div>
                 <div className={styles['result-actions']}>
-                  <button className={styles['btn-restrict']}>Restrict</button>
                   {u.banned && new Date() < new Date(u.banned)
                     ? <button className={styles['btn-unban']} onClick={() => handleUnban(u)}>Unban</button>
                     : <button className={styles['btn-ban']} onClick={() => setBanTarget(u)}>Ban</button>

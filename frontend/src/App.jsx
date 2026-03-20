@@ -22,6 +22,7 @@ import Lesson from './pages/Lesson/Lesson'
 import Payment from './pages/Payment/Payment'
 import ParentPermission from './pages/ParentPermission/ParentPermission'
 import Admin from './pages/Admin'
+import Banned from './pages/Banned'
 import LessonIslandPage from './features/lesson-islands/pages/LessonIslandPage'
 import { LESSON_ISLAND_ROUTE_PATTERN } from './features/lesson-islands/constants/lessonIslandRoutes'
 
@@ -30,40 +31,51 @@ function App() {
     <AuthProvider>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<LogoLink />} />
-        {/* only accessible if not logged in */}
-        <Route element={<ProtectedRoute isAllowed={user => !user} redirectPath="/userpage" />}>
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/start" element={<Start />} />
-          <Route path="/onboard" element={<Onboard />} />
-          <Route path="/pricing" element={<Pricing />} />
-        </Route>
-        <Route path="/account_create" element={<AccountCreate />} />
-        
-        {/* require account to be registered and have parents permission if necessary*/}
-        <Route element={<ProtectedRoute isAllowed={user => !!user} />}>
-          <Route element={<ProtectedRoute isAllowed={user => !user.needs_verification} redirectPath="/parent_permission" />}>
-            <Route path="/pickbot_edit" element={<PickbotEdit />} />
-            <Route path="/userpage" element={<Userpage />} />
-            <Route path="/homepage" element={<Homepage />} />
-            <Route path="/guitar_tuner" element={<GuitarTuner />} />
-            <Route path="/impact" element={<Impact />} />
-            <Route path="/island_select" element={<IslandSelect />} />
-            <Route path="/guitar_island" element={<GuitarIsland />} />
-            <Route path={LESSON_ISLAND_ROUTE_PATTERN} element={<LessonIslandPage />} />
-            <Route path="/song_search" element={<SongSearch />} />
-            <Route path="/lesson" element={<Lesson />} />
-          </Route>
-        </Route>
-        
-        <Route path="/login" element={<Login />} />
-        <Route path="/payment" element={<Payment />} />
+        {/* always accessible */}
         <Route path="/parent_permission" element={<ParentPermission />} />
-        <Route path="/*" element={<BadPage />}></Route>
         
+        {/* inescapable: logged-in users who need verification always go to parent_permission */}
+        <Route element={<ProtectedRoute isAllowed={user => !user || !user.needs_verification} redirectPath="/parent_permission" />}>
+          <Route path="/" element={<LogoLink />} />
+          <Route path="/login" element={<Login />} />
+
+
+          {/* only accessible if not logged in */}
+          <Route element={<ProtectedRoute isAllowed={user => !user} redirectPath="/userpage" />}>
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/start" element={<Start />} />
+            <Route path="/onboard" element={<Onboard />} />
+            <Route path="/pricing" element={<Pricing />} />
+          </Route>
+          <Route path="/account_create" element={<AccountCreate />} />
+
+          {/* require logged in */}
+          <Route element={<ProtectedRoute isAllowed={user => !!user} />}>
+            <Route element={<ProtectedRoute isAllowed={user => !user.banned || new Date() >= new Date(user.banned)} redirectPath="/banned" />}>
+              <Route path="/pickbot_edit" element={<PickbotEdit />} />
+              <Route path="/userpage" element={<Userpage />} />
+              <Route path="/homepage" element={<Homepage />} />
+              <Route path="/guitar_tuner" element={<GuitarTuner />} />
+              <Route path="/impact" element={<Impact />} />
+              <Route path="/island_select" element={<IslandSelect />} />
+              <Route path="/guitar_island" element={<GuitarIsland />} />
+              <Route path={LESSON_ISLAND_ROUTE_PATTERN} element={<LessonIslandPage />} />
+              <Route path="/song_search" element={<SongSearch />} />
+              <Route path="/lesson" element={<Lesson />} />
+            </Route>
+          </Route>
+
+          <Route element={<ProtectedRoute isAllowed={user => !!user?.banned && new Date() < new Date(user.banned)} redirectPath="/userpage" />}>
+            <Route path="/banned" element={<Banned />} />
+          </Route>
+
+          <Route path="/payment" element={<Payment />} />
+          <Route path="/*" element={<BadPage />} />
+
           <Route element={<ProtectedRoute isAllowed={user => user?.admin} />}>
             <Route path="/admin" element={<Admin />} />
           </Route>
+        </Route>
       </Routes>
     </BrowserRouter>
     </AuthProvider>

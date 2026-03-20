@@ -69,7 +69,7 @@ export default function Userpage() {
   
   const [avatarData, setAvatarData] = useState(null);
   const navigate = useNavigate();
-  const { fetchUser } = useContext(AuthContext);
+  const { fetchUser, user: authUser } = useContext(AuthContext);
 
   async function logout() {
     localStorage.clear();
@@ -139,6 +139,7 @@ export default function Userpage() {
                 <a role="menuitem">Add Spotify</a>
                 <a role="menuitem">Add Apple Music</a>
                 <a role="menuitem">SongBook</a>
+                {authUser?.admin && <Link to="/admin" style={{ color: "#66aaff" }}>Admin</Link>}
                 <a role="menuitem" className={styles['logout']} onClick={logout}>Log out</a>
               </div>
             </div>
