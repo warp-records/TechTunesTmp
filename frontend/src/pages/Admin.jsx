@@ -41,14 +41,17 @@ function AddSongCard() {
   const [errorMsg, setErrorMsg] = useState('');
   const [warnMsg, setWarnMsg] = useState('');
   const inputRef = useRef(null);
+  const resetTimer = useRef(null);
 
   const busy = status === 'uploading';
 
   function handleFile(f) {
     if (f && !busy) {
+      clearTimeout(resetTimer.current);
       setFile(f);
       setStatus('idle');
       setErrorMsg('');
+      setWarnMsg('');
     }
   }
 
@@ -90,7 +93,7 @@ function AddSongCard() {
       setErrorMsg('Network error');
     }
     setFile(null);
-    setTimeout(() => {
+    resetTimer.current = setTimeout(() => {
       setStatus('idle');
       setErrorMsg('');
       setWarnMsg('');
@@ -142,7 +145,11 @@ function AddSongCard() {
         className={btnClass}
         disabled={busy}
         onClick={() => {
-          if (!file || status === 'success') {
+          if (!file || status === 'success' || status === 'error') {
+            clearTimeout(resetTimer.current);
+            setStatus('idle');
+            setErrorMsg('');
+            setWarnMsg('');
             inputRef.current.click();
           } else {
             handleUpload();
