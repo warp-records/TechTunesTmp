@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import styles from './Admin.module.css'
 import PremiumBadge from '../components/PremiumBadge'
 
@@ -11,15 +11,10 @@ export default function Admin() {
       <div className={styles['dashboard']}>
         <h1 className={styles['welcome']}>Welcome, {username}</h1>
         <div className={styles['grid']}>
-          <DashCard
-            title="Add Song"
-            description="Upload a new song to the library"
-            icon="🎵"
-            action="Add Song"
-          />
+          <AddSongCard />
           <DashCard
             title="Add Lesson"
-            description="Create a new lesson for students"
+            description="Create a new lesson for students using a song from the song database"
             icon="📖"
             action="Add Lesson"
           />
@@ -35,6 +30,58 @@ export default function Admin() {
       </div>
 
       {showModPanel && <ModPanel onClose={() => setShowModPanel(false)} />}
+    </div>
+  )
+}
+
+function AddSongCard() {
+  const [dragOver, setDragOver] = useState(false);
+  const [file, setFile] = useState(null);
+  const inputRef = useRef(null);
+
+  function handleFile(f) {
+    if (f) setFile(f);
+  }
+
+  function handleDrop(e) {
+    e.preventDefault();
+    setDragOver(false);
+    const f = e.dataTransfer.files[0];
+    if (f) handleFile(f);
+  }
+
+  return (
+    <div
+      className={[styles['card'], styles['song-card'], dragOver ? styles['song-card-over'] : ''].filter(Boolean).join(' ')}
+      onDragOver={e => { e.preventDefault(); setDragOver(true); }}
+      onDragLeave={() => setDragOver(false)}
+      onDrop={handleDrop}
+    >
+      <div className={styles['card-icon']}>🎵</div>
+      <h2 className={styles['card-title']}>Add Song</h2>
+      <div className={styles['card-desc']}>
+        <p>Upload songs to song database</p>
+        <p>Must be .mxl file</p>
+      </div>
+      <div className={styles['drop-zone']}>
+        {file
+          ? <span className={styles['drop-file']}>{file.name}</span>
+          : <span className={styles['drop-hint']}>Drag & drop a file here</span>
+        }
+      </div>
+      <input
+        ref={inputRef}
+        type="file"
+        accept=".mxl,.musicxml"
+        style={{ display: 'none' }}
+        onChange={e => handleFile(e.target.files[0])}
+      />
+      <button
+        className={[styles['card-btn'], styles['btn-default']].join(' ')}
+        onClick={() => inputRef.current.click()}
+      >
+        {file ? 'Change File' : 'Choose File'}
+      </button>
     </div>
   )
 }

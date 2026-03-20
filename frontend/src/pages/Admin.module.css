@@ -262,6 +262,42 @@
   position: absolute;
 }
 
+.song-card {
+  transition: border-color 0.15s;
+}
+
+.song-card-over {
+  border-color: #7722cc;
+  background: #1a1020;
+}
+
+.drop-zone {
+  border: 1px dashed #333;
+  border-radius: 8px;
+  padding: 14px;
+  text-align: center;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.song-card-over .drop-zone {
+  border-color: #7722cc;
+}
+
+.drop-hint {
+  font-size: 0.8rem;
+  color: #555;
+}
+
+.drop-file {
+  font-size: 0.8rem;
+  color: #cc88ff;
+  word-break: break-all;
+}
+
 .ban-label {
   color: #ccc;
   font-size: 0.875rem;
