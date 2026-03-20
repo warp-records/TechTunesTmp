@@ -105,7 +105,7 @@ def parse_song(file: BytesIO, allow_unplayable: bool = False) -> tuple[dict, str
             xml = zf.read(xml_name)
             
     except zipfile.BadZipfile:
-        raise ValueError("BAD_ZIP")
+        raise ValueError("Not in zip format")
     
     tree = ET.parse(BytesIO(xml))
     root = tree.getroot()
