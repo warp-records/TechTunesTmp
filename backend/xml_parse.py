@@ -101,7 +101,7 @@ def parse_song(file: BytesIO, allow_unplayable: bool = False) -> tuple[dict, str
             # xml file is the last file in zip of .mxl zip file
             xml_name = zf.namelist()[-1]
             if not xml_name.endswith(".xml"):
-                return ValueError("XML_NOT_FOUND")
+                return ValueError("No XML file found")
             xml = zf.read(xml_name)
             
     except zipfile.BadZipfile:
@@ -111,7 +111,7 @@ def parse_song(file: BytesIO, allow_unplayable: bool = False) -> tuple[dict, str
     root = tree.getroot()
     
     if root.tag != "score-partwise":
-        raise ValueError("NOT_PARTWISE")
+        raise ValueError("Not partwise format")
 
     sound = root.find(".//sound[@tempo]")
     if sound is None:
