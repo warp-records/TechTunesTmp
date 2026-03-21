@@ -38,5 +38,17 @@ class AvatarDB(Base):
     bodyTexture = Column(String, nullable=False)
     active_items = Column(Text, nullable=False)
     
+class SongDB(Base):
+    __tablename__ = "songs"
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False, unique=True)
+    instrument = Column(String, nullable=False)
+    tempo = Column(Integer, nullable=False)
+    difficulty = Column(Integer, nullable=True)
+    
+    musicxml_path = Column(String, nullable=False)
+    json_path = Column(String, nullable=False)
+
 def init_db():
     Base.metadata.create_all(bind=engine)

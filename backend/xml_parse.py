@@ -75,7 +75,7 @@ class Note:
        
      
 class Song:
-    def __init__(self, name: str, instrument: str, tempo: float, data: list):
+    def __init__(self, name: str, instrument: str, tempo: int, data: list):
         self.name = name
         self.instrument = instrument
         self.tempo = tempo
@@ -127,7 +127,7 @@ def parse_song(file: BytesIO, allow_unplayable: bool = False) -> tuple[Song, int
     sound = root.find(".//sound[@tempo]")
     if sound is None:
         raise ValueError("No BPM found in file")
-    bpm = float(sound.get("tempo"))  # type: ignore[arg-type]
+    bpm = round(float(sound.get("tempo")))  # type: ignore[arg-type]
 
     instrument = root.find(".//part-name").text # type: ignore[union-attr]
     movement_title = root.find("movement-title")
