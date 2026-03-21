@@ -67,7 +67,7 @@ const buildDifficultyNodes = (styles) => [
 export default function GuitarIsland() {
   const [showModal, setShowModal] = useState(false)
   const [searchParams] = useSearchParams()
-  const assignLessonId = searchParams.get('assignLessonId')
+  const assignSongId = searchParams.get('assignSongId')
   const difficultyNodes = buildDifficultyNodes(styles)
 
   return (
@@ -78,7 +78,7 @@ export default function GuitarIsland() {
         style={{ backgroundImage: `url(${BackgroundImg})` }}
       >
         {difficultyNodes.map((node) => (
-          <DifficultyNode key={node.id} node={node} assignLessonId={assignLessonId} />
+          <DifficultyNode key={node.id} node={node} assignSongId={assignSongId} />
         ))}
 
         <button
@@ -97,9 +97,9 @@ export default function GuitarIsland() {
   )
 }
 
-function DifficultyNode({ node, assignLessonId }) {
+function DifficultyNode({ node, assignSongId }) {
   if (node.href) {
-    const to = assignLessonId ? `${node.href}?assignLessonId=${assignLessonId}` : node.href
+    const to = assignSongId ? `${node.href}?assignSongId=${assignSongId}` : node.href
     return (
       <>
         <Link

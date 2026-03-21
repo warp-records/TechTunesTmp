@@ -47,7 +47,7 @@ function SceneAsset({ asset, className }) {
   )
 }
 
-function SceneHotspot({ hotspot }) {
+function SceneHotspot({ hotspot, isAssigning }) {
   const hotspotStyle = {
     left: toPercent(hotspot.left),
     top: toPercent(hotspot.top),
@@ -59,9 +59,11 @@ function SceneHotspot({ hotspot }) {
 
   const classes = [
     styles['lesson-island-scene__hotspot'],
-    hotspot.href
-      ? styles['lesson-island-scene__hotspot--interactive']
-      : styles['lesson-island-scene__hotspot--static'],
+    isAssigning
+      ? styles['lesson-island-scene__hotspot--assigning']
+      : hotspot.href
+        ? styles['lesson-island-scene__hotspot--interactive']
+        : styles['lesson-island-scene__hotspot--static'],
     hotspot.status
       ? styles[`lesson-island-scene__hotspot--${hotspot.status}`]
       : '',
@@ -70,7 +72,7 @@ function SceneHotspot({ hotspot }) {
     .filter(Boolean)
     .join(' ')
 
-  if (hotspot.href) {
+  if (hotspot.href && !isAssigning) {
     return (
       <Link
         to={hotspot.href}
@@ -88,7 +90,7 @@ function SceneHotspot({ hotspot }) {
     <div
       className={classes}
       style={hotspotStyle}
-      role="img"
+      role={isAssigning ? 'button' : 'img'}
       aria-label={hotspot.label}
       title={hotspot.title ?? hotspot.label}
     >
@@ -97,7 +99,7 @@ function SceneHotspot({ hotspot }) {
   )
 }
 
-export default function LessonIslandScene({ scene }) {
+export default function LessonIslandScene({ scene, assignSongId }) {
   const sceneStyle = {
     '--lesson-island-page-fill': scene.canvas.pageFill,
     '--lesson-island-stage-fill': scene.canvas.stageFill,
@@ -132,7 +134,7 @@ export default function LessonIslandScene({ scene }) {
           ))}
 
           {scene.hotspots?.map((hotspot) => (
-            <SceneHotspot key={hotspot.id} hotspot={hotspot} />
+            <SceneHotspot key={hotspot.id} hotspot={hotspot} isAssigning={!!assignSongId} />
           ))}
         </div>
       </div>

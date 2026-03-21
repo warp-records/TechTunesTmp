@@ -115,17 +115,6 @@ export const guitarBeginnerLessonIslandScene = Object.freeze({
     },
   ],
   hotspots: [
-    {
-      id: 'chord-corner',
-      label: 'Open Chord Corner lesson',
-      title: 'Open Chord Corner lesson',
-      // href: '/lesson',
-      left: 7.9,
-      top: 70.8,
-      width: 16.5,
-      height: 21.4,
-      zIndex: 30,
-    },
     { id: 'tile-25', label: 'Tile 25', href: '/lesson?lessonId=25', left: 0.8,  top: 6.2,  width: 12.7, height: 7.7,  rotate: -317.7, zIndex: 15 },
     { id: 'tile-24', label: 'Tile 24', href: '/lesson?lessonId=24', left: 10.9, top: 12.2, width: 13.3, height: 6.7,  rotate: -17.8,  zIndex: 15 },
     { id: 'tile-23', label: 'Tile 23', href: '/lesson?lessonId=23', left: 23.5, top: 9.5,  width: 8,    height: 15.6, rotate: 0,      zIndex: 15 },

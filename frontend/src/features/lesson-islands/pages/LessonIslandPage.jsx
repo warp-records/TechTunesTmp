@@ -21,6 +21,7 @@ export default function LessonIslandPage() {
   const { instrument = '', level = '' } = useParams()
   const [searchParams] = useSearchParams()
   const debug = searchParams.has('debug')
+  const assignSongId = searchParams.get('assignSongId')
   const scene = getLessonIslandScene(instrument, level)
 
   if (!scene) {
@@ -45,7 +46,7 @@ export default function LessonIslandPage() {
 
   return (
     <>
-      <LessonIslandScene scene={scene} />
+      <LessonIslandScene scene={scene} assignSongId={assignSongId} />
       {debug && <DebugTileMapper />}
     </>
   )

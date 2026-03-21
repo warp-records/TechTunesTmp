@@ -246,7 +246,7 @@ function LessonPanel({ onClose }) {
           className={[styles['card-btn'], styles['btn-default']].join(' ')}
           disabled={!selected}
           style={{ opacity: selected ? 1 : 0.4 }}
-          onClick={() => selected && navigate(`/guitar_island?assignLessonId=${selected.id}`)}
+          onClick={() => selected && navigate(`/guitar_island?assignSongId=${selected.id}`)}
         >
           {selected ? `Assign lesson for "${selected.name}"` : 'Select a song'}
         </button>
