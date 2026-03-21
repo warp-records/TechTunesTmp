@@ -208,11 +208,19 @@ const SONGS = [
 function LessonPanel({ onClose }) {
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState(null);
+  const [songs, setSongs] = useState([]);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    fetch('/api/all_songs_meta', { headers: { Authorization: 'Bearer ' + token } })
+      .then(r => r.json())
+      .then(setSongs);
+  }, []);
+
   const results = query
-    ? SONGS.filter(s => s.name.toLowerCase().includes(query.toLowerCase()))
-    : SONGS;
+    ? songs.filter(s => s.name.toLowerCase().includes(query.toLowerCase()))
+    : songs;
 
   return (
     <div className={styles['overlay']} onClick={onClose}>
@@ -243,8 +251,8 @@ function LessonPanel({ onClose }) {
                 onClick={() => setSelected(song)}
               >
                 <span>{song.name}</span>
-                <span className={styles['song-difficulty']}>{DIFFICULTY_LABELS[song.difficulty]}</span>
-                <span>{song.tile}</span>
+                <span className={styles['song-difficulty']}>{song.difficulty != null ? DIFFICULTY_LABELS[song.difficulty] : '—'}</span>
+                <span>—</span>
               </div>
             ))
           }

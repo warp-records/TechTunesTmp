@@ -378,15 +378,56 @@ def fetch_user_list(user_id: int = Depends(get_current_user), db: Session = Depe
 # 
 # 
 
+SONGDB_MUSICXML_DIR = "songdb/musicxml"
+SONGDB_JSON_DIR = "songdb/json"
+os.makedirs(SONGDB_MUSICXML_DIR, exist_ok=True)
+os.makedirs(SONGDB_JSON_DIR, exist_ok=True)
+
 @app.post("/api/upload_song", tags=["songs", "admin"])
-# music xml ".xml" file format
-async def upload_song(song_file: UploadFile, _: None = Depends(is_admin)):
+async def upload_song(song_file: UploadFile, _: None = Depends(is_admin), db: Session = Depends(get_db)):
     contents = await song_file.read()
     try:
         song, skipped = xml_parse.parse_song(io.BytesIO(contents), allow_unplayable=True)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+    existing = db.query(SongDB).filter(SongDB.name == song.name).first()
+
+    if existing:
+        musicxml_path = existing.musicxml_path
+        json_path = existing.json_path
+    else:
+        file_id = str(uuid.uuid4())
+        musicxml_path = os.path.join(SONGDB_MUSICXML_DIR, f"{file_id}.mxl")
+        json_path = os.path.join(SONGDB_JSON_DIR, f"{file_id}.json")
+
+    with open(musicxml_path, "wb") as f:
+        f.write(contents)
+    with open(json_path, "w") as f:
+        f.write(song.to_json())
+
+    if existing:
+        existing.instrument = song.instrument
+        existing.tempo = song.tempo
+    else:
+        db.add(SongDB(
+            name=song.name,
+            instrument=song.instrument,
+            tempo=song.tempo,
+            musicxml_path=musicxml_path,
+            json_path=json_path,
+        ))
+    db.commit()
+
     return { "name": song.name, "skipped_notes": skipped }
+
+@app.get("/api/all_songs_meta", tags=["songs"])
+def all_songs_meta(db: Session = Depends(get_db)):
+    songs = db.query(SongDB).all()
+    return [
+        { "id": s.song_id, "name": s.name, "instrument": s.instrument, "tempo": s.tempo, "difficulty": s.difficulty }
+        for s in songs
+    ]
 
 @app.get("/api/song_meta", tags=["songs"])
 def song_meta(song_id: int, db: Session = Depends(get_db)):
