@@ -192,7 +192,7 @@
 
 .song-table-header {
   display: grid;
-  grid-template-columns: 3fr 2fr 1fr;
+  grid-template-columns: 3fr 2fr 2fr 1fr;
   padding: 6px 12px;
   font-size: 0.75rem;
   color: #555;
@@ -203,7 +203,7 @@
 
 .song-row {
   display: grid;
-  grid-template-columns: 3fr 2fr 1fr;
+  grid-template-columns: 3fr 2fr 2fr 1fr;
   padding: 10px 12px;
   border-radius: 6px;
   color: #ccc;

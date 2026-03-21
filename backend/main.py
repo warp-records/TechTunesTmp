@@ -14,7 +14,7 @@ from fastapi import FastAPI, Request, HTTPException, Depends, APIRouter, Header,
 from pydantic import BaseModel
 
 from sqlalchemy.orm import Session
-from database import SessionLocal, init_db, UserDB, SessionDB, AvatarDB, SongDB
+from database import SessionLocal, init_db, UserDB, SessionDB, AvatarDB, SongDB, LessonTileDB
 
 from datetime import datetime
 import stripe
@@ -425,17 +425,17 @@ async def upload_song(song_file: UploadFile, _: None = Depends(is_admin), db: Se
 def all_songs_meta(db: Session = Depends(get_db)):
     songs = db.query(SongDB).all()
     return [
-        { "id": s.song_id, "name": s.name, "instrument": s.instrument, "tempo": s.tempo, "difficulty": s.difficulty }
+        { "id": s.id, "name": s.name, "instrument": s.instrument, "tempo": s.tempo, "difficulty": s.difficulty }
         for s in songs
     ]
 
 @app.get("/api/song_meta", tags=["songs"])
 def song_meta(song_id: int, db: Session = Depends(get_db)):
-    song = db.query(SongDB).filter(SongDB.song_id == song_id).first()
+    song = db.query(SongDB).filter(SongDB.id == song_id).first()
     if song is None:
         raise HTTPException(status_code=404, detail="Song not found")
     return {
-        "id": song.song_id,
+        "id": song.id,
         "name": song.name,
         "instrument": song.instrument,
         "tempo": song.tempo,

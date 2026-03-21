@@ -50,5 +50,14 @@ class SongDB(Base):
     musicxml_path = Column(String, nullable=False)
     json_path = Column(String, nullable=False)
 
+class LessonTileDB(Base):
+    __tablename__ = "lesson_tiles"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    tile_number = Column(Integer, nullable=False)
+    instrument = Column(Integer, nullable=False)
+    level = Column(Integer, nullable=False)
+    song_id = Column(Integer, ForeignKey("songs.id"), nullable=True)
+
 def init_db():
     Base.metadata.create_all(bind=engine)

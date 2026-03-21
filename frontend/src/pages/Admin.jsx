@@ -239,6 +239,7 @@ function LessonPanel({ onClose }) {
         <div className={styles['results']}>
           <div className={styles['song-table-header']}>
             <span>Song</span>
+            <span>Instrument</span>
             <span>Difficulty</span>
             <span>Tile</span>
           </div>
@@ -251,6 +252,7 @@ function LessonPanel({ onClose }) {
                 onClick={() => setSelected(song)}
               >
                 <span>{song.name}</span>
+                <span>{song.instrument}</span>
                 <span className={styles['song-difficulty']}>{song.difficulty != null ? DIFFICULTY_LABELS[song.difficulty] : '—'}</span>
                 <span>—</span>
               </div>
