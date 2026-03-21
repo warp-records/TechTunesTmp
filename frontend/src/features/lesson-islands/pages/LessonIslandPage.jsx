@@ -37,7 +37,7 @@ export default function LessonIslandPage() {
       method: 'POST',
       headers: { Authorization: 'Bearer ' + token },
     })
-    if (res.ok) navigate('/admin')
+    if (res.ok) navigate(`/admin?assignedSong=${assignSongId}`)
   }, [instrument, level, assignSongId, navigate])
 
   if (!scene) {

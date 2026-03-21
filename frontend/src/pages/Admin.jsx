@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import styles from './Admin.module.css'
 import PremiumBadge from '../components/PremiumBadge'
 
@@ -7,9 +7,23 @@ export default function Admin() {
   const username = localStorage.getItem("username");
   const [showModPanel, setShowModPanel] = useState(false);
   const [showLessonPanel, setShowLessonPanel] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [assignToast, setAssignToast] = useState(searchParams.has('assignedSong'));
+
+  useEffect(() => {
+    if (!assignToast) return;
+    setSearchParams({}, { replace: true });
+    const t = setTimeout(() => setAssignToast(false), 5000);
+    return () => clearTimeout(t);
+  }, []);
 
   return (
     <div className={styles['admin-root']}>
+      {assignToast && (
+        <div className={styles['assign-toast']}>
+          Successfully assigned song
+        </div>
+      )}
       <div className={styles['dashboard']}>
         <h1 className={styles['welcome']}>Welcome, {username}</h1>
         <div className={styles['grid']}>

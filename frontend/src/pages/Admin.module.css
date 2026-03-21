@@ -5,6 +5,30 @@
   box-sizing: border-box;
 }
 
+.assign-toast {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  padding: 14px 32px;
+  border-radius: 999px;
+  background: #1db954;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  box-shadow: 0 6px 28px rgba(29, 185, 84, 0.4);
+  white-space: nowrap;
+  pointer-events: none;
+  animation: toast-fade 5s ease forwards;
+}
+
+@keyframes toast-fade {
+  0%   { opacity: 1; }
+  70%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
 .dashboard {
   max-width: 900px;
   margin: 0 auto;
