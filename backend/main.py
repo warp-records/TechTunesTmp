@@ -441,3 +441,50 @@ def song_meta(song_id: int, db: Session = Depends(get_db)):
         "tempo": song.tempo,
         "difficulty": song.difficulty,
     }
+
+@app.get("/api/lesson_tile", tags=["songs"])
+def get_lesson_tile(tile_number: int, instrument: int, level: int, db: Session = Depends(get_db)):
+    tile = db.query(LessonTileDB).filter(
+        LessonTileDB.tile_number == tile_number,
+        LessonTileDB.instrument == instrument,
+        LessonTileDB.level == level,
+    ).first()
+    if tile is None or tile.song_id is None:
+        raise HTTPException(status_code=404, detail="No lesson assigned to this tile")
+    song = db.query(SongDB).filter(SongDB.id == tile.song_id).first()
+    with open(song.json_path, "r") as f:
+        song_data = json.load(f)
+    return {
+        "id": song.id,
+        "name": song.name,
+        "instrument": song.instrument,
+        "tempo": song.tempo,
+        "difficulty": song.difficulty,
+        "data": song_data,
+    }
+
+@app.post("/api/assign_lesson_tile", tags=["songs", "admin"])
+def assign_lesson_tile(
+    tile_number: int,
+    instrument: int,
+    level: int,
+    song_id: int,
+    _: None = Depends(is_admin),
+    db: Session = Depends(get_db),
+):
+    if db.query(SongDB).filter(SongDB.id == song_id).first() is None:
+        raise HTTPException(status_code=404, detail="Song not found")
+
+    tile = db.query(LessonTileDB).filter(
+        LessonTileDB.tile_number == tile_number,
+        LessonTileDB.instrument == instrument,
+        LessonTileDB.level == level,
+    ).first()
+
+    if tile:
+        tile.song_id = song_id
+    else:
+        db.add(LessonTileDB(tile_number=tile_number, instrument=instrument, level=level, song_id=song_id))
+
+    db.commit()
+    return { "tile_number": tile_number, "instrument": instrument, "level": level, "song_id": song_id }

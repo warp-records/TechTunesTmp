@@ -53,10 +53,9 @@ class SongDB(Base):
 class LessonTileDB(Base):
     __tablename__ = "lesson_tiles"
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    tile_number = Column(Integer, nullable=False)
-    instrument = Column(Integer, nullable=False)
-    level = Column(Integer, nullable=False)
+    tile_number = Column(Integer, primary_key=True)
+    instrument = Column(Integer, primary_key=True)
+    level = Column(Integer, primary_key=True)
     song_id = Column(Integer, ForeignKey("songs.id"), nullable=True)
 
 def init_db():
