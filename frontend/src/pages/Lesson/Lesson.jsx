@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import confetti from 'canvas-confetti'
-import songData from '../../assets/test_song_short.json'
 import drumrollSrc from '../../assets/sounds/drumroll.mp3'
 import applauseSrc from '../../assets/sounds/applause.mp3'
 
@@ -33,13 +32,6 @@ const noteImages = import.meta.glob(
 )
 
 // fuck man life hits so fast
-const beat = (60 / songData.bpm) * 1000
-const songChart = songData.notes.map(n => ({
-  time: n.beat_time * beat,
-  string: n.string,
-  fret: n.fret,
-}))
-
 const SCROLL_TIME = 1500 // ms for note to travel top to bottom
 const START_DELAY = 3000
 const MISS_DURATION = 500 // ms to display note after it reaches the bottom
@@ -47,8 +39,31 @@ const PLAY_WINDOW = 100  // ms before/after bottom that counts as a hit
 const HIT_DURATION = 300 // ms to display glowing note after a hit
 
 export default function Lesson() {
-  const [songName, setSongName] = useState("Canon In D")
+  const [searchParams] = useSearchParams()
+  const [songName, setSongName] = useState('')
   const [levelNum, setLevelNum] = useState(1)
+  const [ready, setReady] = useState(false)
+  const songChartRef = useRef([])
+
+  useEffect(() => {
+    const params = new URLSearchParams({
+      tile_number: searchParams.get('tile_number'),
+      instrument: searchParams.get('instrument'),
+      level: searchParams.get('level'),
+    })
+    fetch(`/api/lesson_tile?${params}`)
+      .then(r => r.json())
+      .then(data => {
+        const beat = (60 / data.data.bpm) * 1000
+        songChartRef.current = data.data.notes.map(n => ({
+          time: n.beat_time * beat,
+          string: n.string,
+          fret: n.fret,
+        }))
+        setSongName(data.name)
+        setReady(true)
+      })
+  }, [])
   // as a decimal
   const [progress, setProgress] = useState(0.0)
   
@@ -102,6 +117,7 @@ export default function Lesson() {
   const lastCountdown = useRef(3)
 
   useEffect(() => {
+    if (!ready) return
     // main game loop
     function loop(time) {
       if (!startTimeRef.current) startTimeRef.current = time
@@ -120,13 +136,14 @@ export default function Lesson() {
       const elapsed = rawElapsed - START_DELAY;
       elapsedRef.current = elapsed
 
+      const chart = songChartRef.current
       // Collect all notes to spawn this frame
       const toSpawn = []
       while (
-        nextNoteIdx.current < songChart.length &&
-        elapsed >= songChart[nextNoteIdx.current].time
+        nextNoteIdx.current < chart.length &&
+        elapsed >= chart[nextNoteIdx.current].time
       ) {
-        const chartNote = songChart[nextNoteIdx.current]
+        const chartNote = chart[nextNoteIdx.current]
         toSpawn.push({
           id: nextNoteIdx.current,
           string: chartNote.string,
@@ -137,7 +154,7 @@ export default function Lesson() {
         nextNoteIdx.current++
       }
       if (toSpawn.length > 0) {
-        setProgress(nextNoteIdx.current / songChart.length)
+        setProgress(nextNoteIdx.current / chart.length)
       }
 
       // Single update: spawn + progress + filter
@@ -161,9 +178,9 @@ export default function Lesson() {
 
     requestRef.current = requestAnimationFrame(loop)
     loopRef.current = loop
-    
+
     return () => cancelAnimationFrame(requestRef.current)
-  }, [])
+  }, [ready])
 
   // should prolly remove this
   useEffect(() => {
@@ -198,7 +215,8 @@ export default function Lesson() {
   // check if gameover
   useEffect(() => {
     if (
-      nextNoteIdx.current >= songChart.length &&
+      songChartRef.current.length > 0 &&
+      nextNoteIdx.current >= songChartRef.current.length &&
       notes.length === 0 &&
       elapsedRef.current > 0
     ) {
