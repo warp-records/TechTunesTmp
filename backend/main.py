@@ -14,7 +14,7 @@ from fastapi import FastAPI, Request, HTTPException, Depends, APIRouter, Header,
 from pydantic import BaseModel
 
 from sqlalchemy.orm import Session
-from database import SessionLocal, init_db, UserDB, SessionDB, AvatarDB
+from database import SessionLocal, init_db, UserDB, SessionDB, AvatarDB, SongDB
 
 from datetime import datetime
 import stripe
@@ -373,7 +373,12 @@ def fetch_user_list(user_id: int = Depends(get_current_user), db: Session = Depe
         for u in users
     ]
 
-@app.post("/api/upload_song", tags=["admin"])
+# SONGS
+# 
+# 
+# 
+
+@app.post("/api/upload_song", tags=["songs", "admin"])
 # music xml ".xml" file format
 async def upload_song(song_file: UploadFile, _: None = Depends(is_admin)):
     contents = await song_file.read()
@@ -382,3 +387,16 @@ async def upload_song(song_file: UploadFile, _: None = Depends(is_admin)):
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     return { "name": song.name, "skipped_notes": skipped }
+
+@app.get("/api/song_meta", tags=["songs"])
+def song_meta(song_id: int, db: Session = Depends(get_db)):
+    song = db.query(SongDB).filter(SongDB.song_id == song_id).first()
+    if song is None:
+        raise HTTPException(status_code=404, detail="Song not found")
+    return {
+        "id": song.song_id,
+        "name": song.name,
+        "instrument": song.instrument,
+        "tempo": song.tempo,
+        "difficulty": song.difficulty,
+    }
