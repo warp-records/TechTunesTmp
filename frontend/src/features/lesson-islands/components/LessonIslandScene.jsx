@@ -54,6 +54,7 @@ function SceneHotspot({ hotspot }) {
     width: toPercent(hotspot.width),
     height: toPercent(hotspot.height),
     zIndex: hotspot.zIndex,
+    ...(hotspot.rotate ? { transform: `rotate(${hotspot.rotate}deg)` } : {}),
   }
 
   const classes = [

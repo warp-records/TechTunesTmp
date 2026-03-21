@@ -115,7 +115,7 @@
 .lesson-island-scene__hotspot--interactive:hover,
 .lesson-island-scene__hotspot--interactive:focus-visible {
   transform: translateY(-0.6%);
-  box-shadow: inset 0 0 0 2px rgba(250, 226, 107, 0.3);
+  box-shadow: inset 0 0 0 3px rgba(250, 226, 107, 0.9), 0 0 12px rgba(250, 226, 107, 0.5);
 }
 
 .lesson-island-scene__hotspot--interactive:focus-visible {
