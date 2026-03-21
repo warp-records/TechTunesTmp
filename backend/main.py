@@ -378,7 +378,7 @@ def fetch_user_list(user_id: int = Depends(get_current_user), db: Session = Depe
 async def upload_song(song_file: UploadFile, _: None = Depends(is_admin)):
     contents = await song_file.read()
     try:
-        result, skipped = xml_parse.parse_song(io.BytesIO(contents), allow_unplayable=True)
+        song, skipped = xml_parse.parse_song(io.BytesIO(contents), allow_unplayable=True)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
-    return { "data": result, "skipped_notes": skipped }
+    return { "name": song.name, "skipped_notes": skipped }

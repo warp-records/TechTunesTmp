@@ -129,8 +129,10 @@ def parse_song(file: BytesIO, allow_unplayable: bool = False) -> tuple[Song, int
         raise ValueError("No BPM found in file")
     bpm = float(sound.get("tempo"))  # type: ignore[arg-type]
 
-    instrument = root.find("instrument-name").text # type: ignore[union-attr]
-    name = root.find("work-title").text # type: ignore[union-attr]
+    instrument = root.find(".//part-name").text # type: ignore[union-attr]
+    movement_title = root.find("movement-title")
+    work_title = root.find("work/work-title")
+    name = (movement_title if movement_title is not None else work_title).text # type: ignore[union-attr]
 
     # time in score in beats
     curr_time = 0

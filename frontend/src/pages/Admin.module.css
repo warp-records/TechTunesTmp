@@ -366,6 +366,13 @@
   background: #5a2a2a;
 }
 
+.upload-success {
+  font-size: 0.8rem;
+  color: #4cff91;
+  margin: 0;
+  text-align: center;
+}
+
 .upload-error {
   font-size: 0.8rem;
   color: #ff6666;

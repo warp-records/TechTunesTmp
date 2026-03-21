@@ -44,6 +44,7 @@ function AddSongCard() {
   const [status, setStatus] = useState('idle'); // idle | uploading | success | error
   const [errorMsg, setErrorMsg] = useState('');
   const [warnMsg, setWarnMsg] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
   const inputRef = useRef(null);
   const resetTimer = useRef(null);
 
@@ -72,6 +73,7 @@ function AddSongCard() {
     setStatus('uploading');
     setErrorMsg('');
     setWarnMsg('');
+    setSuccessMsg('');
     const formData = new FormData();
     formData.append('song_file', file);
     try {
@@ -88,6 +90,7 @@ function AddSongCard() {
       } else {
         const data = await res.json();
         setStatus('success');
+        setSuccessMsg(`Added "${data.name}" to database`);
         if (data.skipped_notes) {
           setWarnMsg(`Some notes in this song were unplayable; ${data.skipped_notes} notes skipped`);
         }
@@ -101,6 +104,7 @@ function AddSongCard() {
       setStatus('idle');
       setErrorMsg('');
       setWarnMsg('');
+      setSuccessMsg('');
     }, 5000);
   }
 
@@ -164,6 +168,9 @@ function AddSongCard() {
       </button>
       {status === 'error' && errorMsg && (
         <p className={styles['upload-error']}>{errorMsg}</p>
+      )}
+      {status === 'success' && successMsg && (
+        <p className={styles['upload-success']}>{successMsg}</p>
       )}
       {status === 'success' && warnMsg && (
         <p className={styles['upload-warn']}>{warnMsg}</p>
