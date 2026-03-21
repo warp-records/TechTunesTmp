@@ -1,7 +1,8 @@
 import { useEffect } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams, useSearchParams } from 'react-router-dom'
 
 import LessonIslandScene from '../components/LessonIslandScene'
+import DebugTileMapper from '../components/DebugTileMapper'
 import { getLessonIslandScene } from '../config/lessonIslandScenes'
 
 function formatSegment(segment) {
@@ -18,6 +19,8 @@ function formatSegment(segment) {
 export default function LessonIslandPage() {
   useEffect(() => { window.scrollTo(0, document.body.scrollHeight) }, [])
   const { instrument = '', level = '' } = useParams()
+  const [searchParams] = useSearchParams()
+  const debug = searchParams.has('debug')
   const scene = getLessonIslandScene(instrument, level)
 
   if (!scene) {
@@ -40,5 +43,10 @@ export default function LessonIslandPage() {
     )
   }
 
-  return <LessonIslandScene scene={scene} />
+  return (
+    <>
+      <LessonIslandScene scene={scene} />
+      {debug && <DebugTileMapper />}
+    </>
+  )
 }

@@ -119,7 +119,7 @@ export const guitarBeginnerLessonIslandScene = Object.freeze({
       id: 'chord-corner',
       label: 'Open Chord Corner lesson',
       title: 'Open Chord Corner lesson',
-      href: '/lesson',
+      // href: '/lesson',
       left: 7.9,
       top: 70.8,
       width: 16.5,
