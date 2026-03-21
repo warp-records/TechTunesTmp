@@ -443,7 +443,7 @@ def song_meta(song_id: int, db: Session = Depends(get_db)):
     }
 
 @app.get("/api/lesson_tile", tags=["songs"])
-def get_lesson_tile(tile_number: int, instrument: int, level: int, db: Session = Depends(get_db)):
+def get_lesson_tile(tile_number: int, instrument: str, level: str, db: Session = Depends(get_db)):
     tile = db.query(LessonTileDB).filter(
         LessonTileDB.tile_number == tile_number,
         LessonTileDB.instrument == instrument,
@@ -466,8 +466,8 @@ def get_lesson_tile(tile_number: int, instrument: int, level: int, db: Session =
 @app.post("/api/assign_lesson_tile", tags=["songs", "admin"])
 def assign_lesson_tile(
     tile_number: int,
-    instrument: int,
-    level: int,
+    instrument: str,
+    level: str,
     song_id: int,
     _: None = Depends(is_admin),
     db: Session = Depends(get_db),

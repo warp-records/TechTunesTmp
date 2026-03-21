@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { Link, useParams, useSearchParams } from 'react-router-dom'
+import { useEffect, useCallback } from 'react'
+import { Link, useParams, useSearchParams, useNavigate } from 'react-router-dom'
 
 import LessonIslandScene from '../components/LessonIslandScene'
 import DebugTileMapper from '../components/DebugTileMapper'
@@ -20,9 +20,25 @@ export default function LessonIslandPage() {
   useEffect(() => { window.scrollTo(0, document.body.scrollHeight) }, [])
   const { instrument = '', level = '' } = useParams()
   const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
   const debug = searchParams.has('debug')
   const assignSongId = searchParams.get('assignSongId')
   const scene = getLessonIslandScene(instrument, level)
+
+  const onAssignTile = useCallback(async (tileNumber) => {
+    const token = localStorage.getItem('token')
+    const params = new URLSearchParams({
+      tile_number: tileNumber,
+      instrument,
+      level,
+      song_id: assignSongId,
+    })
+    const res = await fetch(`/api/assign_lesson_tile?${params}`, {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + token },
+    })
+    if (res.ok) navigate('/admin')
+  }, [instrument, level, assignSongId, navigate])
 
   if (!scene) {
     const readableInstrument = formatSegment(instrument)
@@ -46,7 +62,7 @@ export default function LessonIslandPage() {
 
   return (
     <>
-      <LessonIslandScene scene={scene} assignSongId={assignSongId} />
+      <LessonIslandScene scene={scene} assignSongId={assignSongId} onAssignTile={assignSongId ? onAssignTile : null} />
       {debug && <DebugTileMapper />}
     </>
   )

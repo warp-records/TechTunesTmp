@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import styles from './LessonIslandScene.module.css'
 
@@ -47,7 +47,8 @@ function SceneAsset({ asset, className }) {
   )
 }
 
-function SceneHotspot({ hotspot, isAssigning }) {
+function SceneHotspot({ hotspot, isAssigning, onAssignTile, instrument, level }) {
+  const navigate = useNavigate()
   const hotspotStyle = {
     left: toPercent(hotspot.left),
     top: toPercent(hotspot.top),
@@ -57,40 +58,34 @@ function SceneHotspot({ hotspot, isAssigning }) {
     ...(hotspot.rotate ? { transform: `rotate(${hotspot.rotate}deg)` } : {}),
   }
 
+  const isTile = hotspot.tile_number != null
+  const isInteractive = isAssigning ? isTile : isTile
+
   const classes = [
     styles['lesson-island-scene__hotspot'],
     isAssigning
       ? styles['lesson-island-scene__hotspot--assigning']
-      : hotspot.href
+      : isInteractive
         ? styles['lesson-island-scene__hotspot--interactive']
         : styles['lesson-island-scene__hotspot--static'],
-    hotspot.status
-      ? styles[`lesson-island-scene__hotspot--${hotspot.status}`]
-      : '',
+    hotspot.status ? styles[`lesson-island-scene__hotspot--${hotspot.status}`] : '',
     `lesson-island-scene__hotspot--${hotspot.id}`,
-  ]
-    .filter(Boolean)
-    .join(' ')
+  ].filter(Boolean).join(' ')
 
-  if (hotspot.href && !isAssigning) {
-    return (
-      <Link
-        to={hotspot.href}
-        className={classes}
-        style={hotspotStyle}
-        aria-label={hotspot.label}
-        title={hotspot.title ?? hotspot.label}
-      >
-        <span className={styles['lesson-island-scene__sr-only']}>{hotspot.label}</span>
-      </Link>
-    )
+  function handleClick() {
+    if (isAssigning && onAssignTile) {
+      onAssignTile(hotspot.tile_number)
+    } else if (isTile) {
+      navigate(`/lesson?tile_number=${hotspot.tile_number}&instrument=${instrument}&level=${level}`)
+    }
   }
 
   return (
     <div
       className={classes}
       style={hotspotStyle}
-      role={isAssigning ? 'button' : 'img'}
+      role="button"
+      onClick={isInteractive ? handleClick : undefined}
       aria-label={hotspot.label}
       title={hotspot.title ?? hotspot.label}
     >
@@ -99,7 +94,7 @@ function SceneHotspot({ hotspot, isAssigning }) {
   )
 }
 
-export default function LessonIslandScene({ scene, assignSongId }) {
+export default function LessonIslandScene({ scene, assignSongId, onAssignTile }) {
   const sceneStyle = {
     '--lesson-island-page-fill': scene.canvas.pageFill,
     '--lesson-island-stage-fill': scene.canvas.stageFill,
@@ -121,6 +116,11 @@ export default function LessonIslandScene({ scene, assignSongId }) {
         <Link to={scene.backHref} className={styles['lesson-island-scene-page__back-link']}>
           {scene.backLabel}
         </Link>
+        {assignSongId && (
+          <div className={styles['lesson-island-scene-page__assign-banner']}>
+            Choose a tile to assign this song to
+          </div>
+        )}
       </div>
 
       <div className={styles['lesson-island-scene-page__viewport']}>
@@ -134,7 +134,7 @@ export default function LessonIslandScene({ scene, assignSongId }) {
           ))}
 
           {scene.hotspots?.map((hotspot) => (
-            <SceneHotspot key={hotspot.id} hotspot={hotspot} isAssigning={!!assignSongId} />
+            <SceneHotspot key={hotspot.id} hotspot={hotspot} isAssigning={!!assignSongId} onAssignTile={onAssignTile} instrument={scene.instrument} level={scene.level} />
           ))}
         </div>
       </div>

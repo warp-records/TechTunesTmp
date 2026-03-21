@@ -54,8 +54,8 @@ class LessonTileDB(Base):
     __tablename__ = "lesson_tiles"
 
     tile_number = Column(Integer, primary_key=True)
-    instrument = Column(Integer, primary_key=True)
-    level = Column(Integer, primary_key=True)
+    instrument = Column(String, primary_key=True)
+    level = Column(String, primary_key=True)
     song_id = Column(Integer, ForeignKey("songs.id"), nullable=True)
 
 def init_db():
