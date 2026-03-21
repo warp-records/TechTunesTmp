@@ -72,7 +72,18 @@ class Note:
             return None
 
         return Note.GUITAR_STRINGS[currStr]
-        
+       
+     
+class Song:
+    def __init__(self, name: str, instrument: str, tempo: float, data: list):
+        self.name = name
+        self.instrument = instrument
+        self.tempo = tempo
+        self.data = data
+
+    def to_json(self) -> str:
+        return json.dumps({ 'name': self.name, 'instrument': self.instrument, 'bpm': self.tempo, 'notes': self.data })
+    
 # 
 # output:
 # {"bpm": float,
@@ -93,7 +104,7 @@ class Note:
 
 
 # returns [song_output, unplayable_note_count]
-def parse_song(file: BytesIO, allow_unplayable: bool = False) -> tuple[dict, str]:
+def parse_song(file: BytesIO, allow_unplayable: bool = False) -> tuple[Song, int]:
     # unzip
     xml = None
     try:
@@ -117,6 +128,9 @@ def parse_song(file: BytesIO, allow_unplayable: bool = False) -> tuple[dict, str
     if sound is None:
         raise ValueError("No BPM found in file")
     bpm = float(sound.get("tempo"))  # type: ignore[arg-type]
+
+    instrument = root.find("instrument-name").text # type: ignore[union-attr]
+    name = root.find("work-title").text # type: ignore[union-attr]
 
     # time in score in beats
     curr_time = 0
@@ -173,7 +187,7 @@ def parse_song(file: BytesIO, allow_unplayable: bool = False) -> tuple[dict, str
             }
             output.append(output_note)
 
-    return json.dumps({ 'bpm': bpm, 'notes': output }), skipped_notes
+    return Song(name, instrument, bpm, output), skipped_notes
 
 
 if __name__ == "__main__":
@@ -187,4 +201,4 @@ if __name__ == "__main__":
     if warning:
         print(f"Warning: {warning}")
     with open(sys.argv[2], "w") as f:
-        f.write(result)
+        f.write(result.to_json())
