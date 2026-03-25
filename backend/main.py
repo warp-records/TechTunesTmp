@@ -16,7 +16,7 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 from sqlalchemy.orm import Session
-from database import SessionLocal, init_db, UserDB, SessionDB, AvatarDB, SongDB, LessonTileDB
+from database import SessionLocal, init_db, UserDB, SessionDB, AvatarDB, SongDB, LessonTileDB, NonProfitDB
 
 from datetime import datetime
 import stripe
@@ -80,7 +80,20 @@ def get_current_user(request: Request, db: Session = Depends(get_db)) -> int:
         raise HTTPException(status_code=401, detail="Unauthorized")
         
     return session.user_id
-        
+
+def get_current_nonprofit(request: Request, db: Session = Depends(get_db)) -> int:
+    auth = request.headers.get("Authorization")
+    if not auth or not auth.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+    token = auth.replace("Bearer ", "")
+    session = db.query(SessionDB).filter(SessionDB.token == token, SessionDB.nonprofit_id.isnot(None)).first()
+
+    if not session:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+    return session.nonprofit_id
+
 @app.get("/api/me")
 def me(user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
     user = db.query(UserDB).filter(UserDB.id == user_id).first()
@@ -490,6 +503,74 @@ def assign_lesson_tile(
 
     db.commit()
     return { "tile_number": tile_number, "instrument": instrument, "level": level, "song_id": song_id }
+
+# NON PROFITS
+#
+#
+#
+
+class NonProfitRequest(BaseModel):
+    name: str
+    email: str
+    password: str
+
+class NonProfitLogin(BaseModel):
+    name: str
+    password: str
+
+@app.post("/api/nonprofit/request", tags=["nonprofit"])
+def nonprofit_request(body: NonProfitRequest, db: Session = Depends(get_db)):
+    if db.query(NonProfitDB).filter(NonProfitDB.name == body.name).first():
+        raise HTTPException(status_code=409, detail="NameTaken")
+    if db.query(NonProfitDB).filter(NonProfitDB.email == body.email).first():
+        raise HTTPException(status_code=409, detail="EmailTaken")
+    hashed = bcrypt.hashpw(body.password.encode(), bcrypt.gensalt())
+    db.add(NonProfitDB(name=body.name, email=body.email, password_hash=hashed.decode()))
+    db.commit()
+    return {"message": "Request submitted"}
+
+@app.post("/api/nonprofit/login", tags=["nonprofit"])
+def nonprofit_login(body: NonProfitLogin, db: Session = Depends(get_db)):
+    np = db.query(NonProfitDB).filter(NonProfitDB.name == body.name).first()
+    if not np or not bcrypt.checkpw(body.password.encode(), np.password_hash.encode()):
+        raise HTTPException(status_code=401, detail="Bad login")
+    if not np.is_verified:
+        raise HTTPException(status_code=403, detail="Account pending approval")
+    token = str(uuid.uuid4())
+    db.add(SessionDB(token=token, nonprofit_id=np.id))
+    db.commit()
+    return {"message": "Logged in", "name": np.name, "token": token}
+
+@app.get("/api/nonprofit/me", tags=["nonprofit"])
+def nonprofit_me(nonprofit_id: int = Depends(get_current_nonprofit), db: Session = Depends(get_db)):
+    np = db.query(NonProfitDB).filter(NonProfitDB.id == nonprofit_id).first()
+    return {"name": np.name, "email": np.email, "balance": np.balance}
+
+@app.get("/api/admin/nonprofit/list", tags=["nonprofit", "admin"])
+def nonprofit_list(_: None = Depends(is_admin), db: Session = Depends(get_db)):
+    return [
+        {"id": np.id, "name": np.name, "email": np.email, "is_verified": np.is_verified, "balance": np.balance}
+        for np in db.query(NonProfitDB).all()
+    ]
+
+@app.post("/api/admin/nonprofit/approve", tags=["nonprofit", "admin"])
+def nonprofit_approve(nonprofit_id: int, _: None = Depends(is_admin), db: Session = Depends(get_db)):
+    np = db.query(NonProfitDB).filter(NonProfitDB.id == nonprofit_id).first()
+    if not np:
+        raise HTTPException(status_code=404, detail="Not found")
+    np.is_verified = True
+    db.commit()
+    return {"ok": True}
+
+@app.delete("/api/admin/nonprofit/reject", tags=["nonprofit", "admin"])
+def nonprofit_reject(nonprofit_id: int, _: None = Depends(is_admin), db: Session = Depends(get_db)):
+    np = db.query(NonProfitDB).filter(NonProfitDB.id == nonprofit_id).first()
+    if not np:
+        raise HTTPException(status_code=404, detail="Not found")
+    db.delete(np)
+    db.commit()
+    return {"ok": True}
+
 
 DIST_DIR = os.path.join(os.path.dirname(__file__), "../frontend/dist")
 

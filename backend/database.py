@@ -1,5 +1,5 @@
 
-from sqlalchemy import create_engine, Column, Integer, String, Text, ForeignKey, DateTime, Boolean
+from sqlalchemy import create_engine, Column, Integer, String, Text, ForeignKey, DateTime, Boolean, Numeric
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 DATABASE_URL = "sqlite:///techtunes.db"
@@ -26,10 +26,11 @@ class UserDB(Base):
     
 class SessionDB(Base):
     __tablename__ = "sessions"
-    
-    token = Column(String, primary_key=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    
+
+    token        = Column(String, primary_key=True)
+    user_id      = Column(Integer, ForeignKey("users.id"), nullable=True)
+    nonprofit_id = Column(Integer, ForeignKey("nonprofits.id"), nullable=True)
+
 class AvatarDB(Base):
     __tablename__ = "avatars"
     
@@ -57,6 +58,16 @@ class LessonTileDB(Base):
     instrument = Column(String, primary_key=True)
     level = Column(String, primary_key=True)
     song_id = Column(Integer, ForeignKey("songs.id"), nullable=True)
+
+class NonProfitDB(Base):
+    __tablename__ = "nonprofits"
+
+    id            = Column(Integer, primary_key=True, autoincrement=True)
+    name          = Column(String, unique=True, nullable=False)
+    email         = Column(String, unique=True, nullable=False)
+    password_hash = Column(String, nullable=False)
+    is_verified   = Column(Boolean, nullable=False, default=False)
+    balance       = Column(Integer, nullable=False, default=0)
 
 def init_db():
     Base.metadata.create_all(bind=engine)
