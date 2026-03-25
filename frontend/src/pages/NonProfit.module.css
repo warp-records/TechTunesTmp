@@ -1,0 +1,103 @@
+.np-card {
+  max-width: 480px;
+}
+
+.np-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.np-icon {
+  font-size: 1.8rem;
+}
+
+.np-title {
+  color: #fff;
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.np-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 1.75rem;
+}
+
+.np-tab {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(76, 255, 145, 0.2);
+  background: transparent;
+  color: #666;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.np-tab:hover {
+  background: rgba(76, 255, 145, 0.05);
+  color: #aaa;
+}
+
+.np-tab-active {
+  background: rgba(76, 255, 145, 0.1);
+  border-color: rgba(76, 255, 145, 0.5);
+  color: #4cff91;
+}
+
+.btn-np {
+  background: linear-gradient(135deg, #1a7a3a, #22994a);
+  color: #fff;
+  box-shadow: 0 8px 25px rgba(76, 255, 145, 0.25);
+}
+
+.btn-np:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 15px 35px rgba(76, 255, 145, 0.35);
+}
+
+.np-error {
+  color: #ff6666;
+  font-size: 0.875rem;
+  margin: -0.5rem 0 1rem;
+}
+
+.np-success {
+  text-align: center;
+  padding: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.np-success-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(76, 255, 145, 0.15);
+  border: 2px solid #4cff91;
+  color: #4cff91;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.np-success h4 {
+  color: #fff;
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.np-success p {
+  color: #888;
+  font-size: 0.875rem;
+  margin: 0;
+  line-height: 1.5;
+}

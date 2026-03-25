@@ -515,7 +515,7 @@ class NonProfitRequest(BaseModel):
     password: str
 
 class NonProfitLogin(BaseModel):
-    name: str
+    email: str
     password: str
 
 @app.post("/api/nonprofit/request", tags=["nonprofit"])
@@ -531,7 +531,7 @@ def nonprofit_request(body: NonProfitRequest, db: Session = Depends(get_db)):
 
 @app.post("/api/nonprofit/login", tags=["nonprofit"])
 def nonprofit_login(body: NonProfitLogin, db: Session = Depends(get_db)):
-    np = db.query(NonProfitDB).filter(NonProfitDB.name == body.name).first()
+    np = db.query(NonProfitDB).filter(NonProfitDB.email == body.email).first()
     if not np or not bcrypt.checkpw(body.password.encode(), np.password_hash.encode()):
         raise HTTPException(status_code=401, detail="Bad login")
     if not np.is_verified:
