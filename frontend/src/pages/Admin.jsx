@@ -42,8 +42,16 @@ export default function Admin() {
             description="Manage user accounts"
             icon="🛡️"
             action="Moderate"
-            mod
+            btnClass="btn-mod"
             onClick={() => setShowModPanel(true)}
+          />
+          <DashCard
+            title="Non profits"
+            description="Manage non profit organizations"
+            icon="🏛️"
+            action="Manage"
+            btnClass="btn-green"
+            onClick={() => {}}
           />
         </div>
       </div>
@@ -195,13 +203,13 @@ function AddSongCard() {
   )
 }
 
-function DashCard({ title, description, icon, action, mod, onClick }) {
+function DashCard({ title, description, icon, action, btnClass, onClick }) {
   return (
-    <div className={[styles['card'], mod ? styles['card-mod'] : ''].filter(Boolean).join(' ')}>
+    <div className={styles['card']}>
       <div className={styles['card-icon']}>{icon}</div>
       <h2 className={styles['card-title']}>{title}</h2>
       <p className={styles['card-desc']}>{description}</p>
-      <button onClick={onClick} className={[styles['card-btn'], mod ? styles['btn-mod'] : styles['btn-default']].filter(Boolean).join(' ')}>
+      <button onClick={onClick} className={[styles['card-btn'], styles[btnClass] ?? styles['btn-default']].join(' ')}>
         {action}
       </button>
     </div>

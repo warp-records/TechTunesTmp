@@ -108,6 +108,15 @@
   background: #2a3a6a;
 }
 
+.btn-green {
+  background: #1a7a3a;
+  color: #fff;
+}
+
+.btn-green:hover {
+  background: #22994a;
+}
+
 .overlay {
   position: fixed;
   inset: 0;
