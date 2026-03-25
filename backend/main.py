@@ -74,11 +74,11 @@ def get_current_user(request: Request, db: Session = Depends(get_db)) -> int:
         raise HTTPException(status_code=401, detail="Unauthorized")
     
     token = auth.replace("Bearer ", "")
-    session = db.query(SessionDB).filter(SessionDB.token == token).first()
-    
+    session = db.query(SessionDB).filter(SessionDB.token == token, SessionDB.user_id.isnot(None)).first()
+
     if not session:
         raise HTTPException(status_code=401, detail="Unauthorized")
-        
+
     return session.user_id
 
 def get_current_nonprofit(request: Request, db: Session = Depends(get_db)) -> int:

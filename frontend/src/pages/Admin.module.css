@@ -435,6 +435,78 @@
   to { transform: rotate(360deg); }
 }
 
+.nonprofit-panel {
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  padding: 28px;
+  width: 520px;
+  max-width: 90vw;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.np-tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.np-tab {
+  flex: 1;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #2a2a2a;
+  background: transparent;
+  color: #888;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.np-tab:hover {
+  background: #1e1e1e;
+  color: #ccc;
+}
+
+.np-tab-active {
+  background: #1e1e1e;
+  border-color: #444;
+  color: #fff;
+}
+
+.np-email {
+  font-size: 0.75rem;
+  color: #555;
+  margin-top: 2px;
+  text-decoration: none;
+}
+
+.np-email:hover {
+  color: #66aaff;
+  text-decoration: underline;
+}
+
+.np-balance {
+  font-size: 0.875rem;
+  color: #4cff91;
+  font-weight: 600;
+}
+
+.btn-approve {
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: none;
+  background: #1a3a2a;
+  color: #4cff91;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.btn-approve:hover {
+  background: #2a4a3a;
+}
+
 .ban-label {
   color: #ccc;
   font-size: 0.875rem;

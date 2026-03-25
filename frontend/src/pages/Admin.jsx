@@ -8,6 +8,7 @@ export default function Admin() {
   const username = localStorage.getItem("username");
   const [showModPanel, setShowModPanel] = useState(false);
   const [showLessonPanel, setShowLessonPanel] = useState(false);
+  const [showNonProfitPanel, setShowNonProfitPanel] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const [assignToast, setAssignToast] = useState(searchParams.has('assignedSong'));
 
@@ -51,13 +52,14 @@ export default function Admin() {
             icon="🏛️"
             action="Manage"
             btnClass="btn-green"
-            onClick={() => {}}
+            onClick={() => setShowNonProfitPanel(true)}
           />
         </div>
       </div>
 
       {showLessonPanel && <LessonPanel onClose={() => setShowLessonPanel(false)} />}
       {showModPanel && <ModPanel onClose={() => setShowModPanel(false)} />}
+      {showNonProfitPanel && <NonProfitPanel onClose={() => setShowNonProfitPanel(false)} />}
     </div>
   )
 }
@@ -428,6 +430,77 @@ function BanDialog({ user, onClose, onBanned }) {
         >
           Confirm Ban
         </button>
+      </div>
+    </div>
+  )
+}
+
+const PLACEHOLDER_NONPROFITS = [
+  { id: 1, name: "Green Earth Foundation", email: "contact@greenearth.org", is_verified: false, balance: 0 },
+  { id: 2, name: "Food For All",           email: "info@foodforall.org",    is_verified: true,  balance: 1500 },
+  { id: 3, name: "Music For Kids",         email: "hello@musicforkids.org", is_verified: false, balance: 0 },
+  { id: 4, name: "Clean Water Initiative", email: "ops@cleanwater.org",     is_verified: true,  balance: 320 },
+]
+
+function NonProfitPanel({ onClose }) {
+  const [nonprofits, setNonprofits] = useState(PLACEHOLDER_NONPROFITS);
+  const [tab, setTab] = useState('pending');
+
+  function handleApprove(id) {
+    setNonprofits(prev => prev.map(np => np.id === id ? { ...np, is_verified: true } : np));
+  }
+
+  function handleReject(id) {
+    setNonprofits(prev => prev.filter(np => np.id !== id));
+  }
+
+  const filtered = nonprofits.filter(np => tab === 'pending' ? !np.is_verified : np.is_verified);
+
+  return (
+    <div className={styles['overlay']} onClick={onClose}>
+      <div className={styles['nonprofit-panel']} onClick={e => e.stopPropagation()}>
+        <div className={styles['mod-header']}>
+          <h2>Non Profits</h2>
+          <button className={styles['close-btn']} onClick={onClose}>✕</button>
+        </div>
+        <div className={styles['np-tabs']}>
+          <button
+            className={[styles['np-tab'], tab === 'pending' ? styles['np-tab-active'] : ''].join(' ')}
+            onClick={() => setTab('pending')}
+          >
+            Pending
+          </button>
+          <button
+            className={[styles['np-tab'], tab === 'verified' ? styles['np-tab-active'] : ''].join(' ')}
+            onClick={() => setTab('verified')}
+          >
+            Verified
+          </button>
+        </div>
+        <div className={styles['results']}>
+          {filtered.length === 0
+            ? <p className={styles['no-results']}>No {tab} organizations</p>
+            : filtered.map(np => (
+              <div key={np.id} className={styles['result-row']}>
+                <div className={styles['result-name']}>
+                  <div>
+                    <div>{np.name}</div>
+                    <a className={styles['np-email']} href={`mailto:${np.email}`}>{np.email}</a>
+                  </div>
+                </div>
+                <div className={styles['result-actions']}>
+                  {tab === 'pending'
+                    ? <>
+                        <button className={styles['btn-approve']} onClick={() => handleApprove(np.id)}>Approve</button>
+                        <button className={styles['btn-ban']} onClick={() => handleReject(np.id)}>Reject</button>
+                      </>
+                    : <span className={styles['np-balance']}>${np.balance.toLocaleString()}</span>
+                  }
+                </div>
+              </div>
+            ))
+          }
+        </div>
       </div>
     </div>
   )
