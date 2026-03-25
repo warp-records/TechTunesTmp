@@ -157,3 +157,21 @@
   font-weight: 500;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
 }
+
+.account-type-btn-nonprofit {
+  border-color: rgba(76, 255, 145, 0.3);
+}
+
+.account-type-btn-nonprofit:hover {
+  border-color: #4cff91;
+  background: rgba(76, 255, 145, 0.08);
+  box-shadow: 0 8px 25px rgba(76, 255, 145, 0.2);
+}
+
+.account-type-btn-nonprofit::before {
+  background: linear-gradient(45deg, transparent, rgba(76, 255, 145, 0.15), transparent);
+}
+
+.account-icon-nonprofit {
+  background: linear-gradient(135deg, rgba(76, 255, 145, 0.3), rgba(76, 255, 145, 0.1));
+}

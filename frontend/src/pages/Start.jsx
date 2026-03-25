@@ -38,6 +38,15 @@ export default function Start() {
                 <p>Already have an account? Sign in to continue your journey!</p>
               </div>
             </button>
+            <Link to="/nonprofit">
+              <button className={`${styles['account-type-btn']} ${styles['account-type-btn-nonprofit']}`} data-action="nonprofit">
+                <div className={`${styles['account-icon']} ${styles['account-icon-nonprofit']}`}>🏛️</div>
+                <div className={styles['account-info']}>
+                  <h4>Non Profit</h4>
+                  <p>Request access for a non profit account</p>
+                </div>
+              </button>
+            </Link>
           </div>
         </div>
       </div>
