@@ -278,7 +278,7 @@ background-attachment: fixed;
 
 .song-title-text {
   grid-area: 1 / 1;
-  font-family: 'Nunito-SemiBold', sans-serif;
+  font-family: 'Baumans', sans-serif;
   font-size: 60px;
   color: white;
   -webkit-text-stroke: 1px #12138a;

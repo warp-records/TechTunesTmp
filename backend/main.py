@@ -11,6 +11,8 @@ load_dotenv()
 
 import bcrypt
 from fastapi import FastAPI, Request, HTTPException, Depends, APIRouter, Header, UploadFile
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 from sqlalchemy.orm import Session
@@ -488,3 +490,14 @@ def assign_lesson_tile(
 
     db.commit()
     return { "tile_number": tile_number, "instrument": instrument, "level": level, "song_id": song_id }
+
+DIST_DIR = os.path.join(os.path.dirname(__file__), "../frontend/dist")
+
+app.mount("/assets", StaticFiles(directory=os.path.join(DIST_DIR, "assets")), name="assets")
+
+@app.get("/{full_path:path}")
+def serve_frontend(full_path: str):
+    file = os.path.join(DIST_DIR, full_path)
+    if os.path.isfile(file):
+        return FileResponse(file)
+    return FileResponse(os.path.join(DIST_DIR, "index.html"))

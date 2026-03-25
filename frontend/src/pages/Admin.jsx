@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import styles from './Admin.module.css'
 import PremiumBadge from '../components/PremiumBadge'
+import HomeButton from '../components/HomeButton';
 
 export default function Admin() {
   const username = localStorage.getItem("username");
@@ -19,6 +20,7 @@ export default function Admin() {
 
   return (
     <div className={styles['admin-root']}>
+      <HomeButton />
       {assignToast && (
         <div className={styles['assign-toast']}>
           Successfully assigned song
