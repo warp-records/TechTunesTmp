@@ -435,23 +435,37 @@ function BanDialog({ user, onClose, onBanned }) {
   )
 }
 
-const PLACEHOLDER_NONPROFITS = [
-  { id: 1, name: "Green Earth Foundation", email: "contact@greenearth.org", is_verified: false, balance: 0 },
-  { id: 2, name: "Food For All",           email: "info@foodforall.org",    is_verified: true,  balance: 1500 },
-  { id: 3, name: "Music For Kids",         email: "hello@musicforkids.org", is_verified: false, balance: 0 },
-  { id: 4, name: "Clean Water Initiative", email: "ops@cleanwater.org",     is_verified: true,  balance: 320 },
-]
-
 function NonProfitPanel({ onClose }) {
-  const [nonprofits, setNonprofits] = useState(PLACEHOLDER_NONPROFITS);
+  const [nonprofits, setNonprofits] = useState([]);
   const [tab, setTab] = useState('pending');
 
-  function handleApprove(id) {
-    setNonprofits(prev => prev.map(np => np.id === id ? { ...np, is_verified: true } : np));
+  useEffect(() => {
+    fetchNonprofits();
+  }, []);
+
+  function fetchNonprofits() {
+    const token = localStorage.getItem('token');
+    fetch('/api/admin/nonprofit/list', { headers: { Authorization: 'Bearer ' + token } })
+      .then(r => r.json())
+      .then(setNonprofits);
   }
 
-  function handleReject(id) {
-    setNonprofits(prev => prev.filter(np => np.id !== id));
+  async function handleApprove(id) {
+    const token = localStorage.getItem('token');
+    await fetch(`/api/admin/nonprofit/approve?nonprofit_id=${id}`, {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + token },
+    });
+    fetchNonprofits();
+  }
+
+  async function handleReject(id) {
+    const token = localStorage.getItem('token');
+    await fetch(`/api/admin/nonprofit/reject?nonprofit_id=${id}`, {
+      method: 'DELETE',
+      headers: { Authorization: 'Bearer ' + token },
+    });
+    fetchNonprofits();
   }
 
   const filtered = nonprofits.filter(np => tab === 'pending' ? !np.is_verified : np.is_verified);
