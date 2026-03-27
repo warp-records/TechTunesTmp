@@ -1,7 +1,10 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { loadStripe } from '@stripe/stripe-js'
 import styles from './Login.module.css'
 import npStyles from './NonProfit.module.css'
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_TEST_KEY)
 
 export default function NonProfit() {
   const [tab, setTab] = useState('login') // 'login' | 'request'

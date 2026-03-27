@@ -23,6 +23,7 @@ import Payment from './pages/Payment/Payment'
 import ParentPermission from './pages/ParentPermission/ParentPermission'
 import Admin from './pages/Admin'
 import NonProfit from './pages/NonProfit'
+import NonProfitDashboard from './pages/NonProfitDashboard'
 import Banned from './pages/Banned'
 import LessonIslandPage from './features/lesson-islands/pages/LessonIslandPage'
 import { LESSON_ISLAND_ROUTE_PATTERN } from './features/lesson-islands/constants/lessonIslandRoutes'
@@ -46,6 +47,7 @@ function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/start" element={<Start />} />
           <Route path="/nonprofit" element={<NonProfit />} />
+          <Route path="/nonprofit/dashboard" element={<NonProfitDashboard />} />
             <Route path="/onboard" element={<Onboard />} />
             <Route path="/pricing" element={<Pricing />} />
           </Route>

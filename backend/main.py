@@ -513,6 +513,7 @@ class NonProfitRequest(BaseModel):
     name: str
     email: str
     password: str
+    stripe_bank_token: str
 
 class NonProfitLogin(BaseModel):
     email: str
@@ -525,7 +526,7 @@ def nonprofit_request(body: NonProfitRequest, db: Session = Depends(get_db)):
     if db.query(NonProfitDB).filter(NonProfitDB.email == body.email).first():
         raise HTTPException(status_code=409, detail="EmailTaken")
     hashed = bcrypt.hashpw(body.password.encode(), bcrypt.gensalt())
-    db.add(NonProfitDB(name=body.name, email=body.email, password_hash=hashed.decode()))
+    db.add(NonProfitDB(name=body.name, email=body.email, password_hash=hashed.decode(), stripe_bank_token=body.stripe_bank_token))
     db.commit()
     return {"message": "Request submitted"}
 
@@ -568,12 +569,60 @@ def nonprofit_reject(nonprofit_id: int, _: None = Depends(is_admin), db: Session
     if not np:
         raise HTTPException(status_code=404, detail="Not found")
     db.delete(np)
+    
     db.commit()
     return {"ok": True}
 
 
-DIST_DIR = os.path.join(os.path.dirname(__file__), "../frontend/dist")
+FINANCIAL_ACCOUNT_ID = os.environ.get("FINANCIAL_ACCOUNT_ID")
+@app.post("/api/nonprofit/withdrawal")
+def nonprofit_withdrawal(nonprofit_id: int, db: Session = Depends(get_db)):
+    pass
+    # initialize stripe customer data for withdrawals
+    # customer = stripe.Customer.create(
+    #     description="Charity Name",
+    #     email="no@thank.you"
+    # )
+    
+    # setup_intent = stripe.SetupIntent.create(
+    #     customer=customer.id,
+    #     flow_directions=["outbound"],
+    #     payment_method_types=["us_bank_account"],
+    #     payment_method_data={
+    #         "type": "us_bank_account",
+    #         "us_bank_account": {
+    #             "routing_number": "110000000",
+    #             "account_number": "000123456789",
+    #             "account_holder_type": "individual",
+    #         },
+    #         "billing_details": {"name": "John Doe"},
+    #     }
+    # )
+    
+    # payment_method_id = setup_intent["payment_method"]
+    
+    # outbound_payment = stripe.treasury.OutboundPayment.create(
+    #     financial_account=FINANCIAL_ACCOUNT_ID,
+    #     amount=100,
+    #     currency="usd",
+    #     customer=customer.id,
+    #     destination_payment_method=payment_method_id,
+    #     description="Test outboud payment",
+    # )
+    
+    # features = stripe.treasury.FinancialAccount.update_features(
+    # FINANCIAL_ACCOUNT_ID,
+    # outbound_payments={
+    #     "ach": {
+    #         "requested": True,
+    #     },
+    #     "us_domestic_wire": {
+    #         "requested": True,
+    #     }
+    # }
+    # )
 
+DIST_DIR = os.path.join(os.path.dirname(__file__), "../frontend/dist")
 app.mount("/assets", StaticFiles(directory=os.path.join(DIST_DIR, "assets")), name="assets")
 
 @app.get("/{full_path:path}")
@@ -582,3 +631,27 @@ def serve_frontend(full_path: str):
     if os.path.isfile(file):
         return FileResponse(file)
     return FileResponse(os.path.join(DIST_DIR, "index.html"))
+
+# charity payments
+
+
+
+# setup_intent = stripe.SetupIntent.create(
+#     customer=customer.id,
+#     flow_directions=["outbound"],
+#     payment_method_types=["us_bank_account"],
+#     payment_method_data={
+#         "type": "us_bank_account",
+#         "us_bank_account": {
+#             "routing_number": "110000000",
+#             "account_number": "000123456789",
+#             "account_holder_type": "individual",
+#         },
+#         "billing_details": {"name": "John Doe"},
+#     }
+# )
+
+
+    
+    
+    
