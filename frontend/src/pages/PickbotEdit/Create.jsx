@@ -11,6 +11,7 @@ import mouthBtn from '../../assets/DressingRoom/Dressing/Mouth Button.png'
 import accessoryBtn from '../../assets/DressingRoom/Dressing/AccessoryButton.png'
 import bodyBtn from '../../assets/DressingRoom/Dressing/Body Button.png'
 import padlock from '../../assets/DressingRoom/Dressing/lock.png'
+import TutorialOverlay from './TutorialOverlay'
 
 
 
@@ -98,6 +99,7 @@ export default function PickbotEdit() {
       </div>
 
       <div className={styles['floor']}></div>
+      {showTutorial && <TutorialOverlay />}
     </>
   )
 }
