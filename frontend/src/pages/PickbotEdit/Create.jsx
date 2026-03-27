@@ -1,6 +1,6 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 import styles from './Create.module.css'
 import Avatar from '../../components/Avatar'
@@ -22,7 +22,9 @@ export default function PickbotEdit() {
   const [isPremium, setIsPremium] = useState(false)
   const [premiumPopupVisible, setPremiumPopupVisible] = useState(false)
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const showTutorial = searchParams.get("showTutorial") !== null
   
   useEffect(() => {
     setPremiumPopupVisible(false)
@@ -34,6 +36,19 @@ export default function PickbotEdit() {
     fetch("/api/check-premium", {
       headers: { 'Authorization': 'Bearer ' + token }
     }).then(res => res.json()).then(data => setIsPremium(data.is_premium))
+
+    fetch("/api/get-avatar/", {
+      headers: { 'Authorization': 'Bearer ' + token }
+    }).then(res => {
+      if (!res.ok) return
+      return res.json()
+    }).then(data => {
+      if (!data) return
+      const { form, bodyBg, activeItems } = data.avatar
+      setForm(form)
+      setBodyBg(bodyBg)
+      setActiveItems(activeItems)
+    })
   }, [])
   
   function saveAvatar() {

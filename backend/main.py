@@ -131,7 +131,15 @@ def register(user: User, underage: bool, db: Session = Depends(get_db)):
     token = str(uuid.uuid4())
     db_session = SessionDB(token=token, user_id=db_user.id)
     db.add(db_session)
-    
+
+    db_avatar = AvatarDB(
+        user_id=db_user.id,
+        form=0,
+        bodyTexture=json.dumps({"isTexture": False, "colorIdx": 3}),
+        active_items=json.dumps({}),
+    )
+    db.add(db_avatar)
+
     db.commit()
     
     return { 
