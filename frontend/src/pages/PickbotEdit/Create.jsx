@@ -98,7 +98,7 @@ export default function PickbotEdit() {
       </div>
 
       <div className={styles['floor']}></div>
-      {showTutorial && <TutorialPopup text="Welcome to the Pickbot editor! :)" />}
+      {showTutorial && <TutorialPopup />}
     </>
   )
 }
@@ -368,10 +368,33 @@ export function BodyTexturePicker({ setBodyBg, isPremium, onPremiumRequired, onP
   )
 }
 
-function TutorialPopup({ text }) {
+const TUTORIAL_MESSAGES = [
+  "Welcome to the Pickbot editor! :)",
+]
+
+function TutorialPopup() {
+  const [index, setIndex] = useState(0)
+  const [displayed, setDisplayed] = useState("")
+
+  const text = TUTORIAL_MESSAGES[index]
+
+  useEffect(() => {
+    setDisplayed("")
+    let i = 0
+    const interval = setInterval(() => {
+      setDisplayed(text.slice(0, ++i))
+      if (i >= text.length) clearInterval(interval)
+    }, 30)
+    return () => clearInterval(interval)
+  }, [text])
+
   return (
     <div className={styles['tutorial-popup']}>
-      <p>{text}</p>
+      <div className={styles['tutorial-popup-text']}>
+        <p className={styles['tutorial-popup-sizer']}>{text}</p>
+        <p className={styles['tutorial-popup-display']}>{displayed}</p>
+      </div>
+      <button className={styles['tutorial-popup-next']} onClick={() => setIndex(i => i + 1)}>Next</button>
     </div>
   )
 }
