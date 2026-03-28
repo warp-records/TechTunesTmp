@@ -93,6 +93,11 @@
     cursor: pointer;
 }
 
+.arrow-back:hover, .arrow-forward:hover {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.8));
+}
+
 .arrow-forward {
     position: absolute;
     bottom: 120px;
@@ -128,10 +133,10 @@
 .avatar-exit-left   { animation: slide-to-left    0.3s ease forwards; }
 .avatar-exit-right  { animation: slide-to-right   0.3s ease forwards; }
 
-@keyframes slide-from-right { from { transform: translateX(100%); } to { transform: translateX(0); } }
-@keyframes slide-from-left  { from { transform: translateX(-100%); } to { transform: translateX(0); } }
-@keyframes slide-to-left    { from { transform: translateX(0); } to { transform: translateX(-100%); } }
-@keyframes slide-to-right   { from { transform: translateX(0); } to { transform: translateX(100%); } }
+@keyframes slide-from-right { from { transform: translateX(150%); } to { transform: translateX(0); } }
+@keyframes slide-from-left  { from { transform: translateX(-150%); } to { transform: translateX(0); } }
+@keyframes slide-to-left    { from { transform: translateX(0); } to { transform: translateX(-150%); } }
+@keyframes slide-to-right   { from { transform: translateX(0); } to { transform: translateX(150%); } }
 
 .avatar-slider {
     display: flex;
@@ -320,6 +325,29 @@
     box-shadow: 0 4px 8px rgba(138, 43, 226, 0.3);
     transition: all 0.3s ease;
     z-index: 4;
+}
+
+.tutorial-button {
+    background: linear-gradient(135deg, #9370DB, #8A2BE2);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 20px;
+    cursor: pointer;
+    font-family: 'Arial', sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(138, 43, 226, 0.3);
+    transition: all 0.3s ease;
+}
+
+.tutorial-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(138, 43, 226, 0.5);
+}
+
+.tutorial-button:active {
+    transform: scale(0.95);
 }
 
 .reset-button {
@@ -757,6 +785,24 @@
     left: 0;
     right: 0;
     margin: 0;
+}
+
+.tutorial-popup-close {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 1.2rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    transition: color 0.15s ease;
+}
+
+.tutorial-popup-close:hover {
+    color: white;
 }
 
 .tutorial-popup-next {

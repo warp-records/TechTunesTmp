@@ -31,7 +31,11 @@ export default function PickbotEdit() {
 
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const showTutorial = searchParams.get("showTutorial") !== null
+  const [showTutorial, setShowTutorial] = useState(() => searchParams.get("showTutorial") !== null)
+
+  useEffect(() => {
+    if (showTutorial) navigate('/pickbot_edit', { replace: true })
+  }, [])
   
   useEffect(() => {
     setPremiumPopupVisible(false)
@@ -109,6 +113,7 @@ export default function PickbotEdit() {
         <button className={styles['reset-button']} onClick={() => { setActiveItems({}); setForm(0); setBodyBg({ isTexture: false, colorIdx: 3 }); } }>
           Reset
         </button>
+        <button className={styles['tutorial-button']} onClick={() => { setTutorialIndex(0); setShowTutorial(true) }}>?</button>
       </div>
 
       <div className={styles['floor']}></div>
@@ -388,7 +393,7 @@ const TUTORIAL_MESSAGES = [
   "The pickbot editor is where you customize your very own pickbot!",
   "Click the eyes icon to try out different eyes",
   "Now check out the different mouths",
-  "There are tons of cool accessories to choose from!",
+  "There are tons of cool accessories to choose from! Drag them to move them where you want",
   "Change your body color here. Click on the spin button for a surprise!",
   "You can change your body form with these arrows",
   "Don't forget to save!"
@@ -411,6 +416,7 @@ function TutorialPopup({ index, setIndex }) {
 
   return (
     <div className={styles['tutorial-popup']}>
+      <button className={styles['tutorial-popup-close']} onClick={() => setIndex(TUTORIAL_MESSAGES.length)}>✕</button>
       <div className={styles['tutorial-popup-text']}>
         <p className={styles['tutorial-popup-sizer']}>{text}</p>
         <p className={styles['tutorial-popup-display']}>{displayed}</p>
