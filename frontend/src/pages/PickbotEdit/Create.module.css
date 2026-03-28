@@ -284,6 +284,13 @@
     transform: scale(1.05);
 }
 
+.tutorial-glow-save {
+    background: linear-gradient(135deg, #FFD200, #FFB300) !important;
+    box-shadow: 0 4px 8px rgba(255, 210, 0, 0.4), 0 0 10px rgba(255, 210, 0, 0.8);
+    color: #2d1b3d;
+    animation: tutorial-bob 1s ease-in-out infinite;
+}
+
 .save-button {
     background: linear-gradient(135deg, #8A2BE2, #9370DB);
     color: white;
@@ -394,6 +401,7 @@
 }
 
 .button-icon {
+    position: relative;
     width: 60px;
     height: 60px;
     background-size: contain;
@@ -407,6 +415,25 @@
 .button-icon:hover {
     transform: scale(1.1);
     filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.8));
+}
+
+.tutorial-glow {
+    filter: drop-shadow(0 0 6px rgba(255, 210, 0, 0.6));
+    animation: tutorial-bob 1s ease-in-out infinite;
+}
+
+@keyframes tutorial-bob {
+    0%, 100% { transform: scale(1); }
+    50%       { transform: scale(1.08); }
+}
+
+.tutorial-glow::after {
+    content: '';
+    position: absolute;
+    inset: 5% 5% 15% 5%;
+    border-radius: 50%;
+    background: rgba(255, 210, 0, 0.25);
+    pointer-events: none;
 }
 
 @keyframes fadeIn {
@@ -681,6 +708,7 @@
     transform: translate(-50%, -50%);
     background: linear-gradient(135deg, #4c1a80, #8A2BE2);
     color: #ffffff;
+    width: 420px;
     padding: 36px 48px 10px;
     border-radius: 20px;
     border: 2px solid rgba(255, 210, 0, 0.8);

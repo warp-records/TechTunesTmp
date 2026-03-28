@@ -21,6 +21,7 @@ export default function PickbotEdit() {
   const [activeItems, setActiveItems] = useState({})
   const [isPremium, setIsPremium] = useState(false)
   const [premiumPopupVisible, setPremiumPopupVisible] = useState(false)
+  const [tutorialIndex, setTutorialIndex] = useState(0)
 
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
@@ -67,7 +68,7 @@ export default function PickbotEdit() {
   
   return (
     <>
-      <ChoiceFrame category={category} setCategory={setCategory} setActiveItems={setActiveItems} setBodyBg={setBodyBg} isPremium={isPremium} onPremiumRequired={() => setPremiumPopupVisible(true)} onPremiumDismissed={() => setPremiumPopupVisible(false)} />
+      <ChoiceFrame category={category} setCategory={setCategory} setActiveItems={setActiveItems} setBodyBg={setBodyBg} isPremium={isPremium} onPremiumRequired={() => setPremiumPopupVisible(true)} onPremiumDismissed={() => setPremiumPopupVisible(false)} tutorialIndex={tutorialIndex} />
       <div className={[styles['premium-popup'], premiumPopupVisible ? styles['premium-popup-visible'] : ''].join(' ')}>
         <p>Go premium to unlock this skin!</p>
         <button onClick={() => navigate('/payment')}>Go Premium</button>
@@ -83,12 +84,12 @@ export default function PickbotEdit() {
             }))} />
           <div className={styles['avatar-slider']}></div>
         </div>
-        <div className={styles['arrow-back']} onClick={() => { setForm((form - 1 + avatarList.length) % avatarList.length) }}></div>
-        <div className={styles['arrow-forward']} onClick={() => { setForm((form + 1) % avatarList.length) }}></div>
+        <div className={[styles['arrow-back'], tutorialIndex === 6 ? styles['tutorial-glow'] : ''].join(' ')} onClick={() => { setForm((form - 1 + avatarList.length) % avatarList.length) }}></div>
+        <div className={[styles['arrow-forward'], tutorialIndex === 6 ? styles['tutorial-glow'] : ''].join(' ')} onClick={() => { setForm((form + 1) % avatarList.length) }}></div>
       </div>
       <div className={styles['action-buttons']}>
         <button
-          className={[styles['save-button'], bodyBg.isTexture && !isPremium ? styles['save-button-locked'] : ''].join(' ')}
+          className={[styles['save-button'], bodyBg.isTexture && !isPremium ? styles['save-button-locked'] : '', tutorialIndex === 7 ? styles['tutorial-glow-save'] : ''].join(' ')}
           disabled={bodyBg.isTexture && !isPremium}
           onClick={saveAvatar}
         >Save</button>
@@ -98,7 +99,7 @@ export default function PickbotEdit() {
       </div>
 
       <div className={styles['floor']}></div>
-      {showTutorial && <TutorialPopup />}
+      {showTutorial && tutorialIndex < TUTORIAL_MESSAGES.length && <TutorialPopup index={tutorialIndex} setIndex={setTutorialIndex} />}
     </>
   )
 }
@@ -114,7 +115,8 @@ export default function PickbotEdit() {
  * @param {(color: string|undefined) => void} props.setBodyTexture Body color setter.
  * @returns {JSX.Element}
  */
-export function ChoiceFrame({ category, setCategory, setActiveItems, setBodyBg, isPremium, onPremiumRequired, onPremiumDismissed }) {
+export function ChoiceFrame({ category, setCategory, setActiveItems, setBodyBg, isPremium, onPremiumRequired, onPremiumDismissed, tutorialIndex }) {
+  const tutorialGlowFor = { 2: 'eye', 3: 'mouth', 4: 'accessory', 5: 'body' }
   
   const categoryAssets = {
     "eye": Object.entries(eyeAssets),
@@ -158,10 +160,10 @@ export function ChoiceFrame({ category, setCategory, setActiveItems, setBodyBg, 
         </div>
       )}
       <div className={styles['button-row']}>
-          <div className={styles['button-icon']} onClick={() => { setCategory("eye") }} style={{backgroundImage: `url(${eyesBtn})`}}></div>
-          <div className={styles['button-icon']} onClick={() => { setCategory("mouth") }} style={{backgroundImage: `url(${mouthBtn})`}}></div>
-          <div className={styles['button-icon']} onClick={() => { setCategory("accessory") }} style={{backgroundImage: `url(${accessoryBtn})`}}></div>
-          <div className={styles['button-icon']} onClick={() => { setCategory("body") }} style={{backgroundImage: `url(${bodyBtn})`}}></div>
+          <div className={[styles['button-icon'], tutorialGlowFor[tutorialIndex] === 'eye' ? styles['tutorial-glow'] : ''].join(' ')} onClick={() => { setCategory("eye") }} style={{backgroundImage: `url(${eyesBtn})`}}></div>
+          <div className={[styles['button-icon'], tutorialGlowFor[tutorialIndex] === 'mouth' ? styles['tutorial-glow'] : ''].join(' ')} onClick={() => { setCategory("mouth") }} style={{backgroundImage: `url(${mouthBtn})`}}></div>
+          <div className={[styles['button-icon'], tutorialGlowFor[tutorialIndex] === 'accessory' ? styles['tutorial-glow'] : ''].join(' ')} onClick={() => { setCategory("accessory") }} style={{backgroundImage: `url(${accessoryBtn})`}}></div>
+          <div className={[styles['button-icon'], tutorialGlowFor[tutorialIndex] === 'body' ? styles['tutorial-glow'] : ''].join(' ')} onClick={() => { setCategory("body") }} style={{backgroundImage: `url(${bodyBtn})`}}></div>
       </div>
     </div>
   )
@@ -370,10 +372,16 @@ export function BodyTexturePicker({ setBodyBg, isPremium, onPremiumRequired, onP
 
 const TUTORIAL_MESSAGES = [
   "Welcome to the Pickbot editor! :)",
+  "The pickbot editor is where you customize your very own pickbot!",
+  "Click the eyes icon to try out different eyes",
+  "Now check out the different mouths",
+  "There are tons of cool accessories to choose from!",
+  "Change your body color here. Click on the spin button for a surprise!",
+  "You can change your body form with these arrows",
+  "Don't forget to save!"
 ]
 
-function TutorialPopup() {
-  const [index, setIndex] = useState(0)
+function TutorialPopup({ index, setIndex }) {
   const [displayed, setDisplayed] = useState("")
 
   const text = TUTORIAL_MESSAGES[index]
@@ -394,7 +402,10 @@ function TutorialPopup() {
         <p className={styles['tutorial-popup-sizer']}>{text}</p>
         <p className={styles['tutorial-popup-display']}>{displayed}</p>
       </div>
-      <button className={styles['tutorial-popup-next']} onClick={() => setIndex(i => i + 1)}>Next</button>
+      <button className={styles['tutorial-popup-next']} onClick={() => setIndex(i => i + 1)}>
+        {index === TUTORIAL_MESSAGES.length - 1 ? 'Close' : 'Next'}
+      </button>
+
     </div>
   )
 }
