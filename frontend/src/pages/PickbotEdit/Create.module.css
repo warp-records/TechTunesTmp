@@ -27,6 +27,8 @@
     background-repeat: no-repeat;
     z-index: 3;
     overflow: visible;
+    display: flex;
+    flex-direction: column;
 }
 
 .dressing-scene {
@@ -124,6 +126,12 @@
 /* Action buttons styling */
 .action-buttons {
     position: fixed;
+    right: 10%;
+    width: 500px;
+    top: calc(50% + 80px);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
     z-index: 5;
 }
 
@@ -277,10 +285,6 @@
 }
 
 .save-button {
-    position: fixed;
-    top: 50%;
-    right: calc(17.5% - -100px);
-    transform: translateY(calc(-20% + 100px));
     background: linear-gradient(135deg, #8A2BE2, #9370DB);
     color: white;
     border: none;
@@ -296,10 +300,6 @@
 }
 
 .reset-button {
-    position: fixed;
-    top: 50%;
-    right: calc(17.5% - -95px);
-    transform: translateY(calc(-20% + 150px));
     background: linear-gradient(135deg, #9370DB, #8A2BE2);
     color: white;
     border: none;
@@ -315,17 +315,17 @@
 }
 
 .save-button:hover {
-    transform: translateY(calc(-20% + 100px)) scale(1.05);
+    transform: scale(1.05);
     box-shadow: 0 6px 12px rgba(138, 43, 226, 0.5);
 }
 
 .reset-button:hover {
-    transform: translateY(calc(-20% + 150px)) scale(1.05);
+    transform: scale(1.05);
     box-shadow: 0 6px 12px rgba(138, 43, 226, 0.5);
 }
 
 .save-button:active {
-    transform: translateY(calc(-20% + 100px)) scale(0.95);
+    transform: scale(0.95);
     box-shadow: 0 0 20px rgba(138, 43, 226, 0.8), 0 0 40px rgba(138, 43, 226, 0.6);
 }
 
@@ -377,17 +377,19 @@
 }
 
 .reset-button:active {
-    transform: translateY(calc(-20% + 150px)) scale(0.95);
+    transform: scale(0.95);
     box-shadow: 0 0 20px rgba(138, 43, 226, 0.8), 0 0 40px rgba(138, 43, 226, 0.6);
 }
 
 .button-row {
-    position: fixed;
-    right: 17.5%;
-    top: 50%;
-    transform: translateY(-20%);
+    position: absolute;
+    bottom: -20px;
+    left: -10px;
+    right: 0;
     display: flex;
-    gap: 20px;
+    justify-content: space-evenly;
+    align-items: center;
+    padding: 0 60px;
     z-index: 4;
 }
 
@@ -670,4 +672,32 @@
 .texture-cell:hover {
     transform: scale(1.1);
     border-color: rgba(255, 255, 255, 0.9);
+}
+
+.tutorial-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, #4c1a80, #8A2BE2);
+    color: #ffffff;
+    padding: 36px 48px;
+    border-radius: 20px;
+    border: 2px solid rgba(255, 210, 0, 0.8);
+    font-family: 'Nunito-SemiBold', 'Nunito', sans-serif;
+    font-size: 1.65rem;
+    font-weight: bold;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(138, 43, 226, 0.5);
+    animation: gold-glow 2s ease-in-out infinite;
+    z-index: 7;
+}
+
+@keyframes gold-glow {
+    0%, 100% { box-shadow: 0 8px 32px rgba(138, 43, 226, 0.5), 0 0 6px rgba(255, 210, 0, 0.6); }
+    50%       { box-shadow: 0 8px 32px rgba(138, 43, 226, 0.5), 0 0 12px rgba(255, 210, 0, 1); }
+}
+
+.tutorial-popup p {
+    margin: 0;
 }

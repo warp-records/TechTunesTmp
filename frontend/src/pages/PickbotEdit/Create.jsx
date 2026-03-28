@@ -11,7 +11,6 @@ import mouthBtn from '../../assets/DressingRoom/Dressing/Mouth Button.png'
 import accessoryBtn from '../../assets/DressingRoom/Dressing/AccessoryButton.png'
 import bodyBtn from '../../assets/DressingRoom/Dressing/Body Button.png'
 import padlock from '../../assets/DressingRoom/Dressing/lock.png'
-import TutorialOverlay from './TutorialOverlay'
 
 
 
@@ -99,7 +98,7 @@ export default function PickbotEdit() {
       </div>
 
       <div className={styles['floor']}></div>
-      {showTutorial && <TutorialOverlay />}
+      {showTutorial && <TutorialPopup text="Welcome to the Pickbot editor! :)" />}
     </>
   )
 }
@@ -138,36 +137,33 @@ export function ChoiceFrame({ category, setCategory, setActiveItems, setBodyBg, 
   }
   
   return (
-    <>
+    <div className={styles['choice-frame']}>
+      {category === "body" ? (
+        <BodyTexturePicker key="body" setBodyBg={setBodyBg} isPremium={isPremium} onPremiumRequired={onPremiumRequired} onPremiumDismissed={onPremiumDismissed} />
+      ) : (
+        <div key={category} className={styles[`${category}-options`]}>
+          {rows.map((rowElems, rowIdx) => (
+          <div key={rowIdx} className={styles[`${category}-row`]}>
+              {rowElems.map(([name, url], idx) => (
+                <Item key={idx} category={category} img={url}
+                  onClick={() => setActiveItems(prev => ({
+                    ...prev,
+                    [category]: category === 'accessory'
+                      ? { name, x: 0, y: 0 }
+                      : name,
+                  }))} />
+              ))}
+          </div>
+          ))}
+        </div>
+      )}
       <div className={styles['button-row']}>
           <div className={styles['button-icon']} onClick={() => { setCategory("eye") }} style={{backgroundImage: `url(${eyesBtn})`}}></div>
           <div className={styles['button-icon']} onClick={() => { setCategory("mouth") }} style={{backgroundImage: `url(${mouthBtn})`}}></div>
           <div className={styles['button-icon']} onClick={() => { setCategory("accessory") }} style={{backgroundImage: `url(${accessoryBtn})`}}></div>
           <div className={styles['button-icon']} onClick={() => { setCategory("body") }} style={{backgroundImage: `url(${bodyBtn})`}}></div>
       </div>
-
-      <div className={styles['choice-frame']}>
-        {category === "body" ? (
-          <BodyTexturePicker key="body" setBodyBg={setBodyBg} isPremium={isPremium} onPremiumRequired={onPremiumRequired} onPremiumDismissed={onPremiumDismissed} />
-        ) : (
-          <div key={category} className={styles[`${category}-options`]}>
-            {rows.map((rowElems, rowIdx) => (
-            <div key={rowIdx} className={styles[`${category}-row`]}>
-                {rowElems.map(([name, url], idx) => (
-                  <Item key={idx} category={category} img={url}
-                    onClick={() => setActiveItems(prev => ({
-                      ...prev,
-                      [category]: category === 'accessory'
-                        ? { name, x: 0, y: 0 }
-                        : name,
-                    }))} />
-                ))}
-            </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </>
+    </div>
   )
 }
 
@@ -368,6 +364,14 @@ export function BodyTexturePicker({ setBodyBg, isPremium, onPremiumRequired, onP
           ))}
         </div>
       )}
+    </div>
+  )
+}
+
+function TutorialPopup({ text }) {
+  return (
+    <div className={styles['tutorial-popup']}>
+      <p>{text}</p>
     </div>
   )
 }
