@@ -17,6 +17,12 @@ import padlock from '../../assets/DressingRoom/Dressing/lock.png'
 export default function PickbotEdit() {
   const [category, setCategory] = useState("")
   const [form, setForm] = useState(0)
+  const [slideDir, setSlideDir] = useState('right')
+  const [animKey, setAnimKey] = useState(0)
+
+  const prevForm = slideDir === 'right'
+    ? (form - 1 + avatarList.length) % avatarList.length
+    : (form + 1) % avatarList.length
   const [bodyBg, setBodyBg] = useState({ isTexture: false, colorIdx: 3 })
   const [activeItems, setActiveItems] = useState({})
   const [isPremium, setIsPremium] = useState(false)
@@ -78,14 +84,21 @@ export default function PickbotEdit() {
         <div className={styles['mirror']}></div>
         <div className={styles['stand']}></div>
         <div className={styles['avatar-container']}>
-          <Avatar form={form} activeItems={activeItems} bodyTexture={resolveBodyBg(bodyBg)}
-            onAccessoryDrag={(x, y) => setActiveItems(prev => ({
-              ...prev, accessory: { ...prev.accessory, x, y },
-            }))} />
-          <div className={styles['avatar-slider']}></div>
+          {animKey > 0 && (
+            // for sliding animation
+            <div key={`exit-${animKey}`} className={styles[slideDir === 'right' ? 'avatar-exit-left' : 'avatar-exit-right']}>
+              <Avatar form={prevForm} activeItems={activeItems} bodyTexture={resolveBodyBg(bodyBg)} />
+            </div>
+          )}
+          <div key={`enter-${animKey}`} className={animKey > 0 ? styles[slideDir === 'right' ? 'avatar-enter-right' : 'avatar-enter-left'] : ''}>
+            <Avatar form={form} activeItems={activeItems} bodyTexture={resolveBodyBg(bodyBg)}
+              onAccessoryDrag={(x, y) => setActiveItems(prev => ({
+                ...prev, accessory: { ...prev.accessory, x, y },
+              }))} />
+          </div>
         </div>
-        <div className={[styles['arrow-back'], tutorialIndex === 6 ? styles['tutorial-glow'] : ''].join(' ')} onClick={() => { setForm((form - 1 + avatarList.length) % avatarList.length) }}></div>
-        <div className={[styles['arrow-forward'], tutorialIndex === 6 ? styles['tutorial-glow'] : ''].join(' ')} onClick={() => { setForm((form + 1) % avatarList.length) }}></div>
+        <div className={[styles['arrow-back'], tutorialIndex === 6 ? styles['tutorial-glow'] : ''].join(' ')} onClick={() => { setSlideDir('left'); setForm((form - 1 + avatarList.length) % avatarList.length); setAnimKey(k => k + 1) }}></div>
+        <div className={[styles['arrow-forward'], tutorialIndex === 6 ? styles['tutorial-glow'] : ''].join(' ')} onClick={() => { setSlideDir('right'); setForm((form + 1) % avatarList.length); setAnimKey(k => k + 1) }}></div>
       </div>
       <div className={styles['action-buttons']}>
         <button
