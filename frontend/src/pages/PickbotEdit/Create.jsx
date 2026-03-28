@@ -33,9 +33,6 @@ export default function PickbotEdit() {
   const [searchParams] = useSearchParams()
   const [showTutorial, setShowTutorial] = useState(() => searchParams.get("showTutorial") !== null)
 
-  useEffect(() => {
-    if (showTutorial) navigate('/pickbot_edit', { replace: true })
-  }, [])
   
   useEffect(() => {
     setPremiumPopupVisible(false)
@@ -61,6 +58,10 @@ export default function PickbotEdit() {
       setActiveItems(activeItems)
     })
   }, [])
+  
+  useEffect(() => {
+    if (!showTutorial) navigate('/pickbot_edit', { replace: true })
+  }, [showTutorial])
   
   function saveAvatar() {
     const token = localStorage.getItem("token")
@@ -117,7 +118,7 @@ export default function PickbotEdit() {
       </div>
 
       <div className={styles['floor']}></div>
-      {showTutorial && tutorialIndex < TUTORIAL_MESSAGES.length && <TutorialPopup index={tutorialIndex} setIndex={setTutorialIndex} />}
+      {showTutorial && tutorialIndex < TUTORIAL_MESSAGES.length && <TutorialPopup index={tutorialIndex} setIndex={setTutorialIndex} onClose={() => { setShowTutorial(false); setTutorialIndex(0) }} />}
     </>
   )
 }
@@ -399,7 +400,7 @@ const TUTORIAL_MESSAGES = [
   "Don't forget to save!"
 ]
 
-function TutorialPopup({ index, setIndex }) {
+function TutorialPopup({ index, setIndex, onClose }) {
   const [displayed, setDisplayed] = useState("")
 
   const text = TUTORIAL_MESSAGES[index]
@@ -416,12 +417,12 @@ function TutorialPopup({ index, setIndex }) {
 
   return (
     <div className={styles['tutorial-popup']}>
-      <button className={styles['tutorial-popup-close']} onClick={() => setIndex(TUTORIAL_MESSAGES.length)}>✕</button>
+      <button className={styles['tutorial-popup-close']} onClick={onClose}>✕</button>
       <div className={styles['tutorial-popup-text']}>
         <p className={styles['tutorial-popup-sizer']}>{text}</p>
         <p className={styles['tutorial-popup-display']}>{displayed}</p>
       </div>
-      <button className={styles['tutorial-popup-next']} onClick={() => setIndex(i => i + 1)}>
+      <button className={styles['tutorial-popup-next']} onClick={() => index === TUTORIAL_MESSAGES.length - 1 ? onClose() : setIndex(i => i + 1)}>
         {index === TUTORIAL_MESSAGES.length - 1 ? 'Close' : 'Next'}
       </button>
 

@@ -91,7 +91,7 @@ export default function AccountCreate() {
     if (response.ok) {
       localStorage.setItem("token", data.token)
       await fetchUser();
-      navigate(underage ? '/parent_permission' : '/pickbot_edit');
+      navigate(underage ? '/parent_permission' : '/pickbot_edit?showTutorial');
     }
   }
   
