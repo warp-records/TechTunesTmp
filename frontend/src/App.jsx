@@ -4,7 +4,6 @@ import Logo from './components/Logo'
 import serverRackFall from './assets/Badpage/server_rack_fall.jpg'
 import thisIsFine from './assets/Badpage/thisisfine.jpg'
 import './App.css'
-import Signup from './pages/Signup'
 import Start from './pages/Start'
 import Onboard from './pages/Onboard/Onboard'
 import Pricing from './pages/Pricing/Pricing'
@@ -44,7 +43,6 @@ function App() {
 
           {/* only accessible if not logged in */}
           <Route element={<ProtectedRoute isAllowed={user => !user} redirectPath="/userpage" />}>
-            <Route path="/signup" element={<Signup />} />
             <Route path="/start" element={<Start />} />
           <Route path="/nonprofit" element={<NonProfit />} />
           <Route path="/nonprofit/dashboard" element={<NonProfitDashboard />} />
@@ -90,7 +88,7 @@ export default App
 
 function LogoLink() {
   return (
-    <Link to="/signup">
+    <Link to="/start">
       <Logo />
     </Link>
   )

@@ -31,6 +31,7 @@ export default function Start() {
                 </div>
               </button>
             </Link>
+            <Link to="/login">
             <button className={styles['account-type-btn']} data-action="login">
               <div className={styles['account-icon']}>🔑</div>
               <div className={styles['account-info']}>
@@ -38,6 +39,7 @@ export default function Start() {
                 <p>Already have an account? Sign in to continue your journey!</p>
               </div>
             </button>
+            </Link>
             <Link to="/nonprofit">
               <button className={`${styles['account-type-btn']} ${styles['account-type-btn-nonprofit']}`} data-action="nonprofit">
                 <div className={`${styles['account-icon']} ${styles['account-icon-nonprofit']}`}>🏛️</div>

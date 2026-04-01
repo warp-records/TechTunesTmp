@@ -68,7 +68,7 @@ class NonProfitDB(Base):
     password_hash = Column(String, nullable=False)
     is_verified        = Column(Boolean, nullable=False, default=False)
     balance            = Column(Integer, nullable=False, default=0)
-    stripe_customer_id  = Column(String, nullable=True)
+    stripe_bank_token   = Column(String, nullable=True)
 
 def init_db():
     Base.metadata.create_all(bind=engine)

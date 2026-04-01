@@ -521,7 +521,7 @@ class NonProfitRequest(BaseModel):
     name: str
     email: str
     password: str
-    stripe_bank_token: str
+    stripe_bank_token: str = "0"
 
 class NonProfitLogin(BaseModel):
     email: str

@@ -82,7 +82,7 @@ export default function Login() {
 
           <div className={styles['signup-link']}>
             <p>Don't have an account?
-              <Link to="/signup">
+              <Link to="/onboard">
                 <a id="show-register"> Sign up</a>
               </Link>
             </p>
