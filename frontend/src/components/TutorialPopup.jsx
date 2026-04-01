@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import styles from './TutorialPopup.module.css'
-import neonArrow from '../assets/Tutorial/neon_arrow.png'
+import neonArrow from '../assets/Tutorial/blue-neon-arrow-2.png'
 
 export default function TutorialPopup({ messages, index, setIndex, onClose }) {
   const [displayed, setDisplayed] = useState("")

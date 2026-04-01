@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 
 import styles from './Create.module.css'
 import Avatar from '../../components/Avatar'
-import TutorialPopup from '../../components/TutorialPopup'
+import TutorialPopup, { ArrowIndicator } from '../../components/TutorialPopup'
 import { avatarList, serializeAvatar, resolveBodyBg, TORSO_COLORS } from '../../components/avatarData'
 import { eyeAssets, mouthAssets, accessoryAssets, bodyTextureAssets } from '../../assetRegistry'
 import eyesBtn from '../../assets/DressingRoom/Dressing/Eyes Button.png'
@@ -35,9 +35,11 @@ export default function PickbotEdit() {
   const [showTutorial, setShowTutorial] = useState(() => searchParams.get("showTutorial") !== null)
   
   const eyesBtnRef = useRef(null)
+  const firstEyeRef = useRef(null)
   const mouthBtnRef = useRef(null)
   const accessoryBtnRef = useRef(null)
   const bodyBtnRef = useRef(null)
+  const formArrowRef = useRef(null)
   
   useEffect(() => {
     setPremiumPopupVisible(false)
@@ -84,7 +86,7 @@ export default function PickbotEdit() {
   
   return (
     <>
-      <ChoiceFrame category={category} setCategory={setCategory} setActiveItems={setActiveItems} setBodyBg={setBodyBg} isPremium={isPremium} onPremiumRequired={() => setPremiumPopupVisible(true)} onPremiumDismissed={() => setPremiumPopupVisible(false)} tutorialIndex={tutorialIndex} />
+      <ChoiceFrame category={category} setCategory={setCategory} setActiveItems={setActiveItems} setBodyBg={setBodyBg} isPremium={isPremium} onPremiumRequired={() => setPremiumPopupVisible(true)} onPremiumDismissed={() => setPremiumPopupVisible(false)} tutorialIndex={tutorialIndex} eyesBtnRef={eyesBtnRef} firstEyeRef={firstEyeRef} mouthBtnRef={mouthBtnRef} accessoryBtnRef={accessoryBtnRef} bodyBtnRef={bodyBtnRef} />
       <div className={[styles['premium-popup'], premiumPopupVisible ? styles['premium-popup-visible'] : ''].join(' ')}>
         <p>Go premium to unlock this skin!</p>
         <button onClick={() => navigate('/payment')}>Go Premium</button>
@@ -108,7 +110,7 @@ export default function PickbotEdit() {
           </div>
         </div>
         <div className={[styles['arrow-back'], tutorialIndex === 6 ? styles['tutorial-glow'] : ''].join(' ')} onClick={() => { setSlideDir('left'); setForm((form - 1 + avatarList.length) % avatarList.length); setAnimKey(k => k + 1) }}></div>
-        <div className={[styles['arrow-forward'], tutorialIndex === 6 ? styles['tutorial-glow'] : ''].join(' ')} onClick={() => { setSlideDir('right'); setForm((form + 1) % avatarList.length); setAnimKey(k => k + 1) }}></div>
+        <div ref={formArrowRef} className={[styles['arrow-forward'], tutorialIndex === 6 ? styles['tutorial-glow'] : ''].join(' ')} onClick={() => { setSlideDir('right'); setForm((form + 1) % avatarList.length); setAnimKey(k => k + 1) }}></div>
       </div>
       <div className={styles['action-buttons']}>
         <button
@@ -124,6 +126,14 @@ export default function PickbotEdit() {
 
       <div className={styles['floor']}></div>
       {showTutorial && tutorialIndex < TUTORIAL_MESSAGES.length && <TutorialPopup messages={TUTORIAL_MESSAGES} index={tutorialIndex} setIndex={setTutorialIndex} onClose={() => { setShowTutorial(false); setTutorialIndex(0) }} />}
+      {/* tutorial arrow */}
+      {showTutorial && (() => {
+        const ref = { 1: eyesBtnRef, 2: firstEyeRef, 3: mouthBtnRef, 4: accessoryBtnRef, 5: bodyBtnRef, 6: formArrowRef }[tutorialIndex]
+        console.log(ref)
+        const rect = ref?.current?.getBoundingClientRect()
+        console.log(rect)
+        return rect ? <ArrowIndicator x={rect.left} y={rect.top + rect.height / 2 - 10} /> : null
+      })()}
     </>
   )
 }
@@ -139,8 +149,8 @@ export default function PickbotEdit() {
  * @param {(color: string|undefined) => void} props.setBodyTexture Body color setter.
  * @returns {JSX.Element}
  */
-export function ChoiceFrame({ category, setCategory, setActiveItems, setBodyBg, isPremium, onPremiumRequired, onPremiumDismissed, tutorialIndex, eyesBtnRef, mouthBtnRef, accessoryBtnRef, bodyBtnRef }) {
-  const tutorialGlowFor = { 2: 'eye', 3: 'mouth', 4: 'accessory', 5: 'body' }
+export function ChoiceFrame({ category, setCategory, setActiveItems, setBodyBg, isPremium, onPremiumRequired, onPremiumDismissed, tutorialIndex, eyesBtnRef, firstEyeRef, mouthBtnRef, accessoryBtnRef, bodyBtnRef }) {
+  const tutorialGlowFor = { 1: 'eye', 3: 'mouth', 4: 'accessory', 5: 'body' }
   
   const categoryAssets = {
     "eye": Object.entries(eyeAssets),
@@ -172,6 +182,7 @@ export function ChoiceFrame({ category, setCategory, setActiveItems, setBodyBg, 
           <div key={rowIdx} className={styles[`${category}-row`]}>
               {rowElems.map(([name, url], idx) => (
                 <Item key={idx} category={category} img={url}
+                  innerRef={rowIdx === 0 && idx === 0 && category === 'eye' ? firstEyeRef : undefined}
                   onClick={() => setActiveItems(prev => ({
                     ...prev,
                     [category]: category === 'accessory'
@@ -202,8 +213,8 @@ export function ChoiceFrame({ category, setCategory, setActiveItems, setBodyBg, 
  * @param {() => void} props.onClick Click handler.
  * @returns {JSX.Element}
  */
-export function Item({ category, img, onClick }) {
-  return (<div className={styles[`${category}-option`]} style={{ backgroundImage: `url(${img})` }} onClick={onClick}></div>)
+export function Item({ category, img, onClick, innerRef }) {
+  return (<div ref={innerRef} className={styles[`${category}-option`]} style={{ backgroundImage: `url(${img})` }} onClick={onClick}></div>)
 }
 
 
@@ -396,12 +407,12 @@ export function BodyTexturePicker({ setBodyBg, isPremium, onPremiumRequired, onP
 
 const TUTORIAL_MESSAGES = [
   "Welcome to the Pickbot editor! :)",
-  "The pickbot editor is where you customize your very own pickbot!",
-  "Click the eyes icon to try out different eyes",
-  "Now check out the different mouths",
-  "There are tons of cool accessories to choose from! Drag them to move them where you want",
-  "Change your body color here. Click on the spin button for a surprise!",
-  "You can change your body form with these arrows",
+  "Click on the eyes category",
+  "Add one to your pickbot",
+  "Check out the mouths",
+  "Choose an accessory and drag it",
+  "Change your body color",
+  "Change your body form",
   "Don't forget to save!"
 ]
 
