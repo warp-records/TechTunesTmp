@@ -1,10 +1,11 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 import styles from './Create.module.css'
 import Avatar from '../../components/Avatar'
 import TutorialPopup, { ArrowIndicator } from '../../components/TutorialPopup'
+import { useTutorial } from '../../components/tutorial'
 import { avatarList, serializeAvatar, resolveBodyBg, TORSO_COLORS } from '../../components/avatarData'
 import { eyeAssets, mouthAssets, accessoryAssets, bodyTextureAssets } from '../../assetRegistry'
 import eyesBtn from '../../assets/DressingRoom/Dressing/Eyes Button.png'
@@ -28,11 +29,8 @@ export default function PickbotEdit() {
   const [activeItems, setActiveItems] = useState({})
   const [isPremium, setIsPremium] = useState(false)
   const [premiumPopupVisible, setPremiumPopupVisible] = useState(false)
-  const [tutorialIndex, setTutorialIndex] = useState(0)
-
   const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
-  const [showTutorial, setShowTutorial] = useState(() => searchParams.get("showTutorial") !== null)
+  const { tutorialIndex, showTutorial, start: startTutorial, popupProps: tutorialPopupProps } = useTutorial(TUTORIAL_MESSAGES)
   
   const eyesBtnRef = useRef(null)
   const firstEyeRef = useRef(null)
@@ -65,10 +63,6 @@ export default function PickbotEdit() {
       setActiveItems(activeItems)
     })
   }, [])
-  
-  useEffect(() => {
-    if (!showTutorial) navigate('/pickbot_edit', { replace: true })
-  }, [showTutorial])
   
   function saveAvatar() {
     const token = localStorage.getItem("token")
@@ -121,11 +115,11 @@ export default function PickbotEdit() {
         <button className={styles['reset-button']} onClick={() => { setActiveItems({}); setForm(0); setBodyBg({ isTexture: false, colorIdx: 3 }); } }>
           Reset
         </button>
-        <button className={styles['tutorial-button']} onClick={() => { setTutorialIndex(0); setShowTutorial(true) }}>?</button>
+        <button className={styles['tutorial-button']} onClick={startTutorial}>?</button>
       </div>
 
       <div className={styles['floor']}></div>
-      {showTutorial && tutorialIndex < TUTORIAL_MESSAGES.length && <TutorialPopup messages={TUTORIAL_MESSAGES} index={tutorialIndex} setIndex={setTutorialIndex} onClose={() => { setShowTutorial(false); setTutorialIndex(0) }} />}
+      {showTutorial && tutorialIndex < TUTORIAL_MESSAGES.length && <TutorialPopup {...tutorialPopupProps} />}
       {/* tutorial arrow */}
       {showTutorial && (() => {
         const ref = { 1: eyesBtnRef, 2: firstEyeRef, 3: mouthBtnRef, 4: accessoryBtnRef, 5: bodyBtnRef, 6: formArrowRef }[tutorialIndex]
