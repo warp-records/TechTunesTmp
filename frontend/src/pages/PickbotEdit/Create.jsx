@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 
 import styles from './Create.module.css'
 import Avatar from '../../components/Avatar'
+import TutorialPopup from '../../components/TutorialPopup'
 import { avatarList, serializeAvatar, resolveBodyBg, TORSO_COLORS } from '../../components/avatarData'
 import { eyeAssets, mouthAssets, accessoryAssets, bodyTextureAssets } from '../../assetRegistry'
 import eyesBtn from '../../assets/DressingRoom/Dressing/Eyes Button.png'
@@ -32,7 +33,11 @@ export default function PickbotEdit() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const [showTutorial, setShowTutorial] = useState(() => searchParams.get("showTutorial") !== null)
-
+  
+  const eyesBtnRef = useRef(null)
+  const mouthBtnRef = useRef(null)
+  const accessoryBtnRef = useRef(null)
+  const bodyBtnRef = useRef(null)
   
   useEffect(() => {
     setPremiumPopupVisible(false)
@@ -118,7 +123,7 @@ export default function PickbotEdit() {
       </div>
 
       <div className={styles['floor']}></div>
-      {showTutorial && tutorialIndex < TUTORIAL_MESSAGES.length && <TutorialPopup index={tutorialIndex} setIndex={setTutorialIndex} onClose={() => { setShowTutorial(false); setTutorialIndex(0) }} />}
+      {showTutorial && tutorialIndex < TUTORIAL_MESSAGES.length && <TutorialPopup messages={TUTORIAL_MESSAGES} index={tutorialIndex} setIndex={setTutorialIndex} onClose={() => { setShowTutorial(false); setTutorialIndex(0) }} />}
     </>
   )
 }
@@ -134,7 +139,7 @@ export default function PickbotEdit() {
  * @param {(color: string|undefined) => void} props.setBodyTexture Body color setter.
  * @returns {JSX.Element}
  */
-export function ChoiceFrame({ category, setCategory, setActiveItems, setBodyBg, isPremium, onPremiumRequired, onPremiumDismissed, tutorialIndex }) {
+export function ChoiceFrame({ category, setCategory, setActiveItems, setBodyBg, isPremium, onPremiumRequired, onPremiumDismissed, tutorialIndex, eyesBtnRef, mouthBtnRef, accessoryBtnRef, bodyBtnRef }) {
   const tutorialGlowFor = { 2: 'eye', 3: 'mouth', 4: 'accessory', 5: 'body' }
   
   const categoryAssets = {
@@ -179,10 +184,10 @@ export function ChoiceFrame({ category, setCategory, setActiveItems, setBodyBg, 
         </div>
       )}
       <div className={styles['button-row']}>
-          <div className={[styles['button-icon'], tutorialGlowFor[tutorialIndex] === 'eye' ? styles['tutorial-glow'] : ''].join(' ')} onClick={() => { setCategory("eye") }} style={{backgroundImage: `url(${eyesBtn})`}}></div>
-          <div className={[styles['button-icon'], tutorialGlowFor[tutorialIndex] === 'mouth' ? styles['tutorial-glow'] : ''].join(' ')} onClick={() => { setCategory("mouth") }} style={{backgroundImage: `url(${mouthBtn})`}}></div>
-          <div className={[styles['button-icon'], tutorialGlowFor[tutorialIndex] === 'accessory' ? styles['tutorial-glow'] : ''].join(' ')} onClick={() => { setCategory("accessory") }} style={{backgroundImage: `url(${accessoryBtn})`}}></div>
-          <div className={[styles['button-icon'], tutorialGlowFor[tutorialIndex] === 'body' ? styles['tutorial-glow'] : ''].join(' ')} onClick={() => { setCategory("body") }} style={{backgroundImage: `url(${bodyBtn})`}}></div>
+          <div ref={eyesBtnRef} className={[styles['button-icon'], tutorialGlowFor[tutorialIndex] === 'eye' ? styles['tutorial-glow'] : ''].join(' ')} onClick={() => { setCategory("eye") }} style={{backgroundImage: `url(${eyesBtn})`}}></div>
+          <div ref={mouthBtnRef} className={[styles['button-icon'], tutorialGlowFor[tutorialIndex] === 'mouth' ? styles['tutorial-glow'] : ''].join(' ')} onClick={() => { setCategory("mouth") }} style={{backgroundImage: `url(${mouthBtn})`}}></div>
+          <div ref={accessoryBtnRef} className={[styles['button-icon'], tutorialGlowFor[tutorialIndex] === 'accessory' ? styles['tutorial-glow'] : ''].join(' ')} onClick={() => { setCategory("accessory") }} style={{backgroundImage: `url(${accessoryBtn})`}}></div>
+          <div ref={bodyBtnRef} className={[styles['button-icon'], tutorialGlowFor[tutorialIndex] === 'body' ? styles['tutorial-glow'] : ''].join(' ')} onClick={() => { setCategory("body") }} style={{backgroundImage: `url(${bodyBtn})`}}></div>
       </div>
     </div>
   )
@@ -400,32 +405,3 @@ const TUTORIAL_MESSAGES = [
   "Don't forget to save!"
 ]
 
-function TutorialPopup({ index, setIndex, onClose }) {
-  const [displayed, setDisplayed] = useState("")
-
-  const text = TUTORIAL_MESSAGES[index]
-
-  useEffect(() => {
-    setDisplayed("")
-    let i = 0
-    const interval = setInterval(() => {
-      setDisplayed(text.slice(0, ++i))
-      if (i >= text.length) clearInterval(interval)
-    }, 30)
-    return () => clearInterval(interval)
-  }, [text])
-
-  return (
-    <div className={styles['tutorial-popup']}>
-      <button className={styles['tutorial-popup-close']} onClick={onClose}>✕</button>
-      <div className={styles['tutorial-popup-text']}>
-        <p className={styles['tutorial-popup-sizer']}>{text}</p>
-        <p className={styles['tutorial-popup-display']}>{displayed}</p>
-      </div>
-      <button className={styles['tutorial-popup-next']} onClick={() => index === TUTORIAL_MESSAGES.length - 1 ? onClose() : setIndex(i => i + 1)}>
-        {index === TUTORIAL_MESSAGES.length - 1 ? 'Close' : 'Next'}
-      </button>
-
-    </div>
-  )
-}

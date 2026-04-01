@@ -1,0 +1,98 @@
+.tutorial-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, #4c1a80, #8A2BE2);
+    color: #ffffff;
+    width: 420px;
+    padding: 36px 48px 10px;
+    border-radius: 20px;
+    border: 2px solid rgba(255, 210, 0, 0.8);
+    font-family: 'Nunito-SemiBold', 'Nunito', sans-serif;
+    font-size: 1.65rem;
+    font-weight: bold;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(138, 43, 226, 0.5);
+    animation: gold-glow 2s ease-in-out infinite;
+    z-index: 7;
+}
+
+@keyframes gold-glow {
+    0%, 100% { box-shadow: 0 8px 32px rgba(138, 43, 226, 0.5), 0 0 6px rgba(255, 210, 0, 0.6); }
+    50%       { box-shadow: 0 8px 32px rgba(138, 43, 226, 0.5), 0 0 12px rgba(255, 210, 0, 1); }
+}
+
+.tutorial-popup-text {
+    position: relative;
+}
+
+.tutorial-popup-sizer {
+    visibility: hidden;
+    margin: 0;
+}
+
+.tutorial-popup-display {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin: 0;
+}
+
+.tutorial-popup-close {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 1.2rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    transition: color 0.15s ease;
+}
+
+.tutorial-popup-close:hover {
+    color: white;
+}
+
+.tutorial-popup-next {
+    display: block;
+    margin: 8px auto 0;
+    padding: 8px 24px;
+    background: linear-gradient(135deg, #8A2BE2, #9370DB);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Arial', sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(138, 43, 226, 0.3);
+    transition: all 0.3s ease;
+}
+
+.tutorial-popup-next:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(138, 43, 226, 0.5);
+}
+
+.tutorial-popup-next:active {
+    transform: scale(0.95);
+}
+
+.arrow-indicator {
+    position: fixed;
+    width: 120px;
+    height: 60px;
+    pointer-events: none;
+    z-index: 8;
+    animation: arrow-bob 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes arrow-bob {
+    from { transform: translateX(0); }
+    to   { transform: translateX(8px); }
+}

@@ -101,7 +101,7 @@ function BadPage() {
     <div style={{ "color": "white", "display": "flex", "flexDirection": "column", "alignItems": "center", "gap": "20px", "paddingTop": "60px" }}>
       <p style={{ "font-size": "50px" }}>Page not found rip</p>
       <p style={{ "font-size": "20px" }}>Either you're not authorized to see this page,
-        or our servers like exploded or something</p>
+        or our servers like exploded or something lol</p>
       <br></br>
       {loggedOut
         ? <p>Maybe try <Link to="/login" style={{ textDecoration: "none", borderBottom: "1px solid white", color: "white" }}>logging in</Link>?</p>
