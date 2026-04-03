@@ -1,8 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Link, Navigate, Outlet } from 'react-router-dom'
 import Logo from './components/Logo'
-import serverRackFall from './assets/Badpage/server_rack_fall.jpg'
-import thisIsFine from './assets/Badpage/thisisfine.jpg'
+import BadPage from './pages/BadPage'
 import './App.css'
 import Start from './pages/Start'
 import Onboard from './pages/Onboard/Onboard'
@@ -96,24 +95,6 @@ function LogoLink() {
   )
 }
 
-function BadPage() {
-  const { user } = useAuth();
-  const loggedOut = !user;
-  return (
-    <div style={{ "color": "white", "display": "flex", "flexDirection": "column", "alignItems": "center", "gap": "20px", "paddingTop": "60px" }}>
-      <p style={{ "font-size": "50px" }}>Page not found rip</p>
-      <p style={{ "font-size": "20px" }}>Either you're not authorized to see this page,
-        or our servers like exploded or something lol</p>
-      <br></br>
-      {loggedOut
-        ? <p>Maybe try <Link to="/login" style={{ textDecoration: "none", borderBottom: "1px solid white", color: "white" }}>logging in</Link>?</p>
-        : <p>Maybe try rice?</p>
-      }
-      <img src={serverRackFall} alt="its fine" />
-    </div>
-  )
-}
-
 
 export const AuthContext = createContext(null);
 
@@ -134,7 +115,7 @@ function AuthProvider({ children }) {
 
   return <AuthContext.Provider value={{ user, fetchUser }}>{children}</AuthContext.Provider>
 }
-const useAuth = () => useContext(AuthContext)
+export const useAuth = () => useContext(AuthContext)
 
 function ProtectedRoute({ isAllowed, redirectPath="/bad_page", children }) {
   const { user } = useAuth();
