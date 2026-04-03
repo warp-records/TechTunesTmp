@@ -126,7 +126,7 @@ export default function Lesson() {
   const lastCountdown = useRef(3)
 
   useEffect(() => {
-    if (!ready) return
+    if (!ready || showTutorial) return
     // main game loop
     function loop(time) {
       if (!startTimeRef.current) startTimeRef.current = time
@@ -189,7 +189,7 @@ export default function Lesson() {
     loopRef.current = loop
 
     return () => cancelAnimationFrame(requestRef.current)
-  }, [ready])
+  }, [ready, showTutorial])
 
   // should prolly remove this
   useEffect(() => {
