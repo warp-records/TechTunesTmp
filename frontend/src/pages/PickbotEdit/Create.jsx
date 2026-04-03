@@ -75,7 +75,7 @@ export default function PickbotEdit() {
       body: serializeAvatar({ form, bodyBg, activeItems })
     })
     
-    navigate('/userpage')
+    navigate(showTutorial ? '/userpage?showTutorial' : '/userpage')
   }
   
   return (

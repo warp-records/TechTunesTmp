@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 
 import styles from './GuitarIsland.module.css'
@@ -16,6 +16,10 @@ import { LESSON_ISLAND_INSTRUMENTS } from '../../features/lesson-islands/constan
 import { LESSON_ISLAND_LEVELS } from '../../features/lesson-islands/constants/lessonIslandLevels'
 import { buildLessonIslandPath } from '../../features/lesson-islands/constants/lessonIslandRoutes'
 import HomeButton from '../../components/HomeButton'
+import TutorialPopup, { ArrowIndicator } from '../../components/TutorialPopup'
+import { useTutorial } from '../../components/tutorial'
+
+const TUTORIAL_MESSAGES = ["Head to the beginner path"]
 
 const buildDifficultyNodes = (styles) => [
   {
@@ -69,6 +73,17 @@ export default function GuitarIsland() {
   const [searchParams] = useSearchParams()
   const assignSongId = searchParams.get('assignSongId')
   const difficultyNodes = buildDifficultyNodes(styles)
+  const beginnerSignRef = useRef(null)
+  const { showTutorial, popupProps: tutorialPopupProps } = useTutorial(TUTORIAL_MESSAGES)
+  const [arrowPos, setArrowPos] = useState(null)
+
+  useEffect(() => {
+    if (!showTutorial) { setArrowPos(null); return }
+    const rect = beginnerSignRef.current?.getBoundingClientRect()
+    console.log(beginnerSignRef)
+    console.log(rect)
+    if (rect) setArrowPos({ x: rect.left, y: rect.top + rect.height / 2 })
+  }, [showTutorial])
 
   return (
     <>
@@ -77,8 +92,8 @@ export default function GuitarIsland() {
         className={styles['lesson-island-container']}
         style={{ backgroundImage: `url(${BackgroundImg})` }}
       >
-        {difficultyNodes.map((node) => (
-          <DifficultyNode key={node.id} node={node} assignSongId={assignSongId} />
+        {difficultyNodes.map((node, i) => (
+          <DifficultyNode key={node.id} node={node} assignSongId={assignSongId} innerRef={i === 0 ? beginnerSignRef : undefined} />
         ))}
 
         <button
@@ -93,11 +108,13 @@ export default function GuitarIsland() {
 
       </div>
       {showModal && <Modal onClose={() => setShowModal(false)} />}
+      {showTutorial && <TutorialPopup {...tutorialPopupProps} />}
+      {arrowPos && <ArrowIndicator x={arrowPos.x} y={arrowPos.y} direction="left" />}
     </>
   )
 }
 
-function DifficultyNode({ node, assignSongId }) {
+function DifficultyNode({ node, assignSongId, innerRef }) {
   if (node.href) {
     const to = assignSongId ? `${node.href}?assignSongId=${assignSongId}` : node.href
     return (
@@ -111,14 +128,16 @@ function DifficultyNode({ node, assignSongId }) {
           <img src={node.pathSrc} alt="" aria-hidden="true" className={node.pathClassName} />
         </Link>
 
-        <Link
-          to={to}
-          className={styles['difficulty-link']}
-          aria-label={`Open ${node.label} lesson island`}
-          title={`Open ${node.label} lesson island`}
-        >
-          <img src={node.signSrc} alt="" aria-hidden="true" className={node.signClassName} />
-        </Link>
+        <span>
+          <Link
+            to={to}
+            className={styles['difficulty-link']}
+            aria-label={`Open ${node.label} lesson island`}
+            title={`Open ${node.label} lesson island`}
+          >
+            <img ref={innerRef} src={node.signSrc} alt="" aria-hidden="true" className={node.signClassName} />
+          </Link>
+        </span>
       </>
     )
   }

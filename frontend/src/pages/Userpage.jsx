@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useContext } from 'react'
+import { useState, useEffect, useContext, useRef } from 'react'
 import { Route, Link, useNavigate } from 'react-router-dom'
 import { AuthContext } from '../App'
 
@@ -8,6 +8,12 @@ import { resolveBodyBg } from "../components/avatarData"
 import styles from './Userpage.module.css'
 import PremiumBadge from '../components/PremiumBadge'
 import NotificationBell from '../components/NotificationBell'
+import TutorialPopup, { ArrowIndicator } from '../components/TutorialPopup'
+import { useTutorial } from '../components/tutorial'
+
+const TUTORIAL_MESSAGES = [
+  "Go to the homepage",
+]
 
 const suggestedSongs = [
   { title: "Get Got", subtitle: "Death Grips", stars: 5, },
@@ -69,6 +75,8 @@ export default function Userpage() {
   
   const [avatarData, setAvatarData] = useState(null);
   const navigate = useNavigate();
+  const homeBtnRef = useRef(null)
+  const { tutorialIndex, showTutorial, start: startTutorial, popupProps: tutorialPopupProps } = useTutorial(TUTORIAL_MESSAGES)
   const { fetchUser, user: authUser } = useContext(AuthContext);
 
   async function logout() {
@@ -118,9 +126,11 @@ export default function Userpage() {
     <header className={styles['page-header']}>
         <nav className={[styles['nav'], styles['container']].join(' ')} aria-label="Top Navigation">
           <div className={styles['nav-left']}>
-            <Link to={'/homepage'}>
-              <div className={styles['chip']} title="Go to Home">🏠</div>
-            </Link>
+            <div ref={homeBtnRef}>
+              <Link to={showTutorial ? '/homepage?showTutorial' : '/homepage'}>
+                <div className={styles['chip']} title="Go to Home">🏠</div>
+              </Link>
+            </div>
           </div>
           <div className={styles['logo']}>🎧 TuneVerse 🎶</div>
           <div className={styles['nav-right']}>
@@ -146,6 +156,11 @@ export default function Userpage() {
           </div>
         </nav>
       </header>
+      {showTutorial && <TutorialPopup {...tutorialPopupProps} />}
+      {showTutorial && (() => {
+        const rect = homeBtnRef.current?.getBoundingClientRect()
+        return rect ? <ArrowIndicator x={rect.left + rect.width / 2} y={rect.bottom} direction="up" /> : null
+      })()}
 
     <main className={styles['container']}>
     <section id="avatar" aria-labelledby="avatar-title">

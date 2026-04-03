@@ -34,12 +34,19 @@ export default function TutorialPopup({ messages, index, setIndex, onClose }) {
 const ARROW_W = 120
 const ARROW_H = 60
 
-export function ArrowIndicator({ x, y }) {
+const directionOffset = {
+  right: (x, y) => ({ left: x - ARROW_W,     top: y - ARROW_H / 2              }),
+  left:  (x, y) => ({ left: x + ARROW_W,               top: y - ARROW_H / 2              }),
+  up:    (x, y) => ({ left: x - ARROW_W / 2, top: y - ARROW_H / 2 + ARROW_W / 2 }),
+  down:  (x, y) => ({ left: x - ARROW_W / 2, top: y - ARROW_H / 2 - ARROW_W / 2 }),
+}
+
+export function ArrowIndicator({ x, y, direction = 'right' }) {
   return (
     <img
       src={neonArrow}
-      className={styles['arrow-indicator']}
-      style={{ left: x - ARROW_W, top: y - ARROW_H / 2 }}
+      className={[styles['arrow-base'], styles[`arrow-${direction}`]].join(' ')}
+      style={directionOffset[direction](x, y)}
     />
   )
 }

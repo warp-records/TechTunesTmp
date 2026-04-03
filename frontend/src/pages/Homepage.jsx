@@ -1,7 +1,13 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 import styles from './Homepage.module.css'
+import TutorialPopup, { ArrowIndicator } from '../components/TutorialPopup'
+import { useTutorial } from '../components/tutorial'
+
+const TUTORIAL_MESSAGES = [
+  "Click Lesson Island to start learning!",
+]
 import LessonIslandImg from '../assets/Homepage/LessonIsland.png'
 import TuneStationImg from '../assets/Homepage/TuneStation.png'
 import SongSearchImg from '../assets/Homepage/SongSearch.png'
@@ -14,6 +20,14 @@ export default function Homepage() {
   const homepageRef = useRef(null)
   const lessonIslandRef = useRef(null)
   const [zooming, setZooming] = useState(false)
+  const { showTutorial, start: startTutorial, popupProps: tutorialPopupProps } = useTutorial(TUTORIAL_MESSAGES)
+  const [arrowPos, setArrowPos] = useState(null)
+
+  useEffect(() => {
+    if (!showTutorial) { setArrowPos(null); return }
+    const rect = lessonIslandRef.current?.getBoundingClientRect()
+    if (rect) setArrowPos({ x: rect.left, y: rect.top + rect.height / 2 })
+  }, [showTutorial])
 
   function handleLessonIslandClick() {
     const island = lessonIslandRef.current
@@ -28,7 +42,7 @@ export default function Homepage() {
     setZooming(true)
 
     setTimeout(() => {
-      navigate('/island_select')
+      navigate(showTutorial ? '/island_select?showTutorial' : '/island_select')
     }, 800)
   }
 
@@ -71,6 +85,8 @@ export default function Homepage() {
         <div id="floating-symbols" className={styles['floating-symbols']}></div>
       </div>
       <div className={styles['floor']}></div>
+      {showTutorial && <TutorialPopup {...tutorialPopupProps} />}
+      {arrowPos && <ArrowIndicator x={arrowPos.x} y={arrowPos.y} direction="right" />}
     </div>
   )
 }
