@@ -1,9 +1,13 @@
-import { useEffect, useCallback } from 'react'
+import { useEffect, useCallback, useState } from 'react'
 import { Link, useParams, useSearchParams, useNavigate } from 'react-router-dom'
 
 import LessonIslandScene from '../components/LessonIslandScene'
 import DebugTileMapper from '../components/DebugTileMapper'
 import { getLessonIslandScene } from '../config/lessonIslandScenes'
+import TutorialPopup, { ArrowIndicator } from '../../../components/TutorialPopup'
+import { useTutorial } from '../../../components/tutorial'
+
+const TUTORIAL_MESSAGES = ["Click to try out your first lesson!"]
 
 function formatSegment(segment) {
   if (!segment) {
@@ -24,6 +28,15 @@ export default function LessonIslandPage() {
   const debug = searchParams.has('debug')
   const assignSongId = searchParams.get('assignSongId')
   const scene = getLessonIslandScene(instrument, level)
+  const { showTutorial, popupProps: tutorialPopupProps } = useTutorial(TUTORIAL_MESSAGES)
+  const [arrowPos, setArrowPos] = useState(null)
+
+  useEffect(() => {
+    if (!showTutorial) { setArrowPos(null); return }
+    const el = document.querySelector('.lesson-island-scene__hotspot--tile-1')
+    const rect = el?.getBoundingClientRect()
+    if (rect) setArrowPos({ x: rect.left, y: rect.top + rect.height / 2 })
+  }, [showTutorial])
 
   const onAssignTile = useCallback(async (tileNumber) => {
     const token = localStorage.getItem('token')
@@ -64,6 +77,8 @@ export default function LessonIslandPage() {
     <>
       <LessonIslandScene scene={scene} assignSongId={assignSongId} onAssignTile={assignSongId ? onAssignTile : null} />
       {debug && <DebugTileMapper />}
+      {showTutorial && <TutorialPopup {...tutorialPopupProps} />}
+      {arrowPos && <ArrowIndicator x={arrowPos.x} y={arrowPos.y} direction="right" />}
     </>
   )
 }
