@@ -6,7 +6,7 @@ import applauseSrc from '../../assets/sounds/applause.mp3'
 
 import styles from './Lesson.module.css'
 import HomeButton from '../../components/HomeButton'
-import TutorialPopup from '../../components/TutorialPopup'
+import TutorialPopup, { ArrowIndicator } from '../../components/TutorialPopup'
 import { useTutorial } from '../../components/tutorial'
 
 const TUTORIAL_MESSAGES = [
@@ -48,7 +48,10 @@ const HIT_DURATION = 300 // ms to display glowing note after a hit
 
 export default function Lesson() {
   const [searchParams] = useSearchParams()
-  const { showTutorial, popupProps: tutorialPopupProps } = useTutorial(TUTORIAL_MESSAGES)
+  const { tutorialIndex, showTutorial, popupProps: tutorialPopupProps } = useTutorial(TUTORIAL_MESSAGES)
+  const scoreRef = useRef(null)
+  const pauseButtonRef = useRef(null)
+  const [arrowPos, setArrowPos] = useState(null)
   const [songName, setSongName] = useState('')
   const [levelNum, setLevelNum] = useState(1)
   const [ready, setReady] = useState(false)
@@ -121,6 +124,19 @@ export default function Lesson() {
     requestRef.current = requestAnimationFrame(loopRef.current)
     setIsPaused(false)
   }
+
+  useEffect(() => {
+    if (!showTutorial) { setArrowPos(null); return }
+    if (tutorialIndex === 1) {
+      const rect = scoreRef.current?.getBoundingClientRect()
+      if (rect) setArrowPos({ x: rect.right, y: rect.top + rect.height / 2, direction: 'left' })
+    } else if (tutorialIndex === 2) {
+      const rect = pauseButtonRef.current?.getBoundingClientRect()
+      if (rect) setArrowPos({ x: rect.right, y: rect.top + rect.height / 2, direction: 'left' })
+    } else {
+      setArrowPos(null)
+    }
+  }, [showTutorial, tutorialIndex])
 
   // used for the countdown at the beginning
   const lastCountdown = useRef(3)
@@ -272,18 +288,20 @@ export default function Lesson() {
       <SongTitleBanner title={songName.toUpperCase()} gameOver={showBlur} />
       <PickbotButton gameOver={showBlur} />
       <PauseButton
+        innerRef={pauseButtonRef}
         isPaused={isPaused}
         fadeHUD={fadeHUD}
         handleClick={() => {
-          if (!gameOver) {
+          if (!gameOver && !showTutorial) {
             isPaused ? unpause() : pause()
           }
         }}
       />
-      <Score score={score} fadeHUD={fadeHUD} />
+      <Score innerRef={scoreRef} score={score} fadeHUD={fadeHUD} />
       <FinalScore score={score} show={showFinalScore} />
       
       <BackToHomeButton show={showBackToHome} />
+      {arrowPos && <ArrowIndicator x={arrowPos.x} y={arrowPos.y} direction={arrowPos.direction} />}
       <Arrow key={arrowKey} isUp isVisible={arrowVisible} />
       
       <div className={styles['lesson-stage']}>
@@ -354,8 +372,8 @@ export function ScreenBlur({ show }) {
   return <div className={[styles['screen-blur'], show ? styles['visible'] : ''].filter(Boolean).join(' ')} />
 }
 
-export function Score({ score, fadeHUD }) {
-  return <div className={[styles['score'], fadeHUD ? styles['fade-hud'] : ''].filter(Boolean).join(' ')}>{score}</div>
+export function Score({ score, fadeHUD, innerRef }) {
+  return <div ref={innerRef} className={[styles['score'], fadeHUD ? styles['fade-hud'] : ''].filter(Boolean).join(' ')}>{score}</div>
 }
 
 export function FinalScore({ score, show }) {
@@ -417,9 +435,9 @@ export function PauseMenu({ show, progress, levelNum }) {
   )
 }
 
-export function PauseButton({ isPaused, fadeHUD, handleClick }) {
+export function PauseButton({ isPaused, fadeHUD, handleClick, innerRef }) {
   const imgSrc = isPaused ? PlayImg : PauseImg;
-  return (<img src={imgSrc} onClick={handleClick} className={[styles['pause-play-button'], fadeHUD ? styles['fade-hud'] : ''].filter(Boolean).join(' ')} />)
+  return (<img ref={innerRef} src={imgSrc} onClick={handleClick} className={[styles['pause-play-button'], fadeHUD ? styles['fade-hud'] : ''].filter(Boolean).join(' ')} />)
 }
 
 /*
