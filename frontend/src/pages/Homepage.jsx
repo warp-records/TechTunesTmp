@@ -7,6 +7,7 @@ import { useTutorial } from '../components/tutorial'
 
 const TUTORIAL_MESSAGES = [
   "You can tune your instrument here",
+  "Check out the impact page!",
   "Click Lesson Island to start learning!",
 ]
 import LessonIslandImg from '../assets/Homepage/LessonIsland.png'
@@ -21,6 +22,7 @@ export default function Homepage() {
   const homepageRef = useRef(null)
   const lessonIslandRef = useRef(null)
   const tuneStationRef = useRef(null)
+  const impactRef = useRef(null)
   const [zooming, setZooming] = useState(false)
   const { tutorialIndex, showTutorial, start: startTutorial, popupProps: tutorialPopupProps } = useTutorial(TUTORIAL_MESSAGES)
   const [arrowPos, setArrowPos] = useState(null)
@@ -32,6 +34,9 @@ export default function Homepage() {
       const rect = tuneStationRef.current?.getBoundingClientRect()
       if (rect) setArrowPos({ x: rect.left + 350, y: rect.top + rect.height / 2, direction: 'left' })
     } else if (tutorialIndex === 1) {
+      const rect = impactRef.current?.getBoundingClientRect()
+      if (rect) setArrowPos({ x: rect.left + rect.width / 2, y: rect.bottom, direction: 'up' })
+    } else if (tutorialIndex === 2) {
       const rect = lessonIslandRef.current?.getBoundingClientRect()
       if (rect) setArrowPos({ x: rect.left + 100, y: rect.top + rect.height / 2, direction: 'right' })
     }
@@ -87,7 +92,7 @@ export default function Homepage() {
         </div>
 
         <Link to="/impact" className={styles['impact']} aria-label="Impact">
-          <img src={ImpactImg} alt="Impact" />
+          <img ref={impactRef} src={ImpactImg} alt="Impact" />
         </Link>
 
         <div id="floating-symbols" className={styles['floating-symbols']}></div>
