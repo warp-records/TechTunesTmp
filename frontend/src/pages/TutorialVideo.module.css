@@ -1,0 +1,29 @@
+.skip-button {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 100;
+  width: 75px;
+  height: 75px;
+  background: linear-gradient(135deg, #4c1a80, #8A2BE2);
+  color: #ffffff;
+  border: 2px solid rgba(255, 210, 0, 0.8);
+  border-radius: 12px;
+  font-size: 100%;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(138, 43, 226, 0.5);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.skip-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(138, 43, 226, 0.7);
+}
+
+.skip-button:active {
+  transform: scale(0.95);
+}

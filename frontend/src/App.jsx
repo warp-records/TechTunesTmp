@@ -25,6 +25,7 @@ import NonProfit from './pages/NonProfit'
 import NonProfitDashboard from './pages/NonProfitDashboard'
 import Banned from './pages/Banned'
 import LessonIslandPage from './features/lesson-islands/pages/LessonIslandPage'
+import TutorialVideo from './pages/TutorialVideo'
 import { LESSON_ISLAND_ROUTE_PATTERN } from './features/lesson-islands/constants/lessonIslandRoutes'
 
 function App() {
@@ -64,6 +65,7 @@ function App() {
               <Route path={LESSON_ISLAND_ROUTE_PATTERN} element={<LessonIslandPage />} />
               <Route path="/song_search" element={<SongSearch />} />
               <Route path="/lesson" element={<Lesson />} />
+                <Route path="/lesson_tutorial" element={<TutorialVideo name={"lessonTutorial"} />} />
             </Route>
           </Route>
 

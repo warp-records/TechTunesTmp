@@ -75,7 +75,7 @@ export default function LessonIslandPage() {
 
   return (
     <>
-      <LessonIslandScene scene={scene} assignSongId={assignSongId} onAssignTile={assignSongId ? onAssignTile : null} />
+      <LessonIslandScene scene={scene} assignSongId={assignSongId} onAssignTile={assignSongId ? onAssignTile : null} showTutorial={showTutorial} />
       {debug && <DebugTileMapper />}
       {showTutorial && <TutorialPopup {...tutorialPopupProps} />}
       {arrowPos && <ArrowIndicator x={arrowPos.x} y={arrowPos.y} direction="right" />}
