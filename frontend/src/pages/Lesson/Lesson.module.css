@@ -167,6 +167,7 @@ background-attachment: fixed;
 
 .pause-box-popup.visible {
   opacity: 1;
+  pointer-events: auto;
 }
 
 .pause-box {
@@ -235,7 +236,7 @@ background-attachment: fixed;
   flex-direction: column;
   align-items: center;
   z-index: 2001;
-  pointer-events: auto;
+  pointer-events: none;
 }
 
 .pause-box-button {

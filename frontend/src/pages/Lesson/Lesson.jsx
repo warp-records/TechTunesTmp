@@ -6,6 +6,14 @@ import applauseSrc from '../../assets/sounds/applause.mp3'
 
 import styles from './Lesson.module.css'
 import HomeButton from '../../components/HomeButton'
+import TutorialPopup from '../../components/TutorialPopup'
+import { useTutorial } from '../../components/tutorial'
+
+const TUTORIAL_MESSAGES = [
+  "Play notes as they appear on the screen",
+  "You can see your points here",
+  "Pause the lesson at any time",
+]
 import Strings from '../../assets/Lesson Page Assets/Strings.png'
 import NeonFrame from '../../assets/Lesson Page Assets/Neon Board Frame.png'
 import Board from '../../assets/Lesson Page Assets/Board.png'
@@ -40,6 +48,7 @@ const HIT_DURATION = 300 // ms to display glowing note after a hit
 
 export default function Lesson() {
   const [searchParams] = useSearchParams()
+  const { showTutorial, popupProps: tutorialPopupProps } = useTutorial(TUTORIAL_MESSAGES)
   const [songName, setSongName] = useState('')
   const [levelNum, setLevelNum] = useState(1)
   const [ready, setReady] = useState(false)
@@ -256,8 +265,9 @@ export default function Lesson() {
 
   return (
     <div className="lesson-active">
+      {showTutorial && <TutorialPopup {...tutorialPopupProps} />}
       <ScreenBlur show={showBlur} />
-      <PauseMenu show={isPaused} progress={progress} levelNum={levelNum} />
+      {isPaused && <PauseMenu show={isPaused} progress={progress} levelNum={levelNum} />}
       <CountDown num={countdown} />
       <SongTitleBanner title={songName.toUpperCase()} gameOver={showBlur} />
       <PickbotButton gameOver={showBlur} />
