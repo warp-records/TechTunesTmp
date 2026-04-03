@@ -75,7 +75,7 @@ export default function PickbotEdit() {
       body: serializeAvatar({ form, bodyBg, activeItems })
     })
     
-    navigate(showTutorial ? '/userpage?showTutorial' : '/userpage')
+    navigate('/userpage')
   }
   
   return (
@@ -126,7 +126,7 @@ export default function PickbotEdit() {
         console.log(ref)
         const rect = ref?.current?.getBoundingClientRect()
         console.log(rect)
-        return rect ? <ArrowIndicator x={rect.left} y={rect.top + rect.height / 2 - 10} /> : null
+        return rect ? <ArrowIndicator x={rect.left} y={rect.top + rect.height / 2 - 10} direction="right" /> : null
       })()}
     </>
   )

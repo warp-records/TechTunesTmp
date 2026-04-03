@@ -127,7 +127,7 @@ export default function Userpage() {
         <nav className={[styles['nav'], styles['container']].join(' ')} aria-label="Top Navigation">
           <div className={styles['nav-left']}>
             <div ref={homeBtnRef}>
-              <Link to={showTutorial ? '/homepage?showTutorial' : '/homepage'}>
+              <Link to="/homepage">
                 <div className={styles['chip']} title="Go to Home">🏠</div>
               </Link>
             </div>

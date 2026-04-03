@@ -1,12 +1,11 @@
 import { useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
 
 export function useTutorial(messages) {
-  const [searchParams, setSearchParams] = useSearchParams()
   const [tutorialIndex, setTutorialIndex] = useState(0)
-  const [showTutorial, setShowTutorial] = useState(() => searchParams.get("showTutorial") !== null)
+  const [showTutorial, setShowTutorial] = useState(() => localStorage.getItem('showTutorial') !== null)
 
   function start() {
+    localStorage.setItem('showTutorial', '1')
     setTutorialIndex(0)
     setShowTutorial(true)
   }
@@ -14,8 +13,7 @@ export function useTutorial(messages) {
   function close() {
     setShowTutorial(false)
     setTutorialIndex(0)
-    searchParams.delete('showTutorial')
-    setSearchParams(searchParams)
+    localStorage.removeItem('showTutorial')
   }
 
   const popupProps = {

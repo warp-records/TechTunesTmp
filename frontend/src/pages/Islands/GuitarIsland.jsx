@@ -80,9 +80,7 @@ export default function GuitarIsland() {
   useEffect(() => {
     if (!showTutorial) { setArrowPos(null); return }
     const rect = beginnerSignRef.current?.getBoundingClientRect()
-    console.log(beginnerSignRef)
-    console.log(rect)
-    if (rect) setArrowPos({ x: rect.left, y: rect.top + rect.height / 2 })
+    if (rect) setArrowPos({ x: rect.right - 100, y: rect.top + rect.height / 2 })
   }, [showTutorial])
 
   return (

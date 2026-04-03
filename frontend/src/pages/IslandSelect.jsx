@@ -26,7 +26,7 @@ export default function IslandSelect() {
       <img src={JukeboxImg} alt="Jukebox" className={styles['jukebox-image']} />
       <div className={styles['screen-overlay']}>
         <div className={styles['islands-container']}>
-            <Link to={showTutorial ? '/guitar_island?showTutorial' : '/guitar_island'}>
+            <Link to="/guitar_island">
               <div ref={guitarIslandRef} className={[styles['island-option'], styles['guitar-island'], styles['active']].join(' ')} id="guitarOption">
                 <img src={GuitarIslandImg} alt="Guitar" className={styles['island-icon']} />
                 <div className={styles['island-text']}>GUITAR<br />ISLAND</div>

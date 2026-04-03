@@ -6,6 +6,7 @@ import TutorialPopup, { ArrowIndicator } from '../components/TutorialPopup'
 import { useTutorial } from '../components/tutorial'
 
 const TUTORIAL_MESSAGES = [
+  "You can tune your instrument here",
   "Click Lesson Island to start learning!",
 ]
 import LessonIslandImg from '../assets/Homepage/LessonIsland.png'
@@ -19,15 +20,22 @@ export default function Homepage() {
   const navigate = useNavigate()
   const homepageRef = useRef(null)
   const lessonIslandRef = useRef(null)
+  const tuneStationRef = useRef(null)
   const [zooming, setZooming] = useState(false)
-  const { showTutorial, start: startTutorial, popupProps: tutorialPopupProps } = useTutorial(TUTORIAL_MESSAGES)
+  const { tutorialIndex, showTutorial, start: startTutorial, popupProps: tutorialPopupProps } = useTutorial(TUTORIAL_MESSAGES)
   const [arrowPos, setArrowPos] = useState(null)
 
   useEffect(() => {
     if (!showTutorial) { setArrowPos(null); return }
-    const rect = lessonIslandRef.current?.getBoundingClientRect()
-    if (rect) setArrowPos({ x: rect.left, y: rect.top + rect.height / 2 })
-  }, [showTutorial])
+    if (tutorialIndex === 0) {
+      // bounding rect here calculates weird for some reason
+      const rect = tuneStationRef.current?.getBoundingClientRect()
+      if (rect) setArrowPos({ x: rect.left + 350, y: rect.top + rect.height / 2, direction: 'left' })
+    } else if (tutorialIndex === 1) {
+      const rect = lessonIslandRef.current?.getBoundingClientRect()
+      if (rect) setArrowPos({ x: rect.left + 100, y: rect.top + rect.height / 2, direction: 'right' })
+    }
+  }, [showTutorial, tutorialIndex])
 
   function handleLessonIslandClick() {
     const island = lessonIslandRef.current
@@ -42,7 +50,7 @@ export default function Homepage() {
     setZooming(true)
 
     setTimeout(() => {
-      navigate(showTutorial ? '/island_select?showTutorial' : '/island_select')
+      navigate('/island_select')
     }, 800)
   }
 
@@ -65,7 +73,7 @@ export default function Homepage() {
         </div>
 
         <Link to="/guitar_tuner" className={styles['tune-station']} aria-label="Tune Station">
-          <img src={TuneStationImg} alt="Tune Station" />
+          <img ref={tuneStationRef} src={TuneStationImg} alt="Tune Station" />
         </Link>
 
         <Link to="/song_search" className={styles['song-search']} aria-label="Song Search">
@@ -86,7 +94,7 @@ export default function Homepage() {
       </div>
       <div className={styles['floor']}></div>
       {showTutorial && <TutorialPopup {...tutorialPopupProps} />}
-      {arrowPos && <ArrowIndicator x={arrowPos.x} y={arrowPos.y} direction="right" />}
+      {arrowPos && <ArrowIndicator x={arrowPos.x} y={arrowPos.y} direction={arrowPos.direction} />}
     </div>
   )
 }

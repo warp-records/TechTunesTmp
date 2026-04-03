@@ -35,8 +35,8 @@ const ARROW_W = 120
 const ARROW_H = 60
 
 const directionOffset = {
-  right: (x, y) => ({ left: x - ARROW_W,     top: y - ARROW_H / 2              }),
-  left:  (x, y) => ({ left: x + ARROW_W,               top: y - ARROW_H / 2              }),
+  right: (x, y) => ({ left: x - ARROW_W,  top: y - ARROW_H / 2 }),
+  left:  (x, y) => ({ left: x,            top: y - ARROW_H / 2 }),
   up:    (x, y) => ({ left: x - ARROW_W / 2, top: y - ARROW_H / 2 + ARROW_W / 2 }),
   down:  (x, y) => ({ left: x - ARROW_W / 2, top: y - ARROW_H / 2 - ARROW_W / 2 }),
 }
