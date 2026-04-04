@@ -150,22 +150,34 @@ export function StringLetter({ note, activeNote, handleClick }) {
 const SM = '../assets/Tuner/Sound Meter/'
 
 const meters = {
-  'e-low':  { meter: meterImages[`${SM}E Left Meter.png`],  arrow: meterImages[`${SM}E Left Arrow.png`],  checked: meterImages[`${SM}E Left Checked Arrow.png`] },
-  'a':      { meter: meterImages[`${SM}A Meter.png`],       arrow: meterImages[`${SM}A Arrow.png`],       checked: meterImages[`${SM}A Checked Arrow.png`] },
-  'd':      { meter: meterImages[`${SM}D Meter.png`],       arrow: meterImages[`${SM}D Arrow.png`],       checked: meterImages[`${SM}D Checked Arrow.png`] },
-  'g':      { meter: meterImages[`${SM}G Meter.png`],       arrow: meterImages[`${SM}G Arrow.png`],       checked: meterImages[`${SM}G Checked Arrow.png`] },
-  'b':      { meter: meterImages[`${SM}B Meter.png`],       arrow: meterImages[`${SM}B Arrow.png`],       checked: meterImages[`${SM}B Checked Arrow.png`] },
-  'e-high': { meter: meterImages[`${SM}E Right Meter.png`], arrow: meterImages[`${SM}E Right Arrow.png`], checked: meterImages[`${SM}E Right Checked Arrow.png`] },
+  'e-low':  { meter: meterImages[`${SM}E Left Meter.png`],  arrow: meterImages[`${SM}E Left Arrow.png`],  checked: meterImages[`${SM}E Left Checked Arrow.png`],  color: '#ff3399' },
+  'a':      { meter: meterImages[`${SM}A Meter.png`],       arrow: meterImages[`${SM}A Arrow.png`],       checked: meterImages[`${SM}A Checked Arrow.png`],       color: '#6677ee' },
+  'd':      { meter: meterImages[`${SM}D Meter.png`],       arrow: meterImages[`${SM}D Arrow.png`],       checked: meterImages[`${SM}D Checked Arrow.png`],       color: '#e8724a' },
+  'g':      { meter: meterImages[`${SM}G Meter.png`],       arrow: meterImages[`${SM}G Arrow.png`],       checked: meterImages[`${SM}G Checked Arrow.png`],       color: '#5bc8e8' },
+  'b':      { meter: meterImages[`${SM}B Meter.png`],       arrow: meterImages[`${SM}B Arrow.png`],       checked: meterImages[`${SM}B Checked Arrow.png`],       color: '#cc00ff' },
+  'e-high': { meter: meterImages[`${SM}E Right Meter.png`], arrow: meterImages[`${SM}E Right Arrow.png`], checked: meterImages[`${SM}E Right Checked Arrow.png`], color: '#55bb55' },
 }
 
 export function SoundMeter({ activeNote, pitch, listening, onToggle }) {
+  const [labelCents, setLabelCents] = useState(null)
+  const lastUpdateRef = useRef(0)
+
+  useEffect(() => {
+    const now = Date.now()
+    if (now - lastUpdateRef.current >= 200) {
+      setLabelCents(pitch ? pitch.cents : null)
+      lastUpdateRef.current = now
+    }
+  }, [pitch])
+
   const images = meters[activeNote]
   if (!images) return null
 
-  // Map ±50 cents → ±75 degrees, clamp to ±90
   const inTune = pitch && Math.abs(pitch.cents) <= 5
   const rotation = (pitch && !inTune) ? Math.max(-90, Math.min(90, pitch.cents * 1.5)) : 0
   const arrowSrc = inTune ? images.checked : images.arrow
+
+  const labelInTune = labelCents !== null && Math.abs(labelCents) <= 5
 
   return (
     <div className={styles['sound-meter']}>
@@ -178,6 +190,11 @@ export function SoundMeter({ activeNote, pitch, listening, onToggle }) {
           style={{ transform: `translateX(-50%) rotate(${rotation}deg)` }}
         />
       </div>
+      {labelCents !== null && (
+        <div className={styles['cents-label']} style={{ color: images.color }}>
+          {labelInTune ? 'In tune' : `${labelCents > 0 ? '+' : ''}${labelCents}¢`}
+        </div>
+      )}
       <button
         className={[styles['listen-btn'], listening ? styles['listening'] : ''].filter(Boolean).join(' ')}
         onClick={onToggle}
