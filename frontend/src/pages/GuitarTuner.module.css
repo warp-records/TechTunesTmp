@@ -104,11 +104,27 @@ body {
 .string-meter.active { display: flex; }
 .meter-image { width: 400px; height: auto; position: relative; }
 .meter-arrow {
-  position: absolute; width: 70px; height: auto;
-  top: 50%; left: 50%;
-  transform: translate(-50%,-50%);
+  position: absolute;
+  width: 70px; height: auto;
+  bottom: 15px; left: 50%;
   transform-origin: center bottom;
-  transition: all 0.3s ease;
+  transform: translateX(-50%) rotate(0deg);
+  transition: transform 0.15s ease;
+}
+
+.listen-btn {
+  position: absolute;
+  bottom: -36px; left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 18px;
+  border-radius: 20px; border: none;
+  background: linear-gradient(135deg, #00d4ff, #0099cc);
+  color: white; font-weight: bold; font-size: 13px;
+  cursor: pointer; white-space: nowrap;
+}
+
+.listen-btn.listening {
+  background: linear-gradient(135deg, #4ecdc4, #44a08d);
 }
 
 /* ───── headstock & strings ───────────────────────────────── */
