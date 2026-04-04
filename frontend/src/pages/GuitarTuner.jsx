@@ -81,9 +81,15 @@ const noteAudio = import.meta.glob('../assets/Tuner/Notes/*.flac', { eager: true
 export default function GuitarTuner() {
   let [activeNote, setActiveNote] = useState("string-a");
   const { listening, pitch, toggle } = useMicPitch();
+  const lastNoteRef = useRef(0)
 
   useEffect(() => {
-    if (listening && pitch?.note) setActiveNote(pitch.note)
+    if (!listening || !pitch?.note) return
+    const now = Date.now()
+    if (now - lastNoteRef.current >= 250) {
+      setActiveNote(pitch.note)
+      lastNoteRef.current = now
+    }
   }, [listening, pitch?.note])
 
   const stringLetters = [
@@ -160,20 +166,25 @@ const meters = {
 
 export function SoundMeter({ activeNote, pitch, listening, onToggle }) {
   const [labelCents, setLabelCents] = useState(null)
-  const lastUpdateRef = useRef(0)
+  const [inTune, setInTune] = useState(false)
+  const lastLabelRef = useRef(0)
+  const lastInTuneRef = useRef(0)
 
   useEffect(() => {
     const now = Date.now()
-    if (now - lastUpdateRef.current >= 200) {
+    if (now - lastLabelRef.current >= 200) {
       setLabelCents(pitch ? pitch.cents : null)
-      lastUpdateRef.current = now
+      lastLabelRef.current = now
+    }
+    if (now - lastInTuneRef.current >= 250) {
+      setInTune(!!(pitch && Math.abs(pitch.cents) <= 5))
+      lastInTuneRef.current = now
     }
   }, [pitch])
 
   const images = meters[activeNote]
   if (!images) return null
 
-  const inTune = pitch && Math.abs(pitch.cents) <= 5
   const rotation = (pitch && !inTune) ? Math.max(-90, Math.min(90, pitch.cents * 1.5)) : 0
   const arrowSrc = inTune ? images.checked : images.arrow
 
