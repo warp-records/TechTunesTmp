@@ -2,12 +2,30 @@ import os
 import uuid
 import json
 import io
+import hmac
+import hashlib
+import base64
+import secrets
 from enum import Enum
 
 import xml_parse
 
 from dotenv import load_dotenv
 load_dotenv()
+
+LICENSE_SECRET = os.environ.get("LICENSE_SECRET", "")
+
+def _validate_key_signature(key: str) -> bool:
+    try:
+        clean = key.replace("-", "").upper()
+        if len(clean) != 24:
+            return False
+        raw = base64.b32decode(clean)          # 15 bytes
+        rand, stored_mac = raw[:11], raw[11:]  # 11 + 4
+        expected = hmac.new(LICENSE_SECRET.encode(), rand, hashlib.sha256).digest()[:4]
+        return hmac.compare_digest(stored_mac, expected)
+    except Exception:
+        return False
 
 import bcrypt
 from fastapi import FastAPI, Request, HTTPException, Depends, APIRouter, Header, UploadFile
@@ -16,7 +34,7 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 from sqlalchemy.orm import Session
-from database import SessionLocal, init_db, UserDB, SessionDB, AvatarDB, SongDB, LessonTileDB, NonProfitDB
+from database import SessionLocal, init_db, UserDB, SessionDB, AvatarDB, SongDB, LessonTileDB, NonProfitDB, UsedKeyDB
 
 from datetime import datetime
 import stripe
@@ -36,6 +54,12 @@ init_db()
 class User(BaseModel):
     username: str
     password: str
+
+# while in invite only phase
+class RegisterRequest(BaseModel):
+    username: str
+    password: str
+    license_key: str
     
 class BodyBg(BaseModel):
     isTexture: bool
@@ -112,22 +136,32 @@ def me(user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
     
     
 @app.post("/api/register")
-def register(user: User, underage: bool, db: Session = Depends(get_db)):
+def register(user: RegisterRequest, underage: bool, db: Session = Depends(get_db)):
+    if not _validate_key_signature(user.license_key):
+        raise HTTPException(status_code=400, detail="InvalidKey")
+
+    normalized = user.license_key.replace("-", "").upper()
+    already_used = db.query(UsedKeyDB).filter(UsedKeyDB.key == normalized).first()
+    if already_used:
+        raise HTTPException(status_code=409, detail="KeyAlreadyUsed")
+
     existing = db.query(UserDB).filter(UserDB.username == user.username).first()
     if existing:
         raise HTTPException(status_code=409, detail="UsernameTaken")
-    
-    hashed = bcrypt.hashpw(user.password.encode(), bcrypt.gensalt())    
-    
+
+    hashed = bcrypt.hashpw(user.password.encode(), bcrypt.gensalt())
+
     db_user = UserDB(
-        username=user.username, 
-        password_hash=hashed.decode(), 
-        underage=underage, 
+        username=user.username,
+        password_hash=hashed.decode(),
+        underage=underage,
         admin=False
     )
     db.add(db_user)
     db.flush()
-    
+
+    db.add(UsedKeyDB(key=normalized, used_by=db_user.id))
+
     token = str(uuid.uuid4())
     db_session = SessionDB(token=token, user_id=db_user.id)
     db.add(db_session)
@@ -141,8 +175,8 @@ def register(user: User, underage: bool, db: Session = Depends(get_db)):
     db.add(db_avatar)
 
     db.commit()
-    
-    return { 
+
+    return {
         "message": "User created",
         "username": user.username,
         "token": token,

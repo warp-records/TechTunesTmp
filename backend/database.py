@@ -1,10 +1,11 @@
 
+import os
 from sqlalchemy import create_engine, Column, Integer, String, Text, ForeignKey, DateTime, Boolean, Numeric
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-DATABASE_URL = "sqlite:///techtunes.db"
+DATABASE_URL = os.environ.get("DATABASE_URL")
 
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine)
 Base = declarative_base()
 
@@ -69,6 +70,12 @@ class NonProfitDB(Base):
     is_verified        = Column(Boolean, nullable=False, default=False)
     balance            = Column(Integer, nullable=False, default=0)
     stripe_bank_token   = Column(String, nullable=True)
+
+class UsedKeyDB(Base):
+    __tablename__ = "used_keys"
+
+    key      = Column(String, primary_key=True)
+    used_by  = Column(Integer, ForeignKey("users.id"), nullable=False)
 
 def init_db():
     Base.metadata.create_all(bind=engine)

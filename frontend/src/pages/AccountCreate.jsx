@@ -24,6 +24,8 @@ export default function AccountCreate() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [licenseKey, setLicenseKey] = useState("");
+  const [keyError, setKeyError] = useState("");
   const [suggestions, setSuggestions] = useState(randSuggestions());
   const [usernameTaken, setUsernameTaken] = useState(false);
   
@@ -79,19 +81,23 @@ export default function AccountCreate() {
   
   async function register() {
     const underage = localStorage.getItem("underAge") === "true";
+    setKeyError("");
 
     const response = await fetch(`/api/register?underage=${underage}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })
-      }
-    )
+      body: JSON.stringify({ username, password, license_key: licenseKey })
+    });
 
     const data = await response.json();
     if (response.ok) {
-      localStorage.setItem("token", data.token)
+      localStorage.setItem("token", data.token);
       await fetchUser();
       navigate(underage ? '/parent_permission' : '/pickbot_edit?showTutorial');
+    } else if (data.detail === "InvalidKey") {
+      setKeyError("Invalid invite code");
+    } else if (data.detail === "KeyAlreadyUsed") {
+      setKeyError("This invite code has already been used");
     }
   }
   
@@ -156,8 +162,21 @@ export default function AccountCreate() {
         {password && !isGoodPassword() ?
           (<div className={styles['error-message']}>Password needs 10+ characters, uppercase, lowercase, and 2 numbers or 1 special character</div>) : (<></>)
         }
-        
-          <button onClick={register} className={styles['username-continue-btn']} disabled={!validName || !isGoodPassword() || usernameTaken}>
+
+        <br />
+        <p className={styles['username-subtitle']}>Invite Code</p>
+        <div className={styles['field-input-container']}>
+          <input
+            className={[styles['field-input'], keyError ? styles['bad-input'] : ''].filter(Boolean).join(' ')}
+            placeholder="XXXXXX-XXXXXX-XXXXXX-XXXXXX"
+            autoComplete="off"
+            value={licenseKey}
+            onChange={e => { setLicenseKey(e.target.value); setKeyError(""); }}
+          />
+          {keyError && <div className={styles['error-message']}>{keyError}</div>}
+        </div>
+
+          <button onClick={register} className={styles['username-continue-btn']} disabled={!validName || !isGoodPassword() || usernameTaken || !licenseKey}>
             Continue to PickBot Creation
           </button>
       </div>
