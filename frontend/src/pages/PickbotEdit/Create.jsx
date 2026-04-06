@@ -30,7 +30,7 @@ export default function PickbotEdit() {
   const [isPremium, setIsPremium] = useState(false)
   const [premiumPopupVisible, setPremiumPopupVisible] = useState(false)
   const navigate = useNavigate()
-  const { tutorialIndex, showTutorial, start: startTutorial, popupProps: tutorialPopupProps } = useTutorial(TUTORIAL_MESSAGES)
+  const { tutorialIndex, showTutorial, start: startTutorial, popupProps: tutorialPopupProps } = useTutorial(TUTORIAL_MESSAGES, 0)
   
   const eyesBtnRef = useRef(null)
   const firstEyeRef = useRef(null)

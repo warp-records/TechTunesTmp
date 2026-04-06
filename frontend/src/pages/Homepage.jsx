@@ -24,7 +24,7 @@ export default function Homepage() {
   const tuneStationRef = useRef(null)
   const impactRef = useRef(null)
   const [zooming, setZooming] = useState(false)
-  const { tutorialIndex, showTutorial, start: startTutorial, popupProps: tutorialPopupProps } = useTutorial(TUTORIAL_MESSAGES)
+  const { tutorialIndex, showTutorial, start: startTutorial, popupProps: tutorialPopupProps } = useTutorial(TUTORIAL_MESSAGES, 2)
   const [arrowPos, setArrowPos] = useState(null)
 
   useEffect(() => {

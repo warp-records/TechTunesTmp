@@ -83,6 +83,8 @@ export default function GuitarTuner() {
   const { listening, pitch, toggle } = useMicPitch();
   const lastNoteRef = useRef(0)
 
+  useEffect(() => { toggle() }, [])
+
   useEffect(() => {
     if (!listening || !pitch?.note) return
     const now = Date.now()
@@ -206,12 +208,6 @@ export function SoundMeter({ activeNote, pitch, listening, onToggle }) {
           {labelInTune ? 'In tune' : `${labelCents > 0 ? '+' : ''}${labelCents}¢`}
         </div>
       )}
-      <button
-        className={[styles['listen-btn'], listening ? styles['listening'] : ''].filter(Boolean).join(' ')}
-        onClick={onToggle}
-      >
-        {listening ? '⏹ Stop' : '🎙 Listen'}
-      </button>
     </div>
   )
 }

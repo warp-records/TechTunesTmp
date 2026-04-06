@@ -76,7 +76,7 @@ export default function Userpage() {
   const [avatarData, setAvatarData] = useState(null);
   const navigate = useNavigate();
   const homeBtnRef = useRef(null)
-  const { tutorialIndex, showTutorial, start: startTutorial, popupProps: tutorialPopupProps } = useTutorial(TUTORIAL_MESSAGES)
+  const { tutorialIndex, showTutorial, start: startTutorial, popupProps: tutorialPopupProps } = useTutorial(TUTORIAL_MESSAGES, 1)
   const { fetchUser, user: authUser } = useContext(AuthContext);
 
   async function logout() {

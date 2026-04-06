@@ -1,27 +1,43 @@
 import { useState } from 'react'
 
-export function useTutorial(messages) {
-  const [tutorialIndex, setTutorialIndex] = useState(0)
-  const [showTutorial, setShowTutorial] = useState(() => localStorage.getItem('showTutorial') !== null)
+function readTutorial() {
+  try { return JSON.parse(localStorage.getItem('tutorial')) } catch { return null }
+}
+
+function writeTutorial(pageIndex, partIdx) {
+  localStorage.setItem('tutorial', JSON.stringify({ pageIndex, partIdx }))
+}
+
+export function useTutorial(messages, pageIndex) {
+  const stored = readTutorial()
+  const isThisPage = stored?.pageIndex === pageIndex
+
+  const [partIdx, setPartIdx] = useState(isThisPage ? (stored.partIdx ?? 0) : 0)
+  const [showTutorial, setShowTutorial] = useState(isThisPage)
 
   function start() {
-    localStorage.setItem('showTutorial', '1')
-    setTutorialIndex(0)
+    writeTutorial(pageIndex, 0)
+    setPartIdx(0)
     setShowTutorial(true)
   }
 
   function close() {
     setShowTutorial(false)
-    setTutorialIndex(0)
-    localStorage.removeItem('showTutorial')
+    setPartIdx(0)
+    localStorage.removeItem('tutorial')
+  }
+
+  function updatePartIdx(idx) {
+    setPartIdx(idx)
+    writeTutorial(pageIndex, idx)
   }
 
   const popupProps = {
     messages,
-    index: tutorialIndex,
-    setIndex: setTutorialIndex,
+    index: partIdx,
+    setIndex: updatePartIdx,
     onClose: close,
   }
 
-  return { tutorialIndex, showTutorial, start, close, popupProps }
+  return { tutorialIndex: partIdx, showTutorial, start, close, popupProps }
 }
