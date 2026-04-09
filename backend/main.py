@@ -665,8 +665,8 @@ def nonprofit_withdrawal(nonprofit_id: int, db: Session = Depends(get_db)):
     # }
     # )
 
-DIST_DIR = os.path.join(os.path.dirname(__file__), "../frontend/dist")
-app.mount("/assets", StaticFiles(directory=os.path.join(DIST_DIR, "assets")), name="assets")
+# DIST_DIR = os.path.join(os.path.dirname(__file__), "../frontend/dist")
+# app.mount("/assets", StaticFiles(directory=os.path.join(DIST_DIR, "assets")), name="assets")
 
 # @app.get("/{full_path:path}")
 # def serve_frontend(full_path: str):
