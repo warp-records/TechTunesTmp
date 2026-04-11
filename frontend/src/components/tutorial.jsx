@@ -1,5 +1,7 @@
 import { useState } from 'react'
 
+const LAST_PAGE_INDEX = 2
+
 function readTutorial() {
   try { return JSON.parse(localStorage.getItem('tutorial')) } catch { return null }
 }
@@ -24,7 +26,11 @@ export function useTutorial(messages, pageIndex) {
   function close() {
     setShowTutorial(false)
     setPartIdx(0)
-    localStorage.removeItem('tutorial')
+    if (pageIndex != null && partIdx === messages.length - 1) {
+      writeTutorial(pageIndex + 1, 0)
+    } else {
+      localStorage.removeItem('tutorial')
+    }
   }
 
   function updatePartIdx(idx) {
@@ -32,11 +38,14 @@ export function useTutorial(messages, pageIndex) {
     writeTutorial(pageIndex, idx)
   }
 
+  const isLastStep = pageIndex === LAST_PAGE_INDEX && partIdx === messages.length - 1
+
   const popupProps = {
     messages,
     index: partIdx,
     setIndex: updatePartIdx,
     onClose: close,
+    isLastStep,
   }
 
   return { tutorialIndex: partIdx, showTutorial, start, close, popupProps }

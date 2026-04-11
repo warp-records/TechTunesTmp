@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import styles from './TutorialPopup.module.css'
 import neonArrow from '../assets/Tutorial/blue-neon-arrow-2.png'
 
-export default function TutorialPopup({ messages, index, setIndex, onClose }) {
+export default function TutorialPopup({ messages, index, setIndex, onClose, isLastStep }) {
   const [displayed, setDisplayed] = useState("")
 
   const text = messages[index]
@@ -24,8 +24,8 @@ export default function TutorialPopup({ messages, index, setIndex, onClose }) {
         <p className={styles['tutorial-popup-sizer']}>{text}</p>
         <p className={styles['tutorial-popup-display']}>{displayed}</p>
       </div>
-      <button className={styles['tutorial-popup-next']} onClick={() => index === messages.length - 1 ? onClose() : setIndex(i => i + 1)}>
-        {index === messages.length - 1 ? 'Close' : 'Next'}
+      <button className={styles['tutorial-popup-next']} onClick={() => isLastStep ? onClose() : setIndex(i => i + 1)}>
+        {isLastStep ? 'Close' : 'Next'}
       </button>
     </div>
   )
