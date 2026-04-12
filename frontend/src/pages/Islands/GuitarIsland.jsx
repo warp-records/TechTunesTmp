@@ -74,7 +74,7 @@ export default function GuitarIsland() {
   const assignSongId = searchParams.get('assignSongId')
   const difficultyNodes = buildDifficultyNodes(styles)
   const beginnerSignRef = useRef(null)
-  const { showTutorial, popupProps: tutorialPopupProps } = useTutorial(TUTORIAL_MESSAGES)
+  const { showTutorial, close, popupProps: tutorialPopupProps } = useTutorial(TUTORIAL_MESSAGES, 4)
   const [arrowPos, setArrowPos] = useState(null)
 
   useEffect(() => {
@@ -91,7 +91,7 @@ export default function GuitarIsland() {
         style={{ backgroundImage: `url(${BackgroundImg})` }}
       >
         {difficultyNodes.map((node, i) => (
-          <DifficultyNode key={node.id} node={node} assignSongId={assignSongId} innerRef={i === 0 ? beginnerSignRef : undefined} />
+          <DifficultyNode key={node.id} node={node} assignSongId={assignSongId} innerRef={i === 0 ? beginnerSignRef : undefined} onSignClick={i === 0 ? () => showTutorial && close() : undefined} />
         ))}
 
         <button
@@ -112,7 +112,7 @@ export default function GuitarIsland() {
   )
 }
 
-function DifficultyNode({ node, assignSongId, innerRef }) {
+function DifficultyNode({ node, assignSongId, innerRef, onSignClick }) {
   if (node.href) {
     const to = assignSongId ? `${node.href}?assignSongId=${assignSongId}` : node.href
     return (
@@ -132,6 +132,7 @@ function DifficultyNode({ node, assignSongId, innerRef }) {
             className={styles['difficulty-link']}
             aria-label={`Open ${node.label} lesson island`}
             title={`Open ${node.label} lesson island`}
+            onClick={onSignClick}
           >
             <img ref={innerRef} src={node.signSrc} alt="" aria-hidden="true" className={node.signClassName} />
           </Link>

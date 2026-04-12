@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState } from 'react'
+import { useEffect, useCallback, useState, useRef } from 'react'
 import { Link, useParams, useSearchParams, useNavigate } from 'react-router-dom'
 
 import LessonIslandScene from '../components/LessonIslandScene'
@@ -28,7 +28,7 @@ export default function LessonIslandPage() {
   const debug = searchParams.has('debug')
   const assignSongId = searchParams.get('assignSongId')
   const scene = getLessonIslandScene(instrument, level)
-  const { showTutorial, popupProps: tutorialPopupProps } = useTutorial(TUTORIAL_MESSAGES)
+  const { showTutorial, close: closeTutorial, popupProps: tutorialPopupProps } = useTutorial(TUTORIAL_MESSAGES, 5)
   const [arrowPos, setArrowPos] = useState(null)
 
   useEffect(() => {
@@ -75,7 +75,7 @@ export default function LessonIslandPage() {
 
   return (
     <>
-      <LessonIslandScene scene={scene} assignSongId={assignSongId} onAssignTile={assignSongId ? onAssignTile : null} showTutorial={showTutorial} />
+      <LessonIslandScene scene={scene} assignSongId={assignSongId} onAssignTile={assignSongId ? onAssignTile : null} showTutorial={showTutorial} closeTutorial={closeTutorial} />
       {debug && <DebugTileMapper />}
       {showTutorial && <TutorialPopup {...tutorialPopupProps} />}
       {arrowPos && <ArrowIndicator x={arrowPos.x} y={arrowPos.y} direction="right" />}

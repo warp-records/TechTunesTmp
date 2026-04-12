@@ -47,7 +47,7 @@ function SceneAsset({ asset, className }) {
   )
 }
 
-function SceneHotspot({ hotspot, isAssigning, onAssignTile, instrument, level, showTutorial }) {
+function SceneHotspot({ hotspot, isAssigning, onAssignTile, instrument, level, showTutorial, closeTutorial }) {
   const navigate = useNavigate()
   const hotspotStyle = {
     left: toPercent(hotspot.left),
@@ -77,6 +77,7 @@ function SceneHotspot({ hotspot, isAssigning, onAssignTile, instrument, level, s
       onAssignTile(hotspot.tile_number)
     } else if (isTile) {
       if (showTutorial && hotspot.tile_number === 1) {
+        closeTutorial?.()
         navigate('/lesson_tutorial')
       } else {
         navigate(`/lesson?tile_number=${hotspot.tile_number}&instrument=${instrument}&level=${level}`)
@@ -98,7 +99,7 @@ function SceneHotspot({ hotspot, isAssigning, onAssignTile, instrument, level, s
   )
 }
 
-export default function LessonIslandScene({ scene, assignSongId, onAssignTile, showTutorial }) {
+export default function LessonIslandScene({ scene, assignSongId, onAssignTile, showTutorial, closeTutorial }) {
   const sceneStyle = {
     '--lesson-island-page-fill': scene.canvas.pageFill,
     '--lesson-island-stage-fill': scene.canvas.stageFill,
@@ -138,7 +139,7 @@ export default function LessonIslandScene({ scene, assignSongId, onAssignTile, s
           ))}
 
           {scene.hotspots?.map((hotspot) => (
-            <SceneHotspot key={hotspot.id} hotspot={hotspot} isAssigning={!!assignSongId} onAssignTile={onAssignTile} instrument={scene.instrument} level={scene.level} showTutorial={showTutorial} />
+            <SceneHotspot key={hotspot.id} hotspot={hotspot} isAssigning={!!assignSongId} onAssignTile={onAssignTile} instrument={scene.instrument} level={scene.level} showTutorial={showTutorial} closeTutorial={closeTutorial} />
           ))}
         </div>
       </div>

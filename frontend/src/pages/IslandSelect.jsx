@@ -11,7 +11,7 @@ const TUTORIAL_MESSAGES = ["Open guitar island"]
 
 export default function IslandSelect() {
   const guitarIslandRef = useRef(null)
-  const { showTutorial, popupProps: tutorialPopupProps } = useTutorial(TUTORIAL_MESSAGES, 3)
+  const { showTutorial, close, popupProps: tutorialPopupProps } = useTutorial(TUTORIAL_MESSAGES, 3)
   const [arrowPos, setArrowPos] = useState(null)
 
   useEffect(() => {
@@ -26,7 +26,7 @@ export default function IslandSelect() {
       <img src={JukeboxImg} alt="Jukebox" className={styles['jukebox-image']} />
       <div className={styles['screen-overlay']}>
         <div className={styles['islands-container']}>
-            <Link to="/guitar_island">
+            <Link to="/guitar_island" onClick={() => showTutorial && close()}>
               <div ref={guitarIslandRef} className={[styles['island-option'], styles['guitar-island'], styles['active']].join(' ')} id="guitarOption">
                 <img src={GuitarIslandImg} alt="Guitar" className={styles['island-icon']} />
                 <div className={styles['island-text']}>GUITAR<br />ISLAND</div>

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-const LAST_PAGE_INDEX = 3
+const LAST_PAGE_INDEX = 5
 
 function readTutorial() {
   try { return JSON.parse(localStorage.getItem('tutorial')) } catch { return null }

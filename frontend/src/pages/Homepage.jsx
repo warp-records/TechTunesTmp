@@ -24,7 +24,7 @@ export default function Homepage() {
   const tuneStationRef = useRef(null)
   const impactRef = useRef(null)
   const [zooming, setZooming] = useState(false)
-  const { tutorialIndex, showTutorial, start: startTutorial, popupProps: tutorialPopupProps } = useTutorial(TUTORIAL_MESSAGES, 2)
+  const { tutorialIndex, showTutorial, start: startTutorial, close, popupProps: tutorialPopupProps } = useTutorial(TUTORIAL_MESSAGES, 2)
   const [arrowPos, setArrowPos] = useState(null)
 
   useEffect(() => {
@@ -46,6 +46,7 @@ export default function Homepage() {
     const island = lessonIslandRef.current
     const homepage = homepageRef.current
     if (!island || !homepage) return
+    if (showTutorial) close()
 
     const rect = island.getBoundingClientRect()
     const centerX = ((rect.left + rect.width / 2) / window.innerWidth) * 100
