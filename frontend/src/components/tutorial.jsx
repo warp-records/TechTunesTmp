@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-const LAST_PAGE_INDEX = 2
+const LAST_PAGE_INDEX = 3
 
 function readTutorial() {
   try { return JSON.parse(localStorage.getItem('tutorial')) } catch { return null }
@@ -34,6 +34,10 @@ export function useTutorial(messages, pageIndex) {
   }
 
   function updatePartIdx(idx) {
+    if (idx >= messages.length) {
+      close()
+      return
+    }
     setPartIdx(idx)
     writeTutorial(pageIndex, idx)
   }

@@ -76,7 +76,7 @@ export default function Userpage() {
   const [avatarData, setAvatarData] = useState(null);
   const navigate = useNavigate();
   const homeBtnRef = useRef(null)
-  const { tutorialIndex, showTutorial, start: startTutorial, popupProps: tutorialPopupProps } = useTutorial(TUTORIAL_MESSAGES, 1)
+  const { tutorialIndex, showTutorial, start: startTutorial, close, popupProps: tutorialPopupProps } = useTutorial(TUTORIAL_MESSAGES, 1)
   const { fetchUser, user: authUser } = useContext(AuthContext);
 
   async function logout() {
@@ -126,7 +126,7 @@ export default function Userpage() {
     <header className={styles['page-header']}>
         <nav className={[styles['nav'], styles['container']].join(' ')} aria-label="Top Navigation">
           <div className={styles['nav-left']}>
-            <div ref={homeBtnRef}>
+            <div ref={homeBtnRef} onClick={() => showTutorial && close()}>
               <Link to="/homepage">
                 <div className={styles['chip']} title="Go to Home">🏠</div>
               </Link>

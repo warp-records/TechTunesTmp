@@ -24,7 +24,7 @@ export default function TutorialPopup({ messages, index, setIndex, onClose, isLa
         <p className={styles['tutorial-popup-sizer']}>{text}</p>
         <p className={styles['tutorial-popup-display']}>{displayed}</p>
       </div>
-      <button className={styles['tutorial-popup-next']} onClick={() => isLastStep ? onClose() : setIndex(i => i + 1)}>
+      <button className={styles['tutorial-popup-next']} onClick={() => isLastStep ? onClose() : setIndex(index + 1)}>
         {isLastStep ? 'Close' : 'Next'}
       </button>
     </div>

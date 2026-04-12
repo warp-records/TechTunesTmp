@@ -7,17 +7,17 @@ import { Link } from 'react-router-dom'
 import TutorialPopup, { ArrowIndicator } from '../components/TutorialPopup'
 import { useTutorial } from '../components/tutorial'
 
-const TUTORIAL_MESSAGES = ["Select guitar island"]
+const TUTORIAL_MESSAGES = ["Open guitar island"]
 
 export default function IslandSelect() {
   const guitarIslandRef = useRef(null)
-  const { showTutorial, popupProps: tutorialPopupProps } = useTutorial(TUTORIAL_MESSAGES)
+  const { showTutorial, popupProps: tutorialPopupProps } = useTutorial(TUTORIAL_MESSAGES, 3)
   const [arrowPos, setArrowPos] = useState(null)
 
   useEffect(() => {
     if (!showTutorial) { setArrowPos(null); return }
     const rect = guitarIslandRef.current?.getBoundingClientRect()
-    if (rect) setArrowPos({ x: rect.left, y: rect.top + rect.height / 2 })
+    if (rect) setArrowPos({ x: rect.left + rect.width / 2, y: rect.top })
   }, [showTutorial])
 
   return (
@@ -41,7 +41,7 @@ export default function IslandSelect() {
       </div>
     </div>
     {showTutorial && <TutorialPopup {...tutorialPopupProps} />}
-    {arrowPos && <ArrowIndicator x={arrowPos.x} y={arrowPos.y} direction="right" />}
+    {arrowPos && <ArrowIndicator x={arrowPos.x} y={arrowPos.y} direction="down" />}
     </div>
   )
 }

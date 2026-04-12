@@ -74,7 +74,11 @@ export default function PickbotEdit() {
       },
       body: serializeAvatar({ form, bodyBg, activeItems })
     })
-    
+
+    // pick up on the next page when this is clicked
+    if (showTutorial) {
+      localStorage.setItem('tutorial', JSON.stringify({ pageIndex: 1, partIdx: 0 }))
+    }
     navigate('/userpage')
   }
   
