@@ -44,6 +44,7 @@ export default function Lesson() {
   const [levelNum, setLevelNum] = useState(1)
   const [ready, setReady] = useState(false)
   const songChartRef = useRef([])
+  const songDurationRef = useRef(1)
 
   useEffect(() => {
     const params = new URLSearchParams({
@@ -55,11 +56,13 @@ export default function Lesson() {
       .then(r => r.json())
       .then(data => {
         const beat = (60 / data.data.bpm) * 1000
-        songChartRef.current = data.data.notes.map(n => ({
+        const notes = data.data.notes.map(n => ({
           time: n.beat_time * beat,
           string: n.string,
           fret: n.fret,
         }))
+        songChartRef.current = notes
+        songDurationRef.current = notes.length > 0 ? notes[notes.length - 1].time + SCROLL_TIME : 1
         setSongName(data.name)
         setReady(true)
       })
@@ -153,9 +156,7 @@ export default function Lesson() {
         })
         nextNoteIdx.current++
       }
-      if (toSpawn.length > 0) {
-        setProgress(nextNoteIdx.current / chart.length)
-      }
+      setProgress(Math.min(elapsed / songDurationRef.current, 1.0))
 
       // Single update: spawn + progress + filter
       setNotes(prev => [...prev, ...toSpawn]
@@ -259,7 +260,7 @@ export default function Lesson() {
       <ScreenBlur show={showBlur} />
       {isPaused && <PauseMenu show={isPaused} progress={progress} levelNum={levelNum} />}
       <CountDown num={countdown} />
-      <SongTitleBanner title={songName.toUpperCase()} gameOver={showBlur} />
+      <SongTitleBanner title={songName.toUpperCase()} gameOver={showBlur} progress={progress} />
       <PickbotButton gameOver={showBlur} />
       <PauseButton
         isPaused={isPaused}
@@ -365,11 +366,17 @@ export function BackToHomeButton({ show }) {
   )
 }
 
-export function SongTitleBanner({ title, gameOver }) {
+export function SongTitleBanner({ title, gameOver, progress }) {
   return (
     <div className={[styles['song-title'], gameOver ? styles['game-over'] : ''].filter(Boolean).join(' ')}>
-      <img src={SongTitle} className={styles['song-title-img']} />
-      <span className={styles['song-title-text']}>{title}</span>
+      <div className={styles['song-title-banner']}>
+        <img src={SongTitle} className={styles['song-title-img']} />
+        <span className={styles['song-title-text']}>{title}</span>
+      </div>
+      <div className={styles['lesson-progress-track']}>
+        <div className={styles['lesson-progress-fill']} style={{ width: `${progress * 100}%` }} />
+        <div className={styles['lesson-progress-dot']} style={{ left: `${progress * 100}%` }} />
+      </div>
     </div>
   )
 }

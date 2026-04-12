@@ -260,15 +260,53 @@ background-attachment: fixed;
   left: 50%;
   transform: translateX(-50%);
   z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  transition: top 0.8s ease, transform 0.8s ease, z-index 0s;
+}
+
+.song-title-banner {
   display: grid;
   place-items: center;
-  transition: top 0.8s ease, transform 0.8s ease, z-index 0s;
 }
 
 .song-title.game-over {
   top: 10%;
   z-index: 20;
   transform: translateX(-50%) scale(1.5);
+}
+
+.lesson-progress-track {
+  position: relative;
+  width: 840px;
+  height: 16px;
+  background: #444;
+  border-radius: 999px;
+  overflow: visible;
+}
+
+.lesson-progress-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: #3a7fff;
+  border-radius: 999px;
+  transition: width 0.15s linear;
+}
+
+.lesson-progress-dot {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 28px;
+  height: 28px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 0 12px 6px #3a7fff, 0 0 28px 12px rgba(58, 127, 255, 0.5);
+  transition: left 0.15s linear;
 }
 
 .song-title-img {
