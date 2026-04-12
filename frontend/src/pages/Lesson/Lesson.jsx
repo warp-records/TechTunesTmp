@@ -367,15 +367,18 @@ export function BackToHomeButton({ show }) {
 }
 
 export function SongTitleBanner({ title, gameOver, progress }) {
+  const trackRef = useRef(null)
+  const trackWidth = trackRef.current?.offsetWidth ?? 0
+  const dotSize = 28
   return (
     <div className={[styles['song-title'], gameOver ? styles['game-over'] : ''].filter(Boolean).join(' ')}>
       <div className={styles['song-title-banner']}>
         <img src={SongTitle} className={styles['song-title-img']} />
         <span className={styles['song-title-text']}>{title}</span>
       </div>
-      <div className={styles['lesson-progress-track']}>
+      <div className={styles['lesson-progress-track']} ref={trackRef}>
         <div className={styles['lesson-progress-fill']} style={{ width: `${progress * 100}%` }} />
-        <div className={styles['lesson-progress-dot']} style={{ left: `${progress * 100}%` }} />
+        <div className={styles['lesson-progress-dot']} style={{ transform: `translateX(${progress * trackWidth - dotSize / 2}px) translateY(-50%)` }} />
       </div>
     </div>
   )

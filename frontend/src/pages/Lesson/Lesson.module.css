@@ -300,13 +300,14 @@ background-attachment: fixed;
 .lesson-progress-dot {
   position: absolute;
   top: 50%;
-  transform: translate(-50%, -50%);
+  left: 0;
   width: 28px;
   height: 28px;
   background: white;
   border-radius: 50%;
   box-shadow: 0 0 12px 6px #3a7fff, 0 0 28px 12px rgba(58, 127, 255, 0.5);
-  transition: left 0.15s linear;
+  will-change: transform;
+  transition: transform 0.15s linear;
 }
 
 .song-title-img {
