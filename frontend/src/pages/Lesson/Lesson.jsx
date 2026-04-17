@@ -96,24 +96,28 @@ export default function Lesson() {
   // used to calculate elapsed game time
   // const pausedTime = useRef(0)
   // last paued time
-  // const pausedAt = useRef(null)
   // time when the game started
   // const startTimeRef = useRef(null)
   const nextNoteIdx = useRef(0)
   
+  // time into the song, including the start delay
+  const rawElapsedTime = useRef(0)
   const prevFrameTime = useRef(0)
   
   const loopRef = useRef()
-  const elapsedRef = useRef(0)
+  // const elapsedRef = useRef(0)
   // const lastTimeRef = useRef(0)
-  // may be redundant since pausedAt exists
+  // used for UI
   const [isPaused, setIsPaused] = useState(false)
+  // used for game loop since state doesn't properly get
+  // detected in game loop for some reason
+  const wasPaused = useRef(false)
   const [countdown, setCountdown] = useState(3)
 
   function pause() {
-    pausedAt.current = performance.now()
     cancelAnimationFrame(requestRef.current)
     setIsPaused(true)
+    wasPaused.current = true
   }
 
   function unpause() {
@@ -140,22 +144,26 @@ export default function Lesson() {
     // main game loop
     function loop(time) {
       // lastTimeRef.current = time
-      if (!startTimeRef.current) startTimeRef.current = time
-      if (pausedAt.current != null) {
-        pausedTime.current += time - pausedAt.current;
-        pausedAt.current = null;
+      if (!prevFrameTime.current) prevFrameTime.current = performance.now()
+      if (wasPaused.current) {
+        wasPaused.current = false
+      } else {
+        rawElapsedTime.current += performance.now() - prevFrameTime.current;
       }
+      
+      prevFrameTime.current = performance.now()
+      
+      console.log(rawElapsedTime.current)
 
-      const rawElapsed = time - startTimeRef.current - pausedTime.current
-      const newCountdown = rawElapsed < 1000 ? 3 : rawElapsed < 2000 ? 2 : rawElapsed < START_DELAY ? 1 : null
+
+      const newCountdown = rawElapsedTime.current < 1000 ? 3 : rawElapsedTime.current < 2000 ? 2 : rawElapsedTime.current < START_DELAY ? 1 : null
       if (newCountdown !== lastCountdown.current) {
         lastCountdown.current = newCountdown
         setCountdown(newCountdown)
       }
 
-      const elapsed = rawElapsed - START_DELAY;
-      elapsedRef.current = elapsed
-
+      const elapsed = rawElapsedTime.current - START_DELAY;
+      
       const chart = songChartRef.current
       // Collect all notes to spawn this frame
       const toSpawn = []
@@ -204,7 +212,7 @@ export default function Lesson() {
   useEffect(() => {
     function handleKeyDown(e) {
       if (e.code !== 'Space') return
-      const elapsed = elapsedRef.current
+      const elapsed = rawElapsedTime.current - START_DELAY
       setNotes(prev => {
         let bestNote = null
         let bestDist = Infinity
@@ -277,7 +285,7 @@ export default function Lesson() {
       <ScreenBlur show={showBlur} />
       {isPaused && <PauseMenu show={isPaused} progress={progress} levelNum={levelNum} />}
       <CountDown num={countdown} />
-      <SongTitleBanner title={songName.toUpperCase()} gameOver={showBlur} progress={progress} onSeek={seekTo} />
+      <SongTitleBanner title={songName.toUpperCase()} gameOver={showBlur} progress={progress} /* onSeek={seekTo} */ />
       <PickbotButton gameOver={showBlur} />
       <PauseButton
         isPaused={isPaused}
