@@ -292,7 +292,7 @@ background-attachment: fixed;
   left: 0;
   top: 0;
   height: 100%;
-  background: #3a7fff;
+  background: linear-gradient(to right, #1a3fff, #00cfff);
   border-radius: 999px;
   transition: width 0.15s linear;
 }

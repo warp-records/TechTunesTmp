@@ -91,16 +91,21 @@ export default function Lesson() {
   // request animation frame ref
   const requestRef = useRef()
   
+  
+  // most recent time that the game was paused at
   // used to calculate elapsed game time
-  const pausedTime = useRef(0)
+  // const pausedTime = useRef(0)
   // last paued time
-  const pausedAt = useRef(null)
+  // const pausedAt = useRef(null)
   // time when the game started
-  const startTimeRef = useRef(null)
+  // const startTimeRef = useRef(null)
   const nextNoteIdx = useRef(0)
+  
+  const prevFrameTime = useRef(0)
   
   const loopRef = useRef()
   const elapsedRef = useRef(0)
+  // const lastTimeRef = useRef(0)
   // may be redundant since pausedAt exists
   const [isPaused, setIsPaused] = useState(false)
   const [countdown, setCountdown] = useState(3)
@@ -116,6 +121,17 @@ export default function Lesson() {
     setIsPaused(false)
   }
 
+  // function seekTo(targetProgress) {
+  //   const targetElapsed = targetProgress * songDurationRef.current
+  //   startTimeRef.current = lastTimeRef.current - pausedTime.current - START_DELAY - targetElapsed
+  //   const chart = songChartRef.current
+  //   let idx = 0
+  //   while (idx < chart.length && chart[idx].time <= targetElapsed) idx++
+  //   nextNoteIdx.current = idx
+  //   setNotes([])
+  //   setProgress(targetProgress)
+  // }
+
   // used for the countdown at the beginning
   const lastCountdown = useRef(3)
 
@@ -123,6 +139,7 @@ export default function Lesson() {
     if (!ready) return
     // main game loop
     function loop(time) {
+      // lastTimeRef.current = time
       if (!startTimeRef.current) startTimeRef.current = time
       if (pausedAt.current != null) {
         pausedTime.current += time - pausedAt.current;
@@ -156,7 +173,7 @@ export default function Lesson() {
         })
         nextNoteIdx.current++
       }
-      setProgress(Math.min(elapsed / songDurationRef.current, 1.0))
+      setProgress(Math.min(Math.max(elapsed / songDurationRef.current, 0), 1.0))
 
       // Single update: spawn + progress + filter
       setNotes(prev => [...prev, ...toSpawn]
@@ -260,7 +277,7 @@ export default function Lesson() {
       <ScreenBlur show={showBlur} />
       {isPaused && <PauseMenu show={isPaused} progress={progress} levelNum={levelNum} />}
       <CountDown num={countdown} />
-      <SongTitleBanner title={songName.toUpperCase()} gameOver={showBlur} progress={progress} />
+      <SongTitleBanner title={songName.toUpperCase()} gameOver={showBlur} progress={progress} onSeek={seekTo} />
       <PickbotButton gameOver={showBlur} />
       <PauseButton
         isPaused={isPaused}
@@ -366,17 +383,46 @@ export function BackToHomeButton({ show }) {
   )
 }
 
-export function SongTitleBanner({ title, gameOver, progress }) {
+export function SongTitleBanner({ title, gameOver, progress, onSeek }) {
   const trackRef = useRef(null)
   const trackWidth = trackRef.current?.offsetWidth ?? 0
   const dotSize = 28
+  const isDragging = useRef(false)
+
+  function getProgress(e) {
+    const rect = trackRef.current.getBoundingClientRect()
+    return Math.min(Math.max((e.clientX - rect.left) / rect.width, 0), 1)
+  }
+
+  function handlePointerDown(e) {
+    isDragging.current = true
+    e.currentTarget.setPointerCapture(e.pointerId)
+    onSeek(getProgress(e))
+  }
+
+  function handlePointerMove(e) {
+    if (!isDragging.current) return
+    onSeek(getProgress(e))
+  }
+
+  function handlePointerUp() {
+    isDragging.current = false
+  }
+
   return (
     <div className={[styles['song-title'], gameOver ? styles['game-over'] : ''].filter(Boolean).join(' ')}>
       <div className={styles['song-title-banner']}>
         <img src={SongTitle} className={styles['song-title-img']} />
         <span className={styles['song-title-text']}>{title}</span>
       </div>
-      <div className={styles['lesson-progress-track']} ref={trackRef}>
+      <div
+        className={styles['lesson-progress-track']}
+        ref={trackRef}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerUp}
+      >
         <div className={styles['lesson-progress-fill']} style={{ width: `${progress * 100}%` }} />
         <div className={styles['lesson-progress-dot']} style={{ transform: `translateX(${progress * trackWidth - dotSize / 2}px) translateY(-50%)` }} />
       </div>
