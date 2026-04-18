@@ -133,7 +133,34 @@ export default function Lesson() {
     let idx = 0
     while (idx < chart.length && chart[idx].time <= targetElapsed) idx++
     nextNoteIdx.current = idx
-    setNotes([])
+    
+    const toSpawn = []
+    while (
+      nextNoteIdx.current < chart.length &&
+      elapsed >= chart[nextNoteIdx.current].time
+    ) {
+      const chartNote = chart[nextNoteIdx.current]
+      toSpawn.push({
+        id: nextNoteIdx.current,
+        string: chartNote.string,
+        fret: chartNote.fret,
+        glow: false,
+        spawnTime: chartNote.time,
+      })
+      nextNoteIdx.current++
+    }
+    setProgress(Math.min(Math.max(elapsed / songDurationRef.current, 0), 1.0))
+
+    // Single update: spawn + progress + filter
+    setNotes(prev => [...prev, ...toSpawn]
+      .map(note => {
+        if (note.miss || note.hit) return note
+        const progress = (elapsed - note.spawnTime) / SCROLL_TIME
+        const noteTime = note.spawnTime + SCROLL_TIME
+        if (elapsed > noteTime + PLAY_WINDOW) return { ...note, progress: 1.0, miss: true, missAt: elapsed }
+        return { ...note, progress: Math.min(progress, 1.0) }
+      })
+    )
     setProgress(targetProgress)
   }
 
@@ -405,6 +432,8 @@ export function SongTitleBanner({ title, gameOver, progress, onSeek }) {
 
   function handlePointerDown(e) {
     isDragging.current = true
+    cancelAnimationFrame(requestRef.current)
+    wasPaused.current = true
     e.currentTarget.setPointerCapture(e.pointerId)
     onSeek(getProgress(e))
   }
@@ -415,6 +444,7 @@ export function SongTitleBanner({ title, gameOver, progress, onSeek }) {
   }
 
   function handlePointerUp() {
+    requestRef.current = requestAnimationFrame(loopRef.current)
     isDragging.current = false
   }
 
