@@ -125,16 +125,17 @@ export default function Lesson() {
     setIsPaused(false)
   }
 
-  // function seekTo(targetProgress) {
-  //   const targetElapsed = targetProgress * songDurationRef.current
-  //   startTimeRef.current = lastTimeRef.current - pausedTime.current - START_DELAY - targetElapsed
-  //   const chart = songChartRef.current
-  //   let idx = 0
-  //   while (idx < chart.length && chart[idx].time <= targetElapsed) idx++
-  //   nextNoteIdx.current = idx
-  //   setNotes([])
-  //   setProgress(targetProgress)
-  // }
+  function seekTo(targetProgress) {
+    const targetElapsed = targetProgress * songDurationRef.current
+    // Set the rawElapsedTime to reach the target position, accounting for START_DELAY
+    rawElapsedTime.current = targetElapsed + START_DELAY
+    const chart = songChartRef.current
+    let idx = 0
+    while (idx < chart.length && chart[idx].time <= targetElapsed) idx++
+    nextNoteIdx.current = idx
+    setNotes([])
+    setProgress(targetProgress)
+  }
 
   // used for the countdown at the beginning
   const lastCountdown = useRef(3)
@@ -285,7 +286,7 @@ export default function Lesson() {
       <ScreenBlur show={showBlur} />
       {isPaused && <PauseMenu show={isPaused} progress={progress} levelNum={levelNum} />}
       <CountDown num={countdown} />
-      <SongTitleBanner title={songName.toUpperCase()} gameOver={showBlur} progress={progress} /* onSeek={seekTo} */ />
+      <SongTitleBanner title={songName.toUpperCase()} gameOver={showBlur} progress={progress} onSeek={seekTo} />
       <PickbotButton gameOver={showBlur} />
       <PauseButton
         isPaused={isPaused}
