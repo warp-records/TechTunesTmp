@@ -267,7 +267,7 @@ export default function Lesson() {
       songChartRef.current.length > 0 &&
       nextNoteIdx.current >= songChartRef.current.length &&
       notes.length === 0 &&
-      elapsedRef.current > 0
+      rawElapsedTime.current > 0
     ) {
       setGameOver(true)
     }
@@ -308,7 +308,10 @@ export default function Lesson() {
       <ScreenBlur show={showBlur} />
       {isPaused && <PauseMenu show={showPauseMenu} progress={progress} levelNum={levelNum} />}
       <CountDown num={countdown} />
-      <SongTitleBanner title={songName.toUpperCase()} gameOver={showBlur} progress={progress} onSeek={seekTo} pause={pause} unpause={unpause} />
+      <SongTitleBanner title={songName.toUpperCase()} gameOver={showBlur} />
+      <div className={styles['seek-bar']}>
+        <SeekBar progress={progress} onSeek={seekTo} pause={pause} unpause={unpause} />
+      </div>
       <PickbotButton gameOver={showBlur} />
       <PauseButton
         isPaused={showPauseMenu}
@@ -420,7 +423,18 @@ export function BackToHomeButton({ show }) {
   )
 }
 
-export function SongTitleBanner({ title, gameOver, progress, onSeek, pause, unpause }) {
+export function SongTitleBanner({ title, gameOver }) {
+  return (
+    <div className={[styles['song-title'], gameOver ? styles['game-over'] : ''].filter(Boolean).join(' ')}>
+      <div className={styles['song-title-banner']}>
+        <img src={SongTitle} className={styles['song-title-img']} />
+        <span className={styles['song-title-text']}>{title}</span>
+      </div>
+    </div>
+  )
+}
+
+export function SeekBar({ progress, onSeek, pause, unpause }) {
   const trackRef = useRef(null)
   const trackWidth = trackRef.current?.offsetWidth ?? 0
   const dotSize = 28
@@ -449,22 +463,16 @@ export function SongTitleBanner({ title, gameOver, progress, onSeek, pause, unpa
   }
 
   return (
-    <div className={[styles['song-title'], gameOver ? styles['game-over'] : ''].filter(Boolean).join(' ')}>
-      <div className={styles['song-title-banner']}>
-        <img src={SongTitle} className={styles['song-title-img']} />
-        <span className={styles['song-title-text']}>{title}</span>
-      </div>
-      <div
-        className={styles['lesson-progress-track']}
-        ref={trackRef}
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onPointerCancel={handlePointerUp}
-      >
-        <div className={styles['lesson-progress-fill']} style={{ width: `${progress * 100}%` }} />
-        <div className={styles['lesson-progress-dot']} style={{ transform: `translateX(${progress * trackWidth - dotSize / 2}px) translateY(-50%)` }} />
-      </div>
+    <div
+      className={styles['lesson-progress-track']}
+      ref={trackRef}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerUp}
+    >
+      <div className={styles['lesson-progress-fill']} style={{ width: `${progress * 100}%` }} />
+      <div className={styles['lesson-progress-dot']} style={{ transform: `translateX(${progress * trackWidth - dotSize / 2}px) translateY(-50%)` }} />
     </div>
   )
 }

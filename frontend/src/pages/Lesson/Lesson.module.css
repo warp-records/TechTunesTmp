@@ -475,9 +475,10 @@ background-attachment: fixed;
 }
 
 .note {
-    width: 12vh;
-    transform: translate(-50%, -50%);
-    z-index: 15;
+  width: 12vh;
+  transform: translate(-50%, -50%);
+  z-index: 15;
+  transition: left 50ms linear, top 50ms linear;
 }
 
 @keyframes miss-pulse {
@@ -574,4 +575,17 @@ assets got fucked up and for some reason glowing note is 4x as big
   pointer-events: none;
   align-self: end;
   transform: translateY(5%);
+}
+
+.seek-bar {
+  position: fixed;
+  top: 175px; /* adjust to sit just below your banner */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+  width: calc(500px * 1.2); /* song-title-img is 500px, so 120% = 600px */
+}
+
+.seek-bar .lesson-progress-track {
+  width: 100%;
 }
