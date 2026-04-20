@@ -69,6 +69,7 @@ export default function Lesson() {
   }, [])
   // as a decimal
   const [progress, setProgress] = useState(0.0)
+  const [showPauseMenu, setShowPauseMenu] = useState(false)
   
   const [score, setScore] = useState(0)
   const [gameOver, setGameOver] = useState(false)
@@ -129,6 +130,8 @@ export default function Lesson() {
     const targetElapsed = targetProgress * songDurationRef.current
     // Set the rawElapsedTime to reach the target position, accounting for START_DELAY
     rawElapsedTime.current = targetElapsed + START_DELAY
+    const elapsed = rawElapsedTime.current
+    
     const chart = songChartRef.current
     let idx = 0
     while (idx < chart.length && chart[idx].time <= targetElapsed) idx++
@@ -149,7 +152,6 @@ export default function Lesson() {
       })
       nextNoteIdx.current++
     }
-    setProgress(Math.min(Math.max(elapsed / songDurationRef.current, 0), 1.0))
 
     // Single update: spawn + progress + filter
     setNotes(prev => [...prev, ...toSpawn]
@@ -181,8 +183,6 @@ export default function Lesson() {
       
       prevFrameTime.current = performance.now()
       
-      console.log(rawElapsedTime.current)
-
 
       const newCountdown = rawElapsedTime.current < 1000 ? 3 : rawElapsedTime.current < 2000 ? 2 : rawElapsedTime.current < START_DELAY ? 1 : null
       if (newCountdown !== lastCountdown.current) {
@@ -311,16 +311,22 @@ export default function Lesson() {
   return (
     <div className="lesson-active">
       <ScreenBlur show={showBlur} />
-      {isPaused && <PauseMenu show={isPaused} progress={progress} levelNum={levelNum} />}
+      {isPaused && <PauseMenu show={showPauseMenu} progress={progress} levelNum={levelNum} />}
       <CountDown num={countdown} />
-      <SongTitleBanner title={songName.toUpperCase()} gameOver={showBlur} progress={progress} onSeek={seekTo} />
+      <SongTitleBanner title={songName.toUpperCase()} gameOver={showBlur} progress={progress} onSeek={seekTo} pause={pause} unpause={unpause} />
       <PickbotButton gameOver={showBlur} />
       <PauseButton
-        isPaused={isPaused}
+        isPaused={showPauseMenu}
         fadeHUD={fadeHUD}
         handleClick={() => {
           if (!gameOver) {
-            isPaused ? unpause() : pause()
+            if (isPaused) {
+              setShowPauseMenu(false)
+              unpause()
+            } else {
+              setShowPauseMenu(true)
+              pause()
+            }
           }
         }}
       />
@@ -419,7 +425,7 @@ export function BackToHomeButton({ show }) {
   )
 }
 
-export function SongTitleBanner({ title, gameOver, progress, onSeek }) {
+export function SongTitleBanner({ title, gameOver, progress, onSeek, pause, unpause }) {
   const trackRef = useRef(null)
   const trackWidth = trackRef.current?.offsetWidth ?? 0
   const dotSize = 28
@@ -432,8 +438,7 @@ export function SongTitleBanner({ title, gameOver, progress, onSeek }) {
 
   function handlePointerDown(e) {
     isDragging.current = true
-    cancelAnimationFrame(requestRef.current)
-    wasPaused.current = true
+    pause()
     e.currentTarget.setPointerCapture(e.pointerId)
     onSeek(getProgress(e))
   }
@@ -444,8 +449,8 @@ export function SongTitleBanner({ title, gameOver, progress, onSeek }) {
   }
 
   function handlePointerUp() {
-    requestRef.current = requestAnimationFrame(loopRef.current)
     isDragging.current = false
+    unpause()
   }
 
   return (
