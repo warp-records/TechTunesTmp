@@ -128,41 +128,36 @@ export default function Lesson() {
 
   function seekTo(targetProgress) {
     const targetElapsed = targetProgress * songDurationRef.current
-    // Set the rawElapsedTime to reach the target position, accounting for START_DELAY
     rawElapsedTime.current = targetElapsed + START_DELAY
     const elapsed = rawElapsedTime.current
-    
+  
     const chart = songChartRef.current
+  
+    // Find the index of the next note to spawn after seek point
     let idx = 0
     while (idx < chart.length && chart[idx].time <= targetElapsed) idx++
     nextNoteIdx.current = idx
-    
-    const toSpawn = []
-    while (
-      nextNoteIdx.current < chart.length &&
-      elapsed >= chart[nextNoteIdx.current].time
-    ) {
-      const chartNote = chart[nextNoteIdx.current]
-      toSpawn.push({
-        id: nextNoteIdx.current,
+  
+    // Build the visible notes: notes that should currently be mid-scroll
+    // i.e. spawnTime <= targetElapsed < spawnTime + SCROLL_TIME
+    const visibleNotes = []
+    for (let i = 0; i < chart.length; i++) {
+      const chartNote = chart[i]
+      const noteBottomTime = chartNote.time + SCROLL_TIME
+      if (chartNote.time > targetElapsed) break // spawns in the future
+      if (noteBottomTime < targetElapsed - PLAY_WINDOW) continue // already expired
+      const progress = (targetElapsed - chartNote.time) / SCROLL_TIME
+      visibleNotes.push({
+        id: i,
         string: chartNote.string,
         fret: chartNote.fret,
         glow: false,
         spawnTime: chartNote.time,
+        progress: Math.min(progress, 1.0),
       })
-      nextNoteIdx.current++
     }
-
-    // Single update: spawn + progress + filter
-    setNotes(prev => [...prev, ...toSpawn]
-      .map(note => {
-        if (note.miss || note.hit) return note
-        const progress = (elapsed - note.spawnTime) / SCROLL_TIME
-        const noteTime = note.spawnTime + SCROLL_TIME
-        if (elapsed > noteTime + PLAY_WINDOW) return { ...note, progress: 1.0, miss: true, missAt: elapsed }
-        return { ...note, progress: Math.min(progress, 1.0) }
-      })
-    )
+  
+    setNotes(visibleNotes)
     setProgress(targetProgress)
   }
 
