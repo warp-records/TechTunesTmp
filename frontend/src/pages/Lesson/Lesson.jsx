@@ -70,8 +70,9 @@ export default function Lesson() {
   // as a decimal
   const [progress, setProgress] = useState(0.0)
   const [showPauseMenu, setShowPauseMenu] = useState(false)
-  
   const [score, setScore] = useState(0)
+  
+  // states for different phase of gameover screen
   const [gameOver, setGameOver] = useState(false)
   const [fadeStrings, setFadeStrings] = useState(false)
   const [fadeFrets, setFadeFrets] = useState(false)
@@ -80,6 +81,7 @@ export default function Lesson() {
   const [showBlur, setShowBlur] = useState(false)
   const [showFinalScore, setShowFinalScore] = useState(false)
   const [showBackToHome, setShowBackToHome] = useState(false)
+  
   // used to force a re render on the arrow which triggers animation
   const [arrowKey, setArrowKey] = useState(0)
   const [arrowVisible, setArrowVisible] = useState(false)
@@ -92,25 +94,17 @@ export default function Lesson() {
   // request animation frame ref
   const requestRef = useRef()
   
-  
-  // most recent time that the game was paused at
-  // used to calculate elapsed game time
-  // const pausedTime = useRef(0)
-  // last paued time
-  // time when the game started
-  // const startTimeRef = useRef(null)
   const nextNoteIdx = useRef(0)
   
   // time into the song, including the start delay
   const rawElapsedTime = useRef(0)
+  // time of last frame we rendered to find time between frames
   const prevFrameTime = useRef(0)
   
   const loopRef = useRef()
-  // const elapsedRef = useRef(0)
-  // const lastTimeRef = useRef(0)
   // used for UI
   const [isPaused, setIsPaused] = useState(false)
-  // used for game loop since state doesn't properly get
+  // paused ref for game loop since state doesn't properly get
   // detected in game loop for some reason
   const wasPaused = useRef(false)
   const [countdown, setCountdown] = useState(3)
@@ -129,7 +123,6 @@ export default function Lesson() {
   function seekTo(targetProgress) {
     const targetElapsed = targetProgress * songDurationRef.current
     rawElapsedTime.current = targetElapsed + START_DELAY
-    const elapsed = rawElapsedTime.current
   
     const chart = songChartRef.current
   
@@ -157,6 +150,7 @@ export default function Lesson() {
       })
     }
   
+    setCountdown(null)
     setNotes(visibleNotes)
     setProgress(targetProgress)
   }
@@ -309,7 +303,7 @@ export default function Lesson() {
       {isPaused && <PauseMenu show={showPauseMenu} progress={progress} levelNum={levelNum} />}
       <CountDown num={countdown} />
       <SongTitleBanner title={songName.toUpperCase()} gameOver={showBlur} />
-      <div className={styles['seek-bar']}>
+      <div className={[styles['seek-bar'], fadeHUD ? styles['fade-hud'] : ''].filter(Boolean).join(' ')}>
         <SeekBar progress={progress} onSeek={seekTo} pause={pause} unpause={unpause} />
       </div>
       <PickbotButton gameOver={showBlur} />

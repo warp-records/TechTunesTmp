@@ -478,7 +478,7 @@ background-attachment: fixed;
   width: 12vh;
   transform: translate(-50%, -50%);
   z-index: 15;
-  transition: left 50ms linear, top 50ms linear;
+  transition: left 17ms linear, top 17ms linear;
 }
 
 @keyframes miss-pulse {
