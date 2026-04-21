@@ -70,7 +70,11 @@ export default function Lesson() {
   // as a decimal
   const [progress, setProgress] = useState(0.0)
   const [showPauseMenu, setShowPauseMenu] = useState(false)
+  //separate ref for key down listener
+  const scoreRef = useRef(0)
   const [score, setScore] = useState(0)
+  // [{time, score}]
+  const scoreHistory = useRef([])
   
   // states for different phase of gameover screen
   const [gameOver, setGameOver] = useState(false)
@@ -119,7 +123,7 @@ export default function Lesson() {
     requestRef.current = requestAnimationFrame(loopRef.current)
     setIsPaused(false)
   }
-
+  
   function seekTo(targetProgress) {
     const targetElapsed = targetProgress * songDurationRef.current
     rawElapsedTime.current = targetElapsed + START_DELAY
@@ -158,6 +162,19 @@ export default function Lesson() {
   // used for the countdown at the beginning
   const lastCountdown = useRef(3)
 
+  // useEffect(() => {
+  // }, [score])
+  
+  function updateScoreHistory() {
+    while (scoreHistory.current.length > 0 && 
+      scoreHistory.current[scoreHistory.current.length - 1].time + PLAY_WINDOW >= rawElapsedTime.current) {
+      scoreHistory.current.pop()
+    }
+    const restored = scoreHistory.current[scoreHistory.current.length - 1]?.score ?? 0
+    scoreRef.current = restored
+    setScore(restored)
+  }
+  
   useEffect(() => {
     if (!ready) return
     // main game loop
@@ -244,6 +261,8 @@ export default function Lesson() {
         }
         if (!bestNote) return prev
         setScore(s => s + 5)
+        scoreRef.current += 5
+        scoreHistory.current.push({ time: rawElapsedTime.current, score: scoreRef.current })
         showArrow()
         return prev.map(n => n.id === bestNote.id
           ? { ...n, glow: true, hit: true, hitAt: elapsed }
@@ -304,7 +323,7 @@ export default function Lesson() {
       <CountDown num={countdown} />
       <SongTitleBanner title={songName.toUpperCase()} gameOver={showBlur} />
       <div className={[styles['seek-bar'], fadeHUD ? styles['fade-hud'] : ''].filter(Boolean).join(' ')}>
-        <SeekBar progress={progress} onSeek={seekTo} pause={pause} unpause={unpause} />
+        <SeekBar progress={progress} onSeek={seekTo} pause={pause} unpause={unpause} updateScoreHistory={updateScoreHistory} />
       </div>
       <PickbotButton gameOver={showBlur} />
       <PauseButton
@@ -428,7 +447,7 @@ export function SongTitleBanner({ title, gameOver }) {
   )
 }
 
-export function SeekBar({ progress, onSeek, pause, unpause }) {
+export function SeekBar({ progress, onSeek, pause, unpause, updateScoreHistory }) {
   const trackRef = useRef(null)
   const trackWidth = trackRef.current?.offsetWidth ?? 0
   const dotSize = 28
@@ -453,6 +472,7 @@ export function SeekBar({ progress, onSeek, pause, unpause }) {
 
   function handlePointerUp() {
     isDragging.current = false
+    updateScoreHistory()
     unpause()
   }
 
