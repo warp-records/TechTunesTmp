@@ -624,3 +624,26 @@ assets got fucked up and for some reason glowing note is 4x as big
 .bpm-btn:hover {
   transform: scale(1.2);
 }
+
+.bpm-control {
+  position: fixed;
+  font-size: 20px;
+  top: 20px;
+  left: calc(50% + 320px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 120px; /* match banner height, adjust to taste */
+  z-index: 1;
+  transition: opacity 0.8s ease;
+}
+
+.bpm-display {
+    font-size: 50px;
+}
+
+.bpm-control.game-over {
+  opacity: 0;
+  pointer-events: none;
+}

@@ -57,7 +57,7 @@ export default function Lesson() {
       .then(data => {
         // replace songChartRef notes mapping in the fetch:
         const baseBpm = data.data.bpm
-        bpmRef.current = baseBpm;
+        updateBpm(baseBpm)
         
         const notes = data.data.notes.map(n => ({
           time: n.beat_time,  // keep raw, don't convert yet
@@ -72,6 +72,7 @@ export default function Lesson() {
       })
   }, [])
   const bpmRef = useRef(0)
+  const [bpm, setBpm] = useState(0)
   // as a decimal
   const [progress, setProgress] = useState(0.0)
   const [showPauseMenu, setShowPauseMenu] = useState(false)
@@ -122,10 +123,11 @@ export default function Lesson() {
     return beatTime * (60 / bpmRef.current) * 1000
   }
  
-  function setBpm(bpm) {
+  function updateBpm(bpm) {
     const currentProgress = rawElapsedTime.current / (songDurationRef.current + START_DELAY)
     
     bpmRef.current = bpm
+    setBpm(bpm)
   
     const notes = songChartRef.current
     if (notes.length > 0) {
@@ -346,7 +348,7 @@ export default function Lesson() {
       <ScreenBlur show={showBlur} />
       {isPaused && <PauseMenu show={showPauseMenu} progress={progress} levelNum={levelNum} />}
       <CountDown num={countdown} />
-      <BpmControl bpmRef={bpmRef} songChartRef={songChartRef} songDurationRef={songDurationRef} setBpm={setBpm} />
+      <BpmControl bpm={bpm} updateBpm={updateBpm} fadeHUD={fadeHUD} />
       <SongTitleBanner title={songName.toUpperCase()} gameOver={showBlur} />
       <div className={[styles['seek-bar'], fadeHUD ? styles['fade-hud'] : ''].filter(Boolean).join(' ')}>
         <SeekBar progress={progress} onSeek={seekTo} pause={pause} unpause={unpause} updateScoreHistory={updateScoreHistory} />
@@ -473,19 +475,12 @@ export function SongTitleBanner({ title, gameOver }) {
   )
 }
 
-export function BpmControl({ bpmRef, setBpm }) {
-  const [displayBpm, setDisplayBpm] = useState(bpmRef.current)
-
-  function change(delta) {
-    setBpm(bpmRef.current + delta)
-    setDisplayBpm(bpmRef.current)
-  }
-
+export function BpmControl({ bpm, updateBpm, fadeHUD }) {
   return (
-    <div className={styles['bpm-control']}>
-      <button className={styles['bpm-btn']} onClick={() => change(10)}>▲</button>
-      <span className={styles['bpm-display']}>{displayBpm} BPM</span>
-      <button className={styles['bpm-btn']} onClick={() => change(-10)}>▼</button>
+    <div className={[styles['bpm-control'], fadeHUD ? styles['fade-hud'] : ''].filter(Boolean).join(' ')}>
+      <button className={styles['bpm-btn']} onClick={() => updateBpm(bpm + 10)}>▲</button>
+      <span className={styles['bpm-display']}>{bpm} BPM</span>
+      <button className={styles['bpm-btn']} onClick={() => updateBpm(bpm - 10)}>▼</button>
     </div>
   )
 }
