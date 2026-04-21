@@ -589,3 +589,38 @@ assets got fucked up and for some reason glowing note is 4x as big
 .seek-bar .lesson-progress-track {
   width: 100%;
 }
+
+.bpm-control {
+  position: fixed;
+  top: 20px;
+  left: calc(50% + 320px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  z-index: 1;
+}
+
+.bpm-display {
+  font-family: 'Baumans', sans-serif;
+  font-size: 24px;
+  color: white;
+  -webkit-text-stroke: 1px #12138a;
+  text-shadow: 2px 2px 0px #475dbf;
+  white-space: nowrap;
+}
+
+.bpm-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  line-height: 1;
+  filter: drop-shadow(0 0 4px rgba(147, 51, 234, 0.8));
+  transition: transform 0.1s ease;
+}
+
+.bpm-btn:hover {
+  transform: scale(1.2);
+}

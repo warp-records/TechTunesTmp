@@ -121,6 +121,19 @@ export default function Lesson() {
   function noteTime(beatTime) {
     return beatTime * (60 / bpmRef.current) * 1000
   }
+ 
+  function setBpm(bpm) {
+    const currentProgress = rawElapsedTime.current / (songDurationRef.current + START_DELAY)
+    
+    bpmRef.current = bpm
+  
+    const notes = songChartRef.current
+    if (notes.length > 0) {
+      songDurationRef.current = noteTime(notes[notes.length - 1].time) + SCROLL_TIME
+    }
+  
+    rawElapsedTime.current = currentProgress * (songDurationRef.current + START_DELAY)
+  }
   
   // function timeToBeat(time) {
   //   return time / 1000 / (60 / bpm.bpmRef.current)
@@ -162,7 +175,7 @@ export default function Lesson() {
         string: chartNote.string,
         fret: chartNote.fret,
         glow: false,
-        spawnTime: noteTime(chartNote.time),
+        beatTime: chartNote.time,
         progress: Math.min(progress, 1.0),
       })
     }
@@ -188,11 +201,10 @@ export default function Lesson() {
     setScore(restored)
   }
   
+  // main game loop
   useEffect(() => {
     if (!ready) return
-    // main game loop
     function loop(time) {
-      // lastTimeRef.current = time
       if (!prevFrameTime.current) prevFrameTime.current = performance.now()
       if (wasPaused.current) {
         wasPaused.current = false
@@ -202,7 +214,6 @@ export default function Lesson() {
       
       prevFrameTime.current = performance.now()
       
-
       const newCountdown = rawElapsedTime.current < 1000 ? 3 : rawElapsedTime.current < 2000 ? 2 : rawElapsedTime.current < START_DELAY ? 1 : null
       if (newCountdown !== lastCountdown.current) {
         lastCountdown.current = newCountdown
@@ -224,7 +235,7 @@ export default function Lesson() {
           string: chartNote.string,
           fret: chartNote.fret,
           glow: false,
-          spawnTime: noteTime(chartNote.time),
+          beatTime: chartNote.time,  // store beat time, not ms
         })
         nextNoteIdx.current++
       }
@@ -234,9 +245,10 @@ export default function Lesson() {
       setNotes(prev => [...prev, ...toSpawn]
         .map(note => {
           if (note.miss || note.hit) return note
-          const progress = (elapsed - note.spawnTime) / SCROLL_TIME
-          const noteTime = note.spawnTime + SCROLL_TIME
-          if (elapsed > noteTime + PLAY_WINDOW) return { ...note, progress: 1.0, miss: true, missAt: elapsed }
+          const spawnTime = noteTime(note.beatTime)
+          const progress = (elapsed - spawnTime) / SCROLL_TIME
+          const noteBottomTime = spawnTime + SCROLL_TIME
+          if (elapsed > noteBottomTime + PLAY_WINDOW) return { ...note, progress: 1.0, miss: true, missAt: elapsed }
           return { ...note, progress: Math.min(progress, 1.0) }
         })
         .filter(note => {
@@ -265,16 +277,16 @@ export default function Lesson() {
         let bestDist = Infinity
         for (const note of prev) {
           if (note.hit || note.miss) continue
-          const noteTime = note.spawnTime + SCROLL_TIME
-          const dist = Math.abs(elapsed - noteTime)
+          const noteBottomTime = noteTime(note.beatTime) + SCROLL_TIME
+          const dist = Math.abs(elapsed - noteBottomTime)
           if (dist <= PLAY_WINDOW && dist < bestDist) {
             bestNote = note
             bestDist = dist
           }
         }
         if (!bestNote) return prev
-        setScore(s => s + 5)
         scoreRef.current += 5
+        setScore(scoreRef.current)
         scoreHistory.current.push({ noteIdx: nextNoteIdx.current - 1, score: scoreRef.current })
         showArrow()
         return prev.map(n => n.id === bestNote.id
@@ -334,6 +346,7 @@ export default function Lesson() {
       <ScreenBlur show={showBlur} />
       {isPaused && <PauseMenu show={showPauseMenu} progress={progress} levelNum={levelNum} />}
       <CountDown num={countdown} />
+      <BpmControl bpmRef={bpmRef} songChartRef={songChartRef} songDurationRef={songDurationRef} setBpm={setBpm} />
       <SongTitleBanner title={songName.toUpperCase()} gameOver={showBlur} />
       <div className={[styles['seek-bar'], fadeHUD ? styles['fade-hud'] : ''].filter(Boolean).join(' ')}>
         <SeekBar progress={progress} onSeek={seekTo} pause={pause} unpause={unpause} updateScoreHistory={updateScoreHistory} />
@@ -456,6 +469,23 @@ export function SongTitleBanner({ title, gameOver }) {
         <img src={SongTitle} className={styles['song-title-img']} />
         <span className={styles['song-title-text']}>{title}</span>
       </div>
+    </div>
+  )
+}
+
+export function BpmControl({ bpmRef, setBpm }) {
+  const [displayBpm, setDisplayBpm] = useState(bpmRef.current)
+
+  function change(delta) {
+    setBpm(bpmRef.current + delta)
+    setDisplayBpm(bpmRef.current)
+  }
+
+  return (
+    <div className={styles['bpm-control']}>
+      <button className={styles['bpm-btn']} onClick={() => change(10)}>▲</button>
+      <span className={styles['bpm-display']}>{displayBpm} BPM</span>
+      <button className={styles['bpm-btn']} onClick={() => change(-10)}>▼</button>
     </div>
   )
 }
