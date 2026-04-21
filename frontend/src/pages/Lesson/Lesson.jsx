@@ -55,18 +55,23 @@ export default function Lesson() {
     fetch(`/api/lesson_tile?${params}`)
       .then(r => r.json())
       .then(data => {
-        const beat = (60 / data.data.bpm) * 1000
+        // replace songChartRef notes mapping in the fetch:
+        const baseBpm = data.data.bpm
+        bpmRef.current = baseBpm;
+        
         const notes = data.data.notes.map(n => ({
-          time: n.beat_time * beat,
+          time: n.beat_time,  // keep raw, don't convert yet
           string: n.string,
           fret: n.fret,
         }))
+        
         songChartRef.current = notes
-        songDurationRef.current = notes.length > 0 ? notes[notes.length - 1].time + SCROLL_TIME : 1
+        songDurationRef.current = notes.length > 0 ? noteTime(notes[notes.length - 1].time) + SCROLL_TIME : 1
         setSongName(data.name)
         setReady(true)
       })
   }, [])
+  const bpmRef = useRef(0)
   // as a decimal
   const [progress, setProgress] = useState(0.0)
   const [showPauseMenu, setShowPauseMenu] = useState(false)
@@ -112,6 +117,14 @@ export default function Lesson() {
   // detected in game loop for some reason
   const wasPaused = useRef(false)
   const [countdown, setCountdown] = useState(3)
+  
+  function noteTime(beatTime) {
+    return beatTime * (60 / bpmRef.current) * 1000
+  }
+  
+  // function timeToBeat(time) {
+  //   return time / 1000 / (60 / bpm.bpmRef.current)
+  // }
 
   function pause() {
     cancelAnimationFrame(requestRef.current)
@@ -132,7 +145,7 @@ export default function Lesson() {
   
     // Find the index of the next note to spawn after seek point
     let idx = 0
-    while (idx < chart.length && chart[idx].time <= targetElapsed) idx++
+    while (idx < chart.length && noteTime(chart[idx].time) <= targetElapsed) idx++
     nextNoteIdx.current = idx
   
     // Build the visible notes: notes that should currently be mid-scroll
@@ -140,16 +153,16 @@ export default function Lesson() {
     const visibleNotes = []
     for (let i = 0; i < chart.length; i++) {
       const chartNote = chart[i]
-      const noteBottomTime = chartNote.time + SCROLL_TIME
-      if (chartNote.time > targetElapsed) break // spawns in the future
+      const noteBottomTime = noteTime(chartNote.time) + SCROLL_TIME
+      if (noteTime(chartNote.time) > targetElapsed) break // spawns in the future
       if (noteBottomTime < targetElapsed - PLAY_WINDOW) continue // already expired
-      const progress = (targetElapsed - chartNote.time) / SCROLL_TIME
+      const progress = (targetElapsed - noteTime(chartNote.time)) / SCROLL_TIME
       visibleNotes.push({
         id: i,
         string: chartNote.string,
         fret: chartNote.fret,
         glow: false,
-        spawnTime: chartNote.time,
+        spawnTime: noteTime(chartNote.time),
         progress: Math.min(progress, 1.0),
       })
     }
@@ -166,8 +179,8 @@ export default function Lesson() {
   // }, [score])
   
   function updateScoreHistory() {
-    while (scoreHistory.current.length > 0 && 
-      scoreHistory.current[scoreHistory.current.length - 1].time + PLAY_WINDOW >= rawElapsedTime.current) {
+    while (scoreHistory.current.length > 0 &&
+      scoreHistory.current[scoreHistory.current.length - 1].noteIdx >= nextNoteIdx.current) {
       scoreHistory.current.pop()
     }
     const restored = scoreHistory.current[scoreHistory.current.length - 1]?.score ?? 0
@@ -203,7 +216,7 @@ export default function Lesson() {
       const toSpawn = []
       while (
         nextNoteIdx.current < chart.length &&
-        elapsed >= chart[nextNoteIdx.current].time
+        elapsed >= noteTime(chart[nextNoteIdx.current].time)
       ) {
         const chartNote = chart[nextNoteIdx.current]
         toSpawn.push({
@@ -211,7 +224,7 @@ export default function Lesson() {
           string: chartNote.string,
           fret: chartNote.fret,
           glow: false,
-          spawnTime: chartNote.time,
+          spawnTime: noteTime(chartNote.time),
         })
         nextNoteIdx.current++
       }
@@ -262,7 +275,7 @@ export default function Lesson() {
         if (!bestNote) return prev
         setScore(s => s + 5)
         scoreRef.current += 5
-        scoreHistory.current.push({ time: rawElapsedTime.current, score: scoreRef.current })
+        scoreHistory.current.push({ noteIdx: nextNoteIdx.current - 1, score: scoreRef.current })
         showArrow()
         return prev.map(n => n.id === bestNote.id
           ? { ...n, glow: true, hit: true, hitAt: elapsed }
