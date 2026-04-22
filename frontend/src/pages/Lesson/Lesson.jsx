@@ -39,6 +39,7 @@ const PLAY_WINDOW = 100  // ms before/after bottom that counts as a hit
 const HIT_DURATION = 300 // ms to display glowing note after a hit
 
 export default function Lesson() {
+  // contains the tile number, instrument, and level number
   const [searchParams] = useSearchParams()
   const [songName, setSongName] = useState('')
   const [levelNum, setLevelNum] = useState(1)
@@ -71,6 +72,7 @@ export default function Lesson() {
         setReady(true)
       })
   }, [])
+  // bpm ref used for game loop, state for display
   const bpmRef = useRef(0)
   const [bpm, setBpm] = useState(0)
   // as a decimal
@@ -81,6 +83,10 @@ export default function Lesson() {
   const [score, setScore] = useState(0)
   // [{time, score}]
   const scoreHistory = useRef([])
+  
+  // [{time, input}]
+  // will have to be changed to notes
+  const inputHistory = useRef([])
   
   // states for different phase of gameover screen
   const [gameOver, setGameOver] = useState(false)
@@ -119,6 +125,7 @@ export default function Lesson() {
   const wasPaused = useRef(false)
   const [countdown, setCountdown] = useState(3)
   
+  // convert beats into a song to ms
   function noteTime(beatTime) {
     return beatTime * (60 / bpmRef.current) * 1000
   }
@@ -190,10 +197,8 @@ export default function Lesson() {
   // used for the countdown at the beginning
   const lastCountdown = useRef(3)
 
-  // useEffect(() => {
-  // }, [score])
-  
-  function updateScoreHistory() {
+  // update score and play history when going back in song
+  function updateHistory() {
     while (scoreHistory.current.length > 0 &&
       scoreHistory.current[scoreHistory.current.length - 1].noteIdx >= nextNoteIdx.current) {
       scoreHistory.current.pop()
@@ -269,7 +274,8 @@ export default function Lesson() {
     return () => cancelAnimationFrame(requestRef.current)
   }, [ready])
 
-  // should prolly remove this
+  // detect input
+  // just uses space for now
   useEffect(() => {
     function handleKeyDown(e) {
       if (e.code !== 'Space') return
@@ -286,8 +292,12 @@ export default function Lesson() {
             bestDist = dist
           }
         }
-        if (!bestNote) return prev
-        scoreRef.current += 5
+        if (!bestNote) {
+          scoreRef.current = Math.max(0, scoreRef.current - 10)
+          setScore(scoreRef.current)
+          return prev
+        }
+        scoreRef.current += 10
         setScore(scoreRef.current)
         scoreHistory.current.push({ noteIdx: nextNoteIdx.current - 1, score: scoreRef.current })
         showArrow()
@@ -351,7 +361,7 @@ export default function Lesson() {
       <BpmControl bpm={bpm} updateBpm={updateBpm} fadeHUD={fadeHUD} />
       <SongTitleBanner title={songName.toUpperCase()} gameOver={showBlur} />
       <div className={[styles['seek-bar'], fadeHUD ? styles['fade-hud'] : ''].filter(Boolean).join(' ')}>
-        <SeekBar progress={progress} onSeek={seekTo} pause={pause} unpause={unpause} updateScoreHistory={updateScoreHistory} />
+        <SeekBar progress={progress} onSeek={seekTo} pause={pause} unpause={unpause} updateHistory={updateHistory} disabled={gameOver} />
       </div>
       <PickbotButton gameOver={showBlur} />
       <PauseButton
@@ -485,7 +495,7 @@ export function BpmControl({ bpm, updateBpm, fadeHUD }) {
   )
 }
 
-export function SeekBar({ progress, onSeek, pause, unpause, updateScoreHistory }) {
+export function SeekBar({ progress, onSeek, pause, unpause, updateHistory, disabled }) {
   const trackRef = useRef(null)
   const trackWidth = trackRef.current?.offsetWidth ?? 0
   const dotSize = 28
@@ -497,6 +507,7 @@ export function SeekBar({ progress, onSeek, pause, unpause, updateScoreHistory }
   }
 
   function handlePointerDown(e) {
+    if (disabled) return
     isDragging.current = true
     pause()
     e.currentTarget.setPointerCapture(e.pointerId)
@@ -504,13 +515,15 @@ export function SeekBar({ progress, onSeek, pause, unpause, updateScoreHistory }
   }
 
   function handlePointerMove(e) {
+    if (disabled) return
     if (!isDragging.current) return
     onSeek(getProgress(e))
   }
 
   function handlePointerUp() {
+    if (disabled) return
     isDragging.current = false
-    updateScoreHistory()
+    updateHistory()
     unpause()
   }
 
