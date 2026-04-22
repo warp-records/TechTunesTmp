@@ -392,7 +392,11 @@ export default function Lesson() {
       notes.length === 0 &&
       rawElapsedTime.current > 0
     ) {
-      setGameOver(true)
+      if (reviewModeRef.current) {
+        pause()
+      } else {
+        setGameOver(true)
+      }
     }
   }, [notes])
 
@@ -434,21 +438,30 @@ export default function Lesson() {
       <BpmControl bpm={bpm} updateBpm={updateBpm} fadeHUD={fadeHUD} />
       <SongTitleBanner title={songName.toUpperCase()} gameOver={showBlur} />
       <div className={[styles['seek-bar'], fadeHUD ? styles['fade-hud'] : ''].filter(Boolean).join(' ')}>
-        <SeekBar progress={progress} onSeek={seekTo} pause={pause} unpause={unpause} updateHistory={updateHistory} disabled={gameOver && !reviewMode} />
+        <SeekBar
+          progress={progress}
+          onSeek={seekTo}
+          pause={pause}
+          unpause={unpause}
+          updateHistory={updateHistory}
+          disabled={gameOver && !reviewMode}
+          errorMarkers={inputHistory.current
+            .filter(e => e.type === 'off-beat' || e.type === 'miss')
+            .map(e => e.time / bpmRef.current / songDurationRef.current)}
+        />
       </div>
       <PickbotButton gameOver={showBlur} />
       <PauseButton
         isPaused={showPauseMenu}
         fadeHUD={fadeHUD}
         handleClick={() => {
-          if (!gameOver) {
-            if (isPaused) {
-              setShowPauseMenu(false)
-              unpause()
-            } else {
-              setShowPauseMenu(true)
-              pause()
-            }
+          if (gameOver && !reviewMode) return
+          if (showPauseMenu) {
+            setShowPauseMenu(false)
+            unpause()
+          } else {
+            setShowPauseMenu(true)
+            pause()
           }
         }}
       />
@@ -580,7 +593,7 @@ export function BpmControl({ bpm, updateBpm, fadeHUD }) {
   )
 }
 
-export function SeekBar({ progress, onSeek, pause, unpause, updateHistory, disabled }) {
+export function SeekBar({ progress, onSeek, pause, unpause, updateHistory, disabled, errorMarkers = [] }) {
   const trackRef = useRef(null)
   const trackWidth = trackRef.current?.offsetWidth ?? 0
   const dotSize = 28
@@ -622,6 +635,9 @@ export function SeekBar({ progress, onSeek, pause, unpause, updateHistory, disab
       onPointerCancel={handlePointerUp}
     >
       <div className={styles['lesson-progress-fill']} style={{ width: `${progress * 100}%` }} />
+      {errorMarkers.map((p, i) => (
+        <div key={i} className={styles['seek-error-marker']} style={{ left: `${p * 100}%` }} />
+      ))}
       <div className={styles['lesson-progress-dot']} style={{ transform: `translateX(${progress * trackWidth - dotSize / 2}px) translateY(-50%)` }} />
     </div>
   )
