@@ -97,8 +97,10 @@ export default function Lesson() {
   const [showFinalScore, setShowFinalScore] = useState(false)
   const [showBackToHome, setShowBackToHome] = useState(false)
   
-  // const replayMode = useRef(false)
-  
+  const [reviewMode, setReviewMode] = useState(false)
+  const reviewModeRef = useRef(false)
+  const nextReplayIdx = useRef(0)
+
   // used to force a re render on the arrow which triggers animation
   const [arrowKey, setArrowKey] = useState(0)
   const [arrowVisible, setArrowVisible] = useState(false)
@@ -136,6 +138,44 @@ export default function Lesson() {
 
   function currentBeatTime() {
     return (rawElapsedTime.current - START_DELAY) * bpmRef.current
+  }
+
+  // shared between live input and replay; recordHistory is false when replaying
+  function processSpacePress(recordHistory = true) {
+    const elapsed = rawElapsedTime.current - START_DELAY
+    setNotes(prev => {
+      let bestNote = null
+      let bestDist = Infinity
+      for (const note of prev) {
+        if (note.hit || note.miss) continue
+        const noteBottomTime = noteTime(note.beatTime) + SCROLL_TIME
+        const dist = Math.abs(elapsed - noteBottomTime)
+        if (dist <= PLAY_WINDOW && dist < bestDist) {
+          bestNote = note
+          bestDist = dist
+        }
+      }
+      if (!bestNote) {
+        scoreRef.current = Math.max(0, scoreRef.current - 10)
+        setScore(scoreRef.current)
+        if (recordHistory) {
+          scoreHistory.current.push({ time: currentBeatTime(), score: scoreRef.current })
+          inputHistory.current.push({ time: currentBeatTime(), type: 'off-beat' })
+        }
+        return prev
+      }
+      scoreRef.current += 10
+      setScore(scoreRef.current)
+      if (recordHistory) {
+        scoreHistory.current.push({ time: currentBeatTime(), score: scoreRef.current })
+        inputHistory.current.push({ time: currentBeatTime(), type: 'hit' })
+      }
+      showArrow()
+      return prev.map(n => n.id === bestNote.id
+        ? { ...n, glow: true, hit: true, hitAt: elapsed }
+        : n
+      )
+    })
   }
  
   function updateBpm(bpm) {
@@ -256,6 +296,20 @@ export default function Lesson() {
       }
       setProgress(Math.min(Math.max(elapsed / songDurationRef.current, 0), 1.0))
 
+      if (reviewModeRef.current) {
+        const beatNow = currentBeatTime()
+        while (
+          nextReplayIdx.current < inputHistory.current.length &&
+          inputHistory.current[nextReplayIdx.current].time <= beatNow
+        ) {
+          const entry = inputHistory.current[nextReplayIdx.current]
+          if (entry.type === 'hit' || entry.type === 'off-beat') {
+            processSpacePress(false)
+          }
+          nextReplayIdx.current++
+        }
+      }
+
       // Single update: spawn + progress + filter
       setNotes(prev => [...prev, ...toSpawn]
         .map(note => {
@@ -264,7 +318,9 @@ export default function Lesson() {
           const progress = (elapsed - spawnTime) / SCROLL_TIME
           const noteBottomTime = spawnTime + SCROLL_TIME
           if (elapsed > noteBottomTime + PLAY_WINDOW) {
-            inputHistory.current.push({ time: currentBeatTime(), type: 'miss' })
+            if (!reviewModeRef.current) {
+              inputHistory.current.push({ time: currentBeatTime(), type: 'miss' })
+            }
             return { ...note, progress: 1.0, miss: true, missAt: elapsed }
           }
           return { ...note, progress: Math.min(progress, 1.0) }
@@ -290,40 +346,29 @@ export default function Lesson() {
   useEffect(() => {
     function handleKeyDown(e) {
       if (e.code !== 'Space') return
-      const elapsed = rawElapsedTime.current - START_DELAY
-      setNotes(prev => {
-        let bestNote = null
-        let bestDist = Infinity
-        for (const note of prev) {
-          if (note.hit || note.miss) continue
-          const noteBottomTime = noteTime(note.beatTime) + SCROLL_TIME
-          const dist = Math.abs(elapsed - noteBottomTime)
-          if (dist <= PLAY_WINDOW && dist < bestDist) {
-            bestNote = note
-            bestDist = dist
-          }
-        }
-        if (!bestNote) {
-          scoreRef.current = Math.max(0, scoreRef.current - 10)
-          setScore(scoreRef.current)
-          scoreHistory.current.push({ time: currentBeatTime(), score: scoreRef.current })
-          inputHistory.current.push({ time: currentBeatTime(), type: 'off-beat' })
-          return prev
-        }
-        scoreRef.current += 10
-        setScore(scoreRef.current)
-        scoreHistory.current.push({ time: currentBeatTime(), score: scoreRef.current })
-        inputHistory.current.push({ time: currentBeatTime(), type: 'hit' })
-        showArrow()
-        return prev.map(n => n.id === bestNote.id
-          ? { ...n, glow: true, hit: true, hitAt: elapsed }
-          : n
-        )
-      })
+      if (reviewModeRef.current) return
+      processSpacePress()
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
+
+  function startReview() {
+    reviewModeRef.current = true
+    setReviewMode(true)
+    setShowBlur(false)
+    setShowFinalScore(false)
+    setShowBackToHome(false)
+    setFadeStrings(false)
+    setFadeFrets(false)
+    setFadeBoard(false)
+    setFadeHUD(false)
+    setGameOver(false)
+    scoreRef.current = 0
+    setScore(0)
+    nextReplayIdx.current = 0
+    seekTo(0)
+  }
 
   // check if gameover
   useEffect(() => {
@@ -375,7 +420,7 @@ export default function Lesson() {
       <BpmControl bpm={bpm} updateBpm={updateBpm} fadeHUD={fadeHUD} />
       <SongTitleBanner title={songName.toUpperCase()} gameOver={showBlur} />
       <div className={[styles['seek-bar'], fadeHUD ? styles['fade-hud'] : ''].filter(Boolean).join(' ')}>
-        <SeekBar progress={progress} onSeek={seekTo} pause={pause} unpause={unpause} updateHistory={updateHistory} disabled={gameOver} />
+        <SeekBar progress={progress} onSeek={seekTo} pause={pause} unpause={unpause} updateHistory={updateHistory} disabled={gameOver || reviewMode} />
       </div>
       <PickbotButton gameOver={showBlur} />
       <PauseButton
@@ -396,7 +441,7 @@ export default function Lesson() {
       <Score score={score} fadeHUD={fadeHUD} />
       <FinalScore score={score} show={showFinalScore} />
       
-      <ReviewButton show={showBackToHome} onClick={() => {}} />
+      <ReviewButton show={showBackToHome} onClick={startReview} />
       <BackToHomeButton show={showBackToHome} />
       <Arrow key={arrowKey} isUp isVisible={arrowVisible} />
       
