@@ -126,6 +126,9 @@ export default function Lesson() {
   const wasPaused = useRef(false)
   const [countdown, setCountdown] = useState(3)
   
+  // used for the countdown at the beginning
+  const lastCountdown = useRef(3)
+  
   // convert beats into a song to ms
   function noteTime(beatTime) {
     return beatTime * (60 / bpmRef.current) * 1000
@@ -149,10 +152,6 @@ export default function Lesson() {
     rawElapsedTime.current = currentProgress * (songDurationRef.current + START_DELAY)
   }
   
-  // function timeToBeat(time) {
-  //   return time / 1000 / (60 / bpm.bpmRef.current)
-  // }
-
   function pause() {
     cancelAnimationFrame(requestRef.current)
     setIsPaused(true)
@@ -199,8 +198,6 @@ export default function Lesson() {
     setProgress(targetProgress)
   }
 
-  // used for the countdown at the beginning
-  const lastCountdown = useRef(3)
 
   // update score and play history when going back in song
   function updateHistory() {
@@ -395,6 +392,7 @@ export default function Lesson() {
       <Score score={score} fadeHUD={fadeHUD} />
       <FinalScore score={score} show={showFinalScore} />
       
+      <ReviewButton show={showBackToHome} onClick={() => {}} />
       <BackToHomeButton show={showBackToHome} />
       <Arrow key={arrowKey} isUp isVisible={arrowVisible} />
       
@@ -483,6 +481,17 @@ export function BackToHomeButton({ show }) {
       onClick={() => navigate('/homepage')}
     >
       <img src={BackToHomeImg} className={styles['back-to-home-button']} />
+    </button>
+  )
+}
+
+export function ReviewButton({ show, onClick }) {
+  return (
+    <button
+      className={[styles['review-button-gameover'], show ? styles['visible'] : ''].filter(Boolean).join(' ')}
+      onClick={onClick}
+    >
+      REVIEW
     </button>
   )
 }
