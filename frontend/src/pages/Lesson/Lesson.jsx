@@ -469,6 +469,7 @@ export default function Lesson() {
       <FinalScore score={score} show={showFinalScore} />
       
       <ReviewButton show={showBackToHome} onClick={startReview} />
+      {reviewMode && <div className={styles['review-mode-indicator']}>REVIEW MODE</div>}
       <BackToHomeButton show={showBackToHome} />
       <Arrow key={arrowKey} isUp isVisible={arrowVisible} />
       
