@@ -263,7 +263,10 @@ export default function Lesson() {
           const spawnTime = noteTime(note.beatTime)
           const progress = (elapsed - spawnTime) / SCROLL_TIME
           const noteBottomTime = spawnTime + SCROLL_TIME
-          if (elapsed > noteBottomTime + PLAY_WINDOW) return { ...note, progress: 1.0, miss: true, missAt: elapsed }
+          if (elapsed > noteBottomTime + PLAY_WINDOW) {
+            inputHistory.current.push({ time: currentBeatTime(), type: 'miss' })
+            return { ...note, progress: 1.0, miss: true, missAt: elapsed }
+          }
           return { ...note, progress: Math.min(progress, 1.0) }
         })
         .filter(note => {
@@ -288,7 +291,6 @@ export default function Lesson() {
     function handleKeyDown(e) {
       if (e.code !== 'Space') return
       const elapsed = rawElapsedTime.current - START_DELAY
-      inputHistory.current.push({ time: currentBeatTime() })
       setNotes(prev => {
         let bestNote = null
         let bestDist = Infinity
@@ -305,11 +307,13 @@ export default function Lesson() {
           scoreRef.current = Math.max(0, scoreRef.current - 10)
           setScore(scoreRef.current)
           scoreHistory.current.push({ time: currentBeatTime(), score: scoreRef.current })
+          inputHistory.current.push({ time: currentBeatTime(), type: 'off-beat' })
           return prev
         }
         scoreRef.current += 10
         setScore(scoreRef.current)
         scoreHistory.current.push({ time: currentBeatTime(), score: scoreRef.current })
+        inputHistory.current.push({ time: currentBeatTime(), type: 'hit' })
         showArrow()
         return prev.map(n => n.id === bestNote.id
           ? { ...n, glow: true, hit: true, hitAt: elapsed }
