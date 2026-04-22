@@ -81,11 +81,10 @@ export default function Lesson() {
   //separate ref for key down listener
   const scoreRef = useRef(0)
   const [score, setScore] = useState(0)
-  // [{time, score}]
+  // history is scored in beat time (num beats into song)
+  // rather than raw time
+  // [{beatTime, score}]
   const scoreHistory = useRef([])
-  
-  // [{time, input}]
-  // will have to be changed to notes
   const inputHistory = useRef([])
   
   // states for different phase of gameover screen
@@ -97,6 +96,8 @@ export default function Lesson() {
   const [showBlur, setShowBlur] = useState(false)
   const [showFinalScore, setShowFinalScore] = useState(false)
   const [showBackToHome, setShowBackToHome] = useState(false)
+  
+  // const replayMode = useRef(false)
   
   // used to force a re render on the arrow which triggers animation
   const [arrowKey, setArrowKey] = useState(0)
@@ -211,6 +212,11 @@ export default function Lesson() {
     const restored = scoreHistory.current[scoreHistory.current.length - 1]?.score ?? 0
     scoreRef.current = restored
     setScore(restored)
+
+    while (inputHistory.current.length > 0 &&
+      inputHistory.current[inputHistory.current.length - 1].time > beatTime) {
+      inputHistory.current.pop()
+    }
   }
   
   // main game loop
@@ -285,6 +291,7 @@ export default function Lesson() {
     function handleKeyDown(e) {
       if (e.code !== 'Space') return
       const elapsed = rawElapsedTime.current - START_DELAY
+      inputHistory.current.push({ time: currentBeatTime() })
       setNotes(prev => {
         let bestNote = null
         let bestDist = Infinity
