@@ -129,6 +129,10 @@ export default function Lesson() {
   function noteTime(beatTime) {
     return beatTime * (60 / bpmRef.current) * 1000
   }
+
+  function currentBeatTime() {
+    return (rawElapsedTime.current - START_DELAY) * bpmRef.current
+  }
  
   function updateBpm(bpm) {
     const currentProgress = rawElapsedTime.current / (songDurationRef.current + START_DELAY)
@@ -199,8 +203,9 @@ export default function Lesson() {
 
   // update score and play history when going back in song
   function updateHistory() {
+    const beatTime = currentBeatTime()
     while (scoreHistory.current.length > 0 &&
-      scoreHistory.current[scoreHistory.current.length - 1].noteIdx >= nextNoteIdx.current) {
+      scoreHistory.current[scoreHistory.current.length - 1].time > beatTime) {
       scoreHistory.current.pop()
     }
     const restored = scoreHistory.current[scoreHistory.current.length - 1]?.score ?? 0
@@ -295,11 +300,12 @@ export default function Lesson() {
         if (!bestNote) {
           scoreRef.current = Math.max(0, scoreRef.current - 10)
           setScore(scoreRef.current)
+          scoreHistory.current.push({ time: currentBeatTime(), score: scoreRef.current })
           return prev
         }
         scoreRef.current += 10
         setScore(scoreRef.current)
-        scoreHistory.current.push({ noteIdx: nextNoteIdx.current - 1, score: scoreRef.current })
+        scoreHistory.current.push({ time: currentBeatTime(), score: scoreRef.current })
         showArrow()
         return prev.map(n => n.id === bestNote.id
           ? { ...n, glow: true, hit: true, hitAt: elapsed }
