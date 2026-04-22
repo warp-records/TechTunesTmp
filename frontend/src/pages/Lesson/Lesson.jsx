@@ -242,6 +242,20 @@ export default function Lesson() {
   // update score and play history when going back in song
   function updateHistory() {
     const beatTime = currentBeatTime()
+    if (reviewModeRef.current) {
+      // preserve recordings; re-derive score and replay cursor from them
+      let restored = 0
+      for (const entry of scoreHistory.current) {
+        if (entry.time > beatTime) break
+        restored = entry.score
+      }
+      scoreRef.current = restored
+      setScore(restored)
+      let idx = 0
+      while (idx < inputHistory.current.length && inputHistory.current[idx].time <= beatTime) idx++
+      nextReplayIdx.current = idx
+      return
+    }
     while (scoreHistory.current.length > 0 &&
       scoreHistory.current[scoreHistory.current.length - 1].time > beatTime) {
       scoreHistory.current.pop()
@@ -420,7 +434,7 @@ export default function Lesson() {
       <BpmControl bpm={bpm} updateBpm={updateBpm} fadeHUD={fadeHUD} />
       <SongTitleBanner title={songName.toUpperCase()} gameOver={showBlur} />
       <div className={[styles['seek-bar'], fadeHUD ? styles['fade-hud'] : ''].filter(Boolean).join(' ')}>
-        <SeekBar progress={progress} onSeek={seekTo} pause={pause} unpause={unpause} updateHistory={updateHistory} disabled={gameOver || reviewMode} />
+        <SeekBar progress={progress} onSeek={seekTo} pause={pause} unpause={unpause} updateHistory={updateHistory} disabled={gameOver && !reviewMode} />
       </div>
       <PickbotButton gameOver={showBlur} />
       <PauseButton
