@@ -582,11 +582,13 @@ export function SongTitleBanner({ title, gameOver }) {
 }
 
 export function BpmControl({ bpm, updateBpm, fadeHUD }) {
+  const minBpm = 40
+  
   return (
     <div className={[styles['bpm-control'], fadeHUD ? styles['fade-hud'] : ''].filter(Boolean).join(' ')}>
       <button className={styles['bpm-btn']} onClick={() => updateBpm(bpm + 10)}>▲</button>
       <span className={styles['bpm-display']}>{bpm} BPM</span>
-      <button className={styles['bpm-btn']} onClick={() => updateBpm(bpm - 10)}>▼</button>
+      <button className={styles['bpm-btn']} onClick={() => updateBpm(Math.max(bpm - 10, minBpm))}>▼</button>
     </div>
   )
 }
