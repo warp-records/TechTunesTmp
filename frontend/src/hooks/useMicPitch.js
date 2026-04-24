@@ -10,6 +10,22 @@ const STRING_TARGETS = [
   { note: 'e-high', freq: 329.63 },
 ]
 
+const STRING_OPEN_FREQS = {
+  E:      82.41,
+  A:      110.00,
+  D:      146.83,
+  G:      196.00,
+  B:      246.94,
+  E_HIGH: 329.63,
+}
+
+// Returns { note: 'A', octave: 2, cents: 0 } for a given string and fret number
+export function stringFretToNote(string, fret) {
+  const openFreq = STRING_OPEN_FREQS[string]
+  if (!openFreq) return null
+  return findNearestNote(openFreq * Math.pow(2, fret / 12))
+}
+
 const NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
 
 // Returns { note: 'A', octave: 4, cents: -12 }
