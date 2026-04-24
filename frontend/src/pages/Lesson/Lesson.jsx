@@ -31,6 +31,11 @@ const noteImages = import.meta.glob(
   { eager: true, import: 'default' }
 )
 
+const starImages = import.meta.glob(
+  '../../assets/Lesson Page Assets/Stars/*.svg',
+  { eager: true, import: 'default' }
+)
+
 // fuck man life hits so fast
 const SCROLL_TIME = 1500 // ms for note to travel top to bottom
 const START_DELAY = 3000
@@ -98,6 +103,8 @@ export default function Lesson() {
   const [showBlur, setShowBlur] = useState(false)
   const [showFinalScore, setShowFinalScore] = useState(false)
   const [showBackToHome, setShowBackToHome] = useState(false)
+  const [showStars, setShowStars] = useState(false)
+  const [starRating, setStarRating] = useState(1)
   
   const [reviewMode, setReviewMode] = useState(false)
   const reviewModeRef = useRef(false)
@@ -370,6 +377,7 @@ export default function Lesson() {
     setShowBlur(false)
     setShowFinalScore(false)
     setShowBackToHome(false)
+    setShowStars(false)
     setFadeStrings(false)
     setFadeFrets(false)
     setFadeBoard(false)
@@ -411,6 +419,11 @@ export default function Lesson() {
       setTimeout(() => {
       setShowFinalScore(true)
       setTimeout(() => {
+        const maxScore = songChartRef.current.length * 10
+        const pct = maxScore > 0 ? scoreRef.current / maxScore * 100 : 0
+        const stars = pct >= 90 ? 5 : pct >= 80 ? 4 : pct >= 65 ? 3 : pct >= 50 ? 2 : 1
+        setStarRating(stars)
+        setShowStars(true)
         const fire = (origin, angle) => confetti({
           particleCount: 80,
           angle,
@@ -464,6 +477,7 @@ export default function Lesson() {
       />
       <Score score={score} fadeHUD={fadeHUD} />
       <FinalScore score={score} show={showFinalScore} />
+      {showStars && <div className={styles['gameover-stars']}><LessonStars stars={starRating} /></div>}
       
       <ReviewButton show={showBackToHome} onClick={startReview} />
       {reviewMode && <div className={styles['review-mode-indicator']}>REVIEW MODE</div>}
@@ -731,4 +745,10 @@ export function Note({ progress, string, fret, miss, hit }) {
         style={{ ...pos, opacity: hit ? 1 : 0 }} />
     </>
   )
+}
+
+export function LessonStars({ stars }) {
+  const src = starImages[`../../assets/Lesson Page Assets/Stars/${stars}_star.svg`]
+  if (!src) return null
+  return <img src={src} alt={`${stars} star${stars !== 1 ? 's' : ''}`} />
 }

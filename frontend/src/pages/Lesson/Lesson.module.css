@@ -509,6 +509,19 @@ background-attachment: fixed;
   animation: bounce-in 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
 }
 
+.gameover-stars {
+  position: fixed;
+  top: 68%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 21;
+}
+
+.gameover-stars img {
+  width: 400px;
+  height: auto;
+}
+
 /* Pause/Play Button */
 .pause-play-button {
   position: fixed;
