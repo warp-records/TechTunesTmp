@@ -509,12 +509,20 @@ background-attachment: fixed;
   animation: bounce-in 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
 }
 
+@keyframes stars-pop-in {
+  0%   { transform: translateX(-50%) scale(0);   opacity: 0; }
+  60%  { transform: translateX(-50%) scale(1.2); opacity: 1; }
+  80%  { transform: translateX(-50%) scale(0.9); opacity: 1; }
+  100% { transform: translateX(-50%) scale(1);   opacity: 1; }
+}
+
 .gameover-stars {
   position: fixed;
   top: 68%;
   left: 50%;
   transform: translateX(-50%);
   z-index: 21;
+  animation: stars-pop-in 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
 }
 
 .gameover-stars img {

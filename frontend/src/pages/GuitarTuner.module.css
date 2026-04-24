@@ -406,6 +406,18 @@ body {
 .processing { color: #4ecdc4; }
 .in-tune { color: #51cf66; }
 .out-of-tune { color: #ffd43b; }
+.current-note-display {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 72px;
+  font-family: 'CoreSansM', Arial, sans-serif;
+  color: white;
+  text-shadow: 0 0 20px rgba(147, 51, 234, 0.8);
+  letter-spacing: 4px;
+}
+
 .error { color: #ff6b6b; }
 .ready { color: #74c0fc; }
 
