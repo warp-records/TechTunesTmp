@@ -45,7 +45,10 @@ export default function Lesson() {
   const [levelNum, setLevelNum] = useState(1)
   const [ready, setReady] = useState(false)
   const songChartRef = useRef([])
-  const songDurationRef = useRef(1)
+  function lastBeat() {
+    const n = songChartRef.current.length
+    return n > 0 ? songChartRef.current[n - 1].time : 1
+  }
 
   useEffect(() => {
     const params = new URLSearchParams({
@@ -59,15 +62,14 @@ export default function Lesson() {
         // replace songChartRef notes mapping in the fetch:
         const baseBpm = data.data.bpm
         updateBpm(baseBpm)
-        
+
         const notes = data.data.notes.map(n => ({
           time: n.beat_time,  // keep raw, don't convert yet
           string: n.string,
           fret: n.fret,
         }))
-        
+
         songChartRef.current = notes
-        songDurationRef.current = notes.length > 0 ? noteTime(notes[notes.length - 1].time) + SCROLL_TIME : 1
         setSongName(data.name)
         setReady(true)
       })
@@ -136,8 +138,8 @@ export default function Lesson() {
     return beatTime * (60 / bpmRef.current) * 1000
   }
 
-  function currentBeatTime() {
-    return (rawElapsedTime.current - START_DELAY) * bpmRef.current
+  function currentBeat() {
+    return (rawElapsedTime.current - START_DELAY) * bpmRef.current / 60000
   }
 
   // shared between live input and replay; recordHistory is false when replaying
@@ -159,16 +161,16 @@ export default function Lesson() {
         scoreRef.current = Math.max(0, scoreRef.current - 10)
         setScore(scoreRef.current)
         if (recordHistory) {
-          scoreHistory.current.push({ time: currentBeatTime(), score: scoreRef.current })
-          inputHistory.current.push({ time: currentBeatTime(), type: 'off-beat' })
+          scoreHistory.current.push({ time: currentBeat(), score: scoreRef.current })
+          inputHistory.current.push({ time: currentBeat(), type: 'off-beat' })
         }
         return prev
       }
       scoreRef.current += 10
       setScore(scoreRef.current)
       if (recordHistory) {
-        scoreHistory.current.push({ time: currentBeatTime(), score: scoreRef.current })
-        inputHistory.current.push({ time: currentBeatTime(), type: 'hit' })
+        scoreHistory.current.push({ time: currentBeat(), score: scoreRef.current })
+        inputHistory.current.push({ time: currentBeat(), type: 'hit' })
       }
       showArrow()
       return prev.map(n => n.id === bestNote.id
@@ -179,17 +181,12 @@ export default function Lesson() {
   }
  
   function updateBpm(bpm) {
-    const currentProgress = rawElapsedTime.current / (songDurationRef.current + START_DELAY)
-    
+    const beat = currentBeat()
     bpmRef.current = bpm
     setBpm(bpm)
-  
-    const notes = songChartRef.current
-    if (notes.length > 0) {
-      songDurationRef.current = noteTime(notes[notes.length - 1].time) + SCROLL_TIME
+    if (rawElapsedTime.current >= START_DELAY) {
+      rawElapsedTime.current = noteTime(beat) + START_DELAY
     }
-  
-    rawElapsedTime.current = currentProgress * (songDurationRef.current + START_DELAY)
   }
   
   function pause() {
@@ -204,7 +201,7 @@ export default function Lesson() {
   }
   
   function seekTo(targetProgress) {
-    const targetElapsed = targetProgress * songDurationRef.current
+    const targetElapsed = noteTime(targetProgress * lastBeat())
     rawElapsedTime.current = targetElapsed + START_DELAY
   
     const chart = songChartRef.current
@@ -241,23 +238,23 @@ export default function Lesson() {
 
   // update score and play history when going back in song
   function updateHistory() {
-    const beatTime = currentBeatTime()
+    const beat = currentBeat()
     if (reviewModeRef.current) {
       // preserve recordings; re-derive score and replay cursor from them
       let restored = 0
       for (const entry of scoreHistory.current) {
-        if (entry.time > beatTime) break
+        if (entry.time > beat) break
         restored = entry.score
       }
       scoreRef.current = restored
       setScore(restored)
       let idx = 0
-      while (idx < inputHistory.current.length && inputHistory.current[idx].time <= beatTime) idx++
+      while (idx < inputHistory.current.length && inputHistory.current[idx].time <= beat) idx++
       nextReplayIdx.current = idx
       return
     }
     while (scoreHistory.current.length > 0 &&
-      scoreHistory.current[scoreHistory.current.length - 1].time > beatTime) {
+      scoreHistory.current[scoreHistory.current.length - 1].time > beat) {
       scoreHistory.current.pop()
     }
     const restored = scoreHistory.current[scoreHistory.current.length - 1]?.score ?? 0
@@ -265,7 +262,7 @@ export default function Lesson() {
     setScore(restored)
 
     while (inputHistory.current.length > 0 &&
-      inputHistory.current[inputHistory.current.length - 1].time > beatTime) {
+      inputHistory.current[inputHistory.current.length - 1].time > beat) {
       inputHistory.current.pop()
     }
   }
@@ -308,10 +305,10 @@ export default function Lesson() {
         })
         nextNoteIdx.current++
       }
-      setProgress(Math.min(Math.max(elapsed / songDurationRef.current, 0), 1.0))
+      setProgress(Math.min(Math.max(currentBeat() / lastBeat(), 0), 1.0))
 
       if (reviewModeRef.current) {
-        const beatNow = currentBeatTime()
+        const beatNow = currentBeat()
         while (
           nextReplayIdx.current < inputHistory.current.length &&
           inputHistory.current[nextReplayIdx.current].time <= beatNow
@@ -333,7 +330,7 @@ export default function Lesson() {
           const noteBottomTime = spawnTime + SCROLL_TIME
           if (elapsed > noteBottomTime + PLAY_WINDOW) {
             if (!reviewModeRef.current) {
-              inputHistory.current.push({ time: currentBeatTime(), type: 'miss' })
+              inputHistory.current.push({ time: currentBeat(), type: 'miss' })
             }
             return { ...note, progress: 1.0, miss: true, missAt: elapsed }
           }
@@ -447,7 +444,7 @@ export default function Lesson() {
           disabled={gameOver && !reviewMode}
           errorMarkers={inputHistory.current
             .filter(e => e.type === 'off-beat' || e.type === 'miss')
-            .map(e => e.time / bpmRef.current / songDurationRef.current)}
+            .map(e => e.time / lastBeat())}
         />
       </div>
       <PickbotButton gameOver={showBlur} />
