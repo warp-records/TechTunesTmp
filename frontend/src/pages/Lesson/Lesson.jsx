@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { useMicPitch, stringFretToNote } from '../../hooks/useMicPitch'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import confetti from 'canvas-confetti'
 import drumrollSrc from '../../assets/sounds/drumroll.mp3'
@@ -149,8 +150,9 @@ export default function Lesson() {
     return (rawElapsedTime.current - START_DELAY) * bpmRef.current / 60000
   }
 
-  // shared between live input and replay; recordHistory is false when replaying
-  function processSpacePress(recordHistory = true) {
+  // playedNote: { note, octave } from mic, or null for spacebar (any note counts)
+  // recordHistory: false when replaying
+  function processInput(playedNote = null, recordHistory = true) {
     const elapsed = rawElapsedTime.current - START_DELAY
     setNotes(prev => {
       let bestNote = null
@@ -159,18 +161,22 @@ export default function Lesson() {
         if (note.hit || note.miss) continue
         const noteBottomTime = noteTime(note.beatTime) + SCROLL_TIME
         const dist = Math.abs(elapsed - noteBottomTime)
-        if (dist <= PLAY_WINDOW && dist < bestDist) {
-          bestNote = note
-          bestDist = dist
+        if (dist > PLAY_WINDOW || dist >= bestDist) continue
+        if (playedNote) {
+          const expected = stringFretToNote(note.string, note.fret)
+          console.log(`expected: ${expected?.note}${expected?.octave}, played: ${playedNote.note}${playedNote.octave}`)
+          if (!expected || expected.note !== playedNote.note || expected.octave !== playedNote.octave) continue
         }
+        bestNote = note
+        bestDist = dist
       }
       if (!bestNote) {
-        scoreRef.current = Math.max(0, scoreRef.current - 10)
-        setScore(scoreRef.current)
-        if (recordHistory) {
-          scoreHistory.current.push({ time: currentBeat(), score: scoreRef.current })
-          inputHistory.current.push({ time: currentBeat(), type: 'off-beat' })
-        }
+        // scoreRef.current = Math.max(0, scoreRef.current - 10)
+        // setScore(scoreRef.current)
+        // if (recordHistory) {
+        //   scoreHistory.current.push({ time: currentBeat(), score: scoreRef.current })
+        //   inputHistory.current.push({ time: currentBeat(), type: 'off-beat' })
+        // }
         return prev
       }
       scoreRef.current += 10
@@ -322,7 +328,7 @@ export default function Lesson() {
         ) {
           const entry = inputHistory.current[nextReplayIdx.current]
           if (entry.type === 'hit' || entry.type === 'off-beat') {
-            processSpacePress(false)
+            processInput(null, false)
           }
           nextReplayIdx.current++
         }
@@ -359,17 +365,27 @@ export default function Lesson() {
     return () => cancelAnimationFrame(requestRef.current)
   }, [ready])
 
-  // detect input
-  // just uses space for now
   useEffect(() => {
     function handleKeyDown(e) {
       if (e.code !== 'Space') return
       if (reviewModeRef.current) return
-      processSpacePress()
+      processInput(null)
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
+
+  const { pitch, toggle: toggleMic } = useMicPitch()
+  const prevPitchRef = useRef(null)
+  useEffect(() => { toggleMic() }, [])
+
+  useEffect(() => {
+    if (prevPitchRef.current === null && pitch !== null && !reviewModeRef.current) {
+      console.log(`note: ${pitch.nearestNote.note}${pitch.nearestNote.octave}`)
+      processInput(pitch.nearestNote)
+    }
+    prevPitchRef.current = pitch
+  }, [pitch])
 
   function startReview() {
     reviewModeRef.current = true
