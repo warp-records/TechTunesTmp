@@ -41,7 +41,7 @@ const starImages = import.meta.glob(
 const SCROLL_TIME = 1500 // ms for note to travel top to bottom
 const START_DELAY = 3000
 const MISS_DURATION = 500 // ms to display note after it reaches the bottom
-const PLAY_WINDOW = 100  // ms before/after bottom that counts as a hit
+const PLAY_WINDOW = 200  // ms before/after bottom that counts as a hit
 const HIT_DURATION = 300 // ms to display glowing note after a hit
 
 export default function Lesson() {
@@ -107,6 +107,9 @@ export default function Lesson() {
   const [showStars, setShowStars] = useState(false)
   const [starRating, setStarRating] = useState(1)
   
+  const confettiCanvasRef = useRef(null)
+  const confettiInstance = useRef(null)
+
   const [reviewMode, setReviewMode] = useState(false)
   const reviewModeRef = useRef(false)
   const nextReplayIdx = useRef(0)
@@ -431,7 +434,6 @@ export default function Lesson() {
     setTimeout(() => {
       const drumroll = new Audio(drumrollSrc)
       drumroll.play()
-      setTimeout(() => new Audio(applauseSrc).play(), 2000)
       setTimeout(() => {
       setShowFinalScore(true)
       setTimeout(() => {
@@ -440,16 +442,21 @@ export default function Lesson() {
         const stars = pct >= 90 ? 5 : pct >= 80 ? 4 : pct >= 65 ? 3 : pct >= 50 ? 2 : 1
         setStarRating(stars)
         setShowStars(true)
-        const fire = (origin, angle) => confetti({
-          particleCount: 80,
-          angle,
-          spread: 100,
-          origin,
-          colors: ['#9300fc', '#ff00cc', '#ffffff', '#00eaff'],
-          zIndex: 25,
-        })
-        fire({ x: 0, y: 0.6 }, 60)
-        fire({ x: 1, y: 0.6 }, 120)
+        if (stars > 1) {
+          new Audio(applauseSrc).play()
+          if (!confettiInstance.current && confettiCanvasRef.current) {
+            confettiInstance.current = confetti.create(confettiCanvasRef.current, { resize: true })
+          }
+          const fire = (origin, angle) => confettiInstance.current?.({
+            particleCount: 80,
+            angle,
+            spread: 100,
+            origin,
+            colors: ['#9300fc', '#ff00cc', '#ffffff', '#00eaff'],
+          })
+          fire({ x: 0, y: 0.6 }, 60)
+          fire({ x: 1, y: 0.6 }, 120)
+        }
         setTimeout(() => setShowBackToHome(true), 500)
       }, 1100)
       }, 2000)
@@ -458,6 +465,7 @@ export default function Lesson() {
 
   return (
     <div className="lesson-active">
+      <canvas ref={confettiCanvasRef} className={styles['confetti-canvas']} />
       <ScreenBlur show={showBlur} />
       {isPaused && <PauseMenu show={showPauseMenu} progress={progress} levelNum={levelNum} />}
       <CountDown num={countdown} />

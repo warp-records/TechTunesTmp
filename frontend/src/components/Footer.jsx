@@ -6,6 +6,7 @@ export default function Footer() {
       <a href="#">Terms</a> |
       <a href="#">Privacy</a> |
       <a href="#">Contact</a>
+      &nbsp;&middot; v{__APP_VERSION__}
     </footer>
   )
 }

@@ -37,7 +37,7 @@ function App() {
         
         {/* inescapable: logged-in users who need verification always go to parent_permission */}
         <Route element={<ProtectedRoute isAllowed={user => !user || !user.needs_verification} redirectPath="/parent_permission" />}>
-          <Route path="/" element={<LogoLink />} />
+          <Route path="/" element={<><LogoLink /><p className="version-label">v{__APP_VERSION__}</p></>} />
           <Route path="/login" element={<Login />} />
 
 

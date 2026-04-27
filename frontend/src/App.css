@@ -37,3 +37,15 @@
 .read-the-docs {
   color: #888;
 }
+
+.version-label {
+  position: fixed;
+  opacity: 0.75;
+  bottom: 12px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: #888;
+  font-size: 24px;
+  margin: 0;
+}
