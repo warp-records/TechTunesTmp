@@ -41,7 +41,7 @@ const starImages = import.meta.glob(
 const SCROLL_TIME = 1500 // ms for note to travel top to bottom
 const START_DELAY = 3000
 const MISS_DURATION = 500 // ms to display note after it reaches the bottom
-const PLAY_WINDOW = 200  // ms before/after bottom that counts as a hit
+const PLAY_WINDOW = 300  // ms before/after bottom that counts as a hit
 const HIT_DURATION = 300 // ms to display glowing note after a hit
 
 export default function Lesson() {
@@ -378,17 +378,12 @@ export default function Lesson() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
 
-  const { pitch, toggle: toggleMic } = useMicPitch()
-  const prevPitchRef = useRef(null)
+  const onNoteRef = useRef(null)
+  onNoteRef.current = (note) => {
+    if (!reviewModeRef.current) processInput(note)
+  }
+  const { toggle: toggleMic } = useMicPitch({ onNoteRef })
   useEffect(() => { toggleMic() }, [])
-
-  useEffect(() => {
-    if (prevPitchRef.current === null && pitch !== null && !reviewModeRef.current) {
-      console.log(`note: ${pitch.nearestNote.note}${pitch.nearestNote.octave}`)
-      processInput(pitch.nearestNote)
-    }
-    prevPitchRef.current = pitch
-  }, [pitch])
 
   function startReview() {
     reviewModeRef.current = true
