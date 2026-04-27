@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import confetti from 'canvas-confetti'
 import drumrollSrc from '../../assets/sounds/drumroll.mp3'
 import applauseSrc from '../../assets/sounds/applause.mp3'
+import wahSrc from '../../assets/sounds/wah_wah_wah.mp3'
 
 import styles from './Lesson.module.css'
 import HomeButton from '../../components/HomeButton'
@@ -41,7 +42,7 @@ const starImages = import.meta.glob(
 const SCROLL_TIME = 1500 // ms for note to travel top to bottom
 const START_DELAY = 3000
 const MISS_DURATION = 500 // ms to display note after it reaches the bottom
-const PLAY_WINDOW = 300  // ms before/after bottom that counts as a hit
+const PLAY_WINDOW = 200  // ms before/after bottom that counts as a hit
 const HIT_DURATION = 300 // ms to display glowing note after a hit
 
 export default function Lesson() {
@@ -53,7 +54,9 @@ export default function Lesson() {
   const songChartRef = useRef([])
   function lastBeat() {
     const n = songChartRef.current.length
-    return n > 0 ? songChartRef.current[n - 1].time : 1
+    if (n === 0) return 1
+    const extraBeats = (SCROLL_TIME + PLAY_WINDOW) * bpmRef.current / 60000
+    return songChartRef.current[n - 1].time + extraBeats
   }
 
   useEffect(() => {
@@ -427,14 +430,16 @@ export default function Lesson() {
     setTimeout(() => setFadeHUD(true), 2000)
     setTimeout(() => setShowBlur(true), 2250)
     setTimeout(() => {
-      const drumroll = new Audio(drumrollSrc)
-      drumroll.play()
+      const maxScore = songChartRef.current.length * 10
+      const pct = maxScore > 0 ? scoreRef.current / maxScore * 100 : 0
+      const stars = pct >= 90 ? 5 : pct >= 80 ? 4 : pct >= 65 ? 3 : pct >= 50 ? 2 : 1
+      if (stars > 1) {
+        const drumroll = new Audio(drumrollSrc)
+        drumroll.play()
+      }
       setTimeout(() => {
       setShowFinalScore(true)
       setTimeout(() => {
-        const maxScore = songChartRef.current.length * 10
-        const pct = maxScore > 0 ? scoreRef.current / maxScore * 100 : 0
-        const stars = pct >= 90 ? 5 : pct >= 80 ? 4 : pct >= 65 ? 3 : pct >= 50 ? 2 : 1
         setStarRating(stars)
         setShowStars(true)
         if (stars > 1) {
@@ -451,6 +456,8 @@ export default function Lesson() {
           })
           fire({ x: 0, y: 0.6 }, 60)
           fire({ x: 1, y: 0.6 }, 120)
+        } else {
+          new Audio(wahSrc).play()
         }
         setTimeout(() => setShowBackToHome(true), 500)
       }, 1100)
