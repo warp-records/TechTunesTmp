@@ -46,6 +46,11 @@ const PLAY_WINDOW = 200  // ms before/after bottom that counts as a hit
 const HIT_DURATION = 300 // ms to display glowing note after a hit
 
 export default function Lesson() {
+  const [retryKey, setRetryKey] = useState(0)
+  return <LessonGame key={retryKey} onRetry={() => setRetryKey(k => k + 1)} />
+}
+
+function LessonGame({ onRetry }) {
   // contains the tile number, instrument, and level number
   const [searchParams] = useSearchParams()
   const [songName, setSongName] = useState('')
@@ -505,8 +510,16 @@ export default function Lesson() {
       <FinalScore score={score} show={showFinalScore} />
       {showStars && <div className={styles['gameover-stars']}><LessonStars stars={starRating} /></div>}
       
-      <ReviewButton show={showBackToHome} onClick={startReview} />
-      {reviewMode && <div className={styles['review-mode-indicator']}>REVIEW MODE</div>}
+      <div className={[styles['gameover-action-row'], showBackToHome ? styles['visible'] : ''].filter(Boolean).join(' ')}>
+        <ReviewButton onClick={startReview} />
+        <RetryButton onRetry={onRetry} />
+      </div>
+      {reviewMode && (
+        <div className={styles['review-mode-row']}>
+          <div className={styles['review-mode-indicator']}>REVIEW MODE</div>
+          <RetryButton onRetry={onRetry} />
+        </div>
+      )}
       <BackToHomeButton show={showBackToHome} />
       <Arrow key={arrowKey} isUp isVisible={arrowVisible} />
       
@@ -599,13 +612,18 @@ export function BackToHomeButton({ show }) {
   )
 }
 
-export function ReviewButton({ show, onClick }) {
+export function ReviewButton({ onClick }) {
   return (
-    <button
-      className={[styles['review-button-gameover'], show ? styles['visible'] : ''].filter(Boolean).join(' ')}
-      onClick={onClick}
-    >
+    <button className={styles['review-button-gameover']} onClick={onClick}>
       REVIEW
+    </button>
+  )
+}
+
+export function RetryButton({ onRetry }) {
+  return (
+    <button className={styles['retry-button-gameover']} onClick={onRetry}>
+      ↻
     </button>
   )
 }

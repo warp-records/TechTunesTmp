@@ -447,11 +447,25 @@ background-attachment: fixed;
   filter: brightness(1.2);
 }
 
-.review-button-gameover {
+.gameover-action-row {
   position: fixed;
   bottom: 150px;
   left: 50%;
   transform: translateX(-50%);
+  display: flex;
+  gap: 20px;
+  z-index: 22;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+}
+
+.gameover-action-row.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.review-button-gameover {
   background: none;
   border: 3px solid #ff00cc;
   border-radius: 12px;
@@ -461,28 +475,50 @@ background-attachment: fixed;
   color: white;
   letter-spacing: 4px;
   cursor: pointer;
-  z-index: 22;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.6s ease, filter 0.2s ease;
+  transition: filter 0.2s ease;
   text-shadow: 0 0 12px rgba(255, 0, 204, 0.8);
   box-shadow: 0 0 16px rgba(255, 0, 204, 0.6), inset 0 0 12px rgba(255, 0, 204, 0.3);
-}
-
-.review-button-gameover.visible {
-  opacity: 1;
-  pointer-events: auto;
 }
 
 .review-button-gameover:hover {
   filter: brightness(1.3);
 }
 
-.review-mode-indicator {
+.retry-button-gameover {
+  background: none;
+  border: 3px solid #ff00cc;
+  border-radius: 12px;
+  padding: 14px 32px;
+  font-size: 32px;
+  color: white;
+  cursor: pointer;
+  transition: filter 0.2s ease;
+  text-shadow: 0 0 12px rgba(255, 0, 204, 0.8);
+  box-shadow: 0 0 16px rgba(255, 0, 204, 0.6), inset 0 0 12px rgba(255, 0, 204, 0.3);
+}
+
+.retry-button-gameover:hover {
+  filter: brightness(1.3);
+}
+
+.review-mode-row {
   position: fixed;
   top: 205px;
   left: 50%;
   transform: translateX(-50%);
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  z-index: 22;
+}
+
+.review-mode-row .retry-button-gameover {
+  font-size: 20px;
+  padding: 0 18px;
+}
+
+.review-mode-indicator {
+  white-space: nowrap;
   padding: 10px 22px;
   font-family: 'CoreSansM', sans-serif;
   font-size: 20px;
