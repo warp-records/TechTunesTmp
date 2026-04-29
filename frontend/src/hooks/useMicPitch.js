@@ -55,6 +55,7 @@ export function findNearestString(freq) {
 
 export function useMicPitch({ onNoteRef } = {}) {
   const [listening, setListening] = useState(false)
+  const [pitch, setPitch] = useState(null)
   const audioCtxRef = useRef(null)
   const analyserRef = useRef(null)
   const streamRef = useRef(null)
@@ -66,6 +67,7 @@ export function useMicPitch({ onNoteRef } = {}) {
     streamRef.current?.getTracks().forEach(t => t.stop())
     audioCtxRef.current?.close()
     setListening(false)
+    setPitch(null)
   }, [])
 
   const start = useCallback(async () => {
@@ -86,8 +88,11 @@ export function useMicPitch({ onNoteRef } = {}) {
       analyser.getFloatTimeDomainData(buf)
       const [frequency, clarity] = detectorRef.current.findPitch(buf, audioCtx.sampleRate)
       const hasPitch = clarity > 0.9 && frequency > 60 && frequency < 1400
-      if (hasPitch && !prevHadPitch) {
-        onNoteRef?.current?.(findNearestNote(frequency))
+      if (hasPitch) {
+        setPitch({ ...findNearestString(frequency), nearestNote: findNearestNote(frequency) })
+        if (!prevHadPitch) onNoteRef?.current?.(findNearestNote(frequency))
+      } else {
+        setPitch(null)
       }
       prevHadPitch = hasPitch
       rafRef.current = requestAnimationFrame(loop)
@@ -97,5 +102,5 @@ export function useMicPitch({ onNoteRef } = {}) {
 
   useEffect(() => () => stop(), [stop])
 
-  return { listening, toggle: listening ? stop : start }
+  return { listening, pitch, toggle: listening ? stop : start }
 }

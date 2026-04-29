@@ -39,10 +39,11 @@ const starImages = import.meta.glob(
 )
 
 // fuck man life hits so fast
-const SCROLL_TIME = 1500 // ms for note to travel top to bottom
+// might have to adjust this dynamically
+const SCROLL_TIME = 3000 // ms for note to travel top to bottom
 const START_DELAY = 3000
 const MISS_DURATION = 500 // ms to display note after it reaches the bottom
-const PLAY_WINDOW = 200  // ms before/after bottom that counts as a hit
+const PLAY_WINDOW = 300  // ms before/after bottom that counts as a hit
 const HIT_DURATION = 300 // ms to display glowing note after a hit
 
 export default function Lesson() {
@@ -62,6 +63,9 @@ function LessonGame({ onRetry }) {
     if (n === 0) return 1
     const extraBeats = (SCROLL_TIME + PLAY_WINDOW) * bpmRef.current / 60000
     return songChartRef.current[n - 1].time + extraBeats
+  }
+  function songProgress() {
+    return Math.min(Math.max(currentBeat() / lastBeat(), 0), 1)
   }
 
   useEffect(() => {
@@ -329,7 +333,7 @@ function LessonGame({ onRetry }) {
         })
         nextNoteIdx.current++
       }
-      setProgress(Math.min(Math.max(currentBeat() / lastBeat(), 0), 1.0))
+      setProgress(songProgress())
 
       if (reviewModeRef.current) {
         const beatNow = currentBeat()
@@ -354,7 +358,7 @@ function LessonGame({ onRetry }) {
           const noteBottomTime = spawnTime + SCROLL_TIME
           if (elapsed > noteBottomTime + PLAY_WINDOW) {
             if (!reviewModeRef.current) {
-              inputHistory.current.push({ time: currentBeat(), type: 'miss' })
+              inputHistory.current.push({ time: currentBeat(), progress: songProgress(), type: 'miss' })
             }
             return { ...note, progress: 1.0, miss: true, missAt: elapsed }
           }
@@ -488,7 +492,7 @@ function LessonGame({ onRetry }) {
           disabled={gameOver && !reviewMode}
           errorMarkers={inputHistory.current
             .filter(e => e.type === 'off-beat' || e.type === 'miss')
-            .map(e => e.time / lastBeat())}
+            .map(e => e.progress)}
         />
       </div>
       <PickbotButton gameOver={showBlur} />
@@ -640,7 +644,7 @@ export function SongTitleBanner({ title, gameOver }) {
 }
 
 export function BpmControl({ bpm, updateBpm, fadeHUD }) {
-  const minBpm = 40
+  const minBpm = 10
   
   return (
     <div className={[styles['bpm-control'], fadeHUD ? styles['fade-hud'] : ''].filter(Boolean).join(' ')}>
