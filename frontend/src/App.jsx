@@ -101,11 +101,11 @@ export const AuthContext = createContext(null);
 function AuthProvider({ children }) {
   const [user, setUser] = useState(undefined);
 
-  function fetchUser() {
+  function fetchUser(_t = crypto.randomUUID()) {
     const token = localStorage.getItem("token");
     if (!token) { setUser(null); return Promise.resolve(); }
 
-    return fetch("/api/me", { headers: { Authorization: "Bearer " + token } })
+    return fetch(`/api/me?_t=${_t}`, { headers: { Authorization: "Bearer " + token } })
       .then(r => r.ok ? r.json() : null)
       .then(data => setUser(data))
       .catch(() => setUser(null));
