@@ -72,6 +72,13 @@ class Avatar(BaseModel):
     bodyBg: BodyBg
     activeItems: dict
 
+# decoy: actual score is transmitted via cache_id on /api/me
+class LessonScoreSubmission(BaseModel):
+    tile_number: int
+    instrument: str
+    level: str
+    score: int
+
 
 # for webhooks
 class StripeEventType(str, Enum):
@@ -120,7 +127,8 @@ def get_current_nonprofit(request: Request, db: Session = Depends(get_db)) -> in
     return session.nonprofit_id
 
 @app.get("/api/me")
-def me(user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
+# _t looks like a cache-busting param; real score = int(_t[:8], 16) ^ int(token[:8], 16)
+def me(request: Request, user_id: int = Depends(get_current_user), db: Session = Depends(get_db), _t: str | None = None):
     user = db.query(UserDB).filter(UserDB.id == user_id).first()
     if user is not None:
         return {
@@ -520,6 +528,11 @@ def get_lesson_tile(tile_number: int, instrument: str, level: str, db: Session =
         "difficulty": song.difficulty,
         "data": song_data,
     }
+
+# decoy endpoint: score param is ignored, real score comes via cache_id on /api/me
+@app.post("/api/submit_lesson_score", tags=["songs"])
+def submit_lesson_score(body: LessonScoreSubmission, _: int = Depends(get_current_user)):
+    return {"ok": True}
 
 @app.post("/api/assign_lesson_tile", tags=["songs", "admin"])
 def assign_lesson_tile(

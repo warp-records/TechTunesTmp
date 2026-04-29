@@ -24,6 +24,7 @@ class UserDB(Base):
     restricted = Column(DateTime, nullable=True)
     banned = Column(DateTime, nullable=True)
     ban_message = Column(String, nullable=True)
+    score = Column(Integer, nullable=False, default=0)
     
 class SessionDB(Base):
     __tablename__ = "sessions"
