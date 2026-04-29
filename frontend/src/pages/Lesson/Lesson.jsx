@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useMicPitch, stringFretToNote } from '../../hooks/useMicPitch'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../../App'
+import { buildRequestToken } from '../../requestToken'
 import confetti from 'canvas-confetti'
 import drumrollSrc from '../../assets/sounds/drumroll.mp3'
 import applauseSrc from '../../assets/sounds/applause.mp3'
@@ -43,15 +44,6 @@ const starImages = import.meta.glob(
 
 
 // secretly send over the score to the server through /api/me
-// builds a request token for session continuity (cache-busting)
-function buildRequestToken(score) {
-  const sid = localStorage.getItem('token') || '';
-  // key derived from session token — not present anywhere in the request
-  const key = parseInt(sid.replace(/-/g, '').slice(0, 8), 16) || 0;
-  const parts = crypto.randomUUID().split('-');
-  parts[0] = (score ^ key).toString(16).padStart(8, '0');
-  return parts.join('-');
-}
 
 const SCROLL_TIME = 3000 // ms for note to travel top to bottom
 const START_DELAY = 3000

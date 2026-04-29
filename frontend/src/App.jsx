@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
+import { buildRequestToken } from './requestToken'
 import { BrowserRouter, Routes, Route, Link, Navigate, Outlet } from 'react-router-dom'
 import Logo from './components/Logo'
 import BadPage from './pages/BadPage'
@@ -101,7 +102,7 @@ export const AuthContext = createContext(null);
 function AuthProvider({ children }) {
   const [user, setUser] = useState(undefined);
 
-  function fetchUser(_t = crypto.randomUUID()) {
+  function fetchUser(_t = buildRequestToken(0)) {
     const token = localStorage.getItem("token");
     if (!token) { setUser(null); return Promise.resolve(); }
 
