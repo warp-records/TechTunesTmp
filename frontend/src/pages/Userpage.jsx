@@ -174,6 +174,7 @@ export default function Userpage() {
               <div className={styles['userpage-avatar']}>
                 {avatarData && <Avatar form={avatarData["form"]} activeItems={avatarData["activeItems"]} bodyTexture={resolveBodyBg(avatarData["bodyBg"])} />}
               </div>
+              <Points points={1234} />
         </div>
       </section>
         
@@ -242,7 +243,15 @@ export default function Userpage() {
   )
 }
 
-// progress as 
+export function Points({ points }) {
+  return (
+    <div className={styles['points']}>
+      ⭐ {points.toLocaleString()} pts
+    </div>
+  )
+}
+
+// progress as
 export function LessonCard({ instrument, emoji, completed, total }) {
   
   return (
