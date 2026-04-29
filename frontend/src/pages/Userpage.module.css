@@ -29,6 +29,40 @@
     color: #ff4444 !important;
 }
 
+@property --border-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+}
+
+@keyframes spin-border {
+    to { --border-angle: 360deg; }
+}
+
+.avatar-frame {
+    position: relative;
+    width: 250px;
+    height: 290px;
+    margin: 16px auto 0;
+    border-radius: 28px;
+    overflow: hidden;
+    background: conic-gradient(from var(--border-angle), #9300fc, #ff00cc, #00eaff, #9300fc);
+    animation: spin-border 15s linear infinite;
+}
+
+.avatar-frame-inner {
+    position: absolute;
+    inset: 5px;
+    border-radius: 24px;
+    background: #0e0818;
+    box-shadow: inset 0 0 30px rgba(147, 0, 252, 0.25);
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 15px;
+}
+
 .points {
     margin-top: 32px;
     margin-bottom: 4px;

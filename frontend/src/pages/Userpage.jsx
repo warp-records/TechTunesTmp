@@ -171,9 +171,9 @@ export default function Userpage() {
             {isPremium && <PremiumBadge />}
           </div>
                 
-              <div className={styles['userpage-avatar']}>
+              <AvatarFrame>
                 {avatarData && <Avatar form={avatarData["form"]} activeItems={avatarData["activeItems"]} bodyTexture={resolveBodyBg(avatarData["bodyBg"])} />}
-              </div>
+              </AvatarFrame>
               <Points points={1234} />
         </div>
       </section>
@@ -240,6 +240,16 @@ export default function Userpage() {
 
   </main>
   </div>
+  )
+}
+
+export function AvatarFrame({ children }) {
+  return (
+    <div className={styles['avatar-frame']}>
+      <div className={styles['avatar-frame-inner']}>
+        {children}
+      </div>
+    </div>
   )
 }
 
