@@ -52,6 +52,7 @@ const genres = [
 export default function Userpage() {
   let [username, setUsername] = useState("");
   let [isPremium, setIsPremium] = useState(false)
+  const [score, setScore] = useState(0)
   const [selectedMenu, setSelectedMenu] = useState(null)
   const [notifications, setNotifications] = useState([
     { title: "Donation", subtext: "$5 was just donated to your select charity, Generation Music!" },
@@ -115,9 +116,20 @@ export default function Userpage() {
       }
     }
 
+    async function getScore() {
+      const res = await fetch('/api/get_score', {
+        headers: { Authorization: 'Bearer ' + token }
+      })
+      if (res.ok) {
+        const data = await res.json()
+        setScore(data.score)
+      }
+    }
+
     getAvatar();
     checkPremium();
-    
+    getScore();
+
     setUsername(localStorage.getItem("username"));
   }, []);
   
@@ -174,7 +186,7 @@ export default function Userpage() {
               <AvatarFrame>
                 {avatarData && <Avatar form={avatarData["form"]} activeItems={avatarData["activeItems"]} bodyTexture={resolveBodyBg(avatarData["bodyBg"])} />}
               </AvatarFrame>
-              <Points points={1234} />
+              <Points points={score} />
         </div>
       </section>
         

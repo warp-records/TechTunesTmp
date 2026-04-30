@@ -165,6 +165,13 @@ def me(request: Request, user_id: int = Depends(get_current_user), db: Session =
         raise HTTPException(status_code=404, detail="User not found")
     
     
+@app.get("/api/get_score")
+def get_score(user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
+    user = db.query(UserDB).filter(UserDB.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return { "score": user.score }
+
 @app.post("/api/register")
 def register(user: RegisterRequest, underage: bool, db: Session = Depends(get_db)):
     if not _validate_key_signature(user.license_key):
