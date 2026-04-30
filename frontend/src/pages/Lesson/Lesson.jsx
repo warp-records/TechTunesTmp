@@ -21,9 +21,8 @@ import PickbotImg from '../../assets/Lesson Page Assets/Pickbot Button.png'
 import PauseBoxImg from '../../assets/Lesson Page Assets/Pause Box.png'
 import BackToHomeImg from '../../assets/Lesson Page Assets/Back to Home Button.png'
 import BattleFriendImg from '../../assets/Lesson Page Assets/Battle Friend Button.png'
-import UpArrow from '../../assets/Lesson Page Assets/Up Arrow.png'
-import UpArrowGlow from '../../assets/Lesson Page Assets/Up Arrow Glow.png'
-import DownArrow from '../../assets/Lesson Page Assets/Down Arrow.png'
+import StreakMeterBase from '../../assets/Lesson Page Assets/Streak Meter/steakmeter_base.png'
+import StreakMeterArm from '../../assets/Lesson Page Assets/Streak Meter/steakmeter_arm.png'
 import Countdown1 from '../../assets/Lesson Page Assets/Countdown 1.png'
 import Countdown2 from '../../assets/Lesson Page Assets/Countdown 2.png'
 import Countdown3 from '../../assets/Lesson Page Assets/Countdown 3.png'
@@ -50,6 +49,9 @@ const START_DELAY = 3000
 const MISS_DURATION = 500 // ms to display note after it reaches the bottom
 const PLAY_WINDOW = 300  // ms before/after bottom that counts as a hit
 const HIT_DURATION = 300 // ms to display glowing note after a hit
+
+const STREAK_HIT_DEGREES = 36     // degrees added per hit
+const STREAK_MAX_DEGREES = 180    // maximum rotation
 
 export default function Lesson() {
   const [retryKey, setRetryKey] = useState(0)
@@ -106,6 +108,7 @@ function LessonGame({ onRetry }) {
   const [showPauseMenu, setShowPauseMenu] = useState(false)
   //separate ref for key down listener
   const scoreRef = useRef(0)
+  // Due to quirk in anti cheat, score must be a multiple of 10
   const [score, setScore] = useState(0)
   // history is scored in beat time (num beats into song)
   // rather than raw time
@@ -132,14 +135,10 @@ function LessonGame({ onRetry }) {
   const reviewModeRef = useRef(false)
   const nextReplayIdx = useRef(0)
 
-  // used to force a re render on the arrow which triggers animation
-  const [arrowKey, setArrowKey] = useState(0)
-  const [arrowVisible, setArrowVisible] = useState(false)
+  // currently is set to 3/4 of the bpm
+  const streakRotRef = useRef(0)
+  const [streakRot, setStreakRot] = useState(0)
 
-  function showArrow() {
-    setArrowKey(k => k + 1)
-    setArrowVisible(true)
-  }
   const [notes, setNotes] = useState([])
   // request animation frame ref
   const requestRef = useRef()
@@ -202,11 +201,12 @@ function LessonGame({ onRetry }) {
       }
       scoreRef.current += 10
       setScore(scoreRef.current)
+      streakRotRef.current = Math.min(streakRotRef.current + STREAK_HIT_DEGREES, STREAK_MAX_DEGREES)
+      setStreakRot(streakRotRef.current)
       if (recordHistory) {
         scoreHistory.current.push({ time: currentBeat(), score: scoreRef.current })
         inputHistory.current.push({ time: currentBeat(), type: 'hit' })
       }
-      showArrow()
       return prev.map(n => n.id === bestNote.id
         ? { ...n, glow: true, hit: true, hitAt: elapsed }
         : n
@@ -235,6 +235,8 @@ function LessonGame({ onRetry }) {
   }
   
   function seekTo(targetProgress) {
+    streakRotRef.current = 0
+    setStreakRot(0)
     const targetElapsed = noteTime(targetProgress * lastBeat())
     rawElapsedTime.current = targetElapsed + START_DELAY
   
@@ -306,12 +308,17 @@ function LessonGame({ onRetry }) {
     if (!ready) return
     function loop(time) {
       if (!prevFrameTime.current) prevFrameTime.current = performance.now()
+      const delta = performance.now() - prevFrameTime.current
       if (wasPaused.current) {
         wasPaused.current = false
       } else {
-        rawElapsedTime.current += performance.now() - prevFrameTime.current;
+        rawElapsedTime.current += delta
+        if (streakRotRef.current > 0) {
+          streakRotRef.current = Math.max(0, streakRotRef.current - (delta / 1000) * (bpmRef.current * 0.75))
+          setStreakRot(streakRotRef.current)
+        }
       }
-      
+
       prevFrameTime.current = performance.now()
       
       const newCountdown = rawElapsedTime.current < 1000 ? 3 : rawElapsedTime.current < 2000 ? 2 : rawElapsedTime.current < START_DELAY ? 1 : null
@@ -498,6 +505,7 @@ function LessonGame({ onRetry }) {
       <ScreenBlur show={showBlur} />
       {isPaused && <PauseMenu show={showPauseMenu} progress={progress} levelNum={levelNum} />}
       <CountDown num={countdown} />
+      <StreakMeter rotation={streakRot} />
       <BpmControl bpm={bpm} updateBpm={updateBpm} fadeHUD={fadeHUD} />
       <SongTitleBanner title={songName.toUpperCase()} gameOver={showBlur} />
       <div className={[styles['seek-bar'], fadeHUD ? styles['fade-hud'] : ''].filter(Boolean).join(' ')}>
@@ -543,8 +551,6 @@ function LessonGame({ onRetry }) {
         </div>
       )}
       <BackToHomeButton show={showBackToHome} />
-      <Arrow key={arrowKey} isUp isVisible={arrowVisible} />
-      
       <div className={styles['lesson-stage']}>
         <img className={[styles['layer-board'], fadeBoard ? styles['fade-frets'] : ''].filter(Boolean).join(' ')} src={Board} alt="Board" />
         <img className={[styles['layer-frame'], fadeFrets ? styles['fade-frets'] : ''].filter(Boolean).join(' ')} src={NeonFrame} alt="Neon Board Frame" />
@@ -597,20 +603,21 @@ export function PickbotButton({ gameOver }) {
   )
 }
 
-export function Arrow({ isUp, isVisible }) {
-  if (isUp) {
-    return (
-      <div className={[styles['arrow-container'], isVisible ? styles['visible'] : ''].filter(Boolean).join(' ')}>
-        <img src={UpArrowGlow} className={styles['arrow-glow']} />
-        <img src={UpArrow} className={styles['arrow-inner']} />
-      </div>
-    )
-  }
-  return <img src={DownArrow} className={styles['arrow-inner']} />
-}
-
 export function ScreenBlur({ show }) {
   return <div className={[styles['screen-blur'], show ? styles['visible'] : ''].filter(Boolean).join(' ')} />
+}
+
+export function StreakMeter({ rotation }) {
+  return (
+    <div className={styles['streak-meter']}>
+      <img src={StreakMeterBase} className={styles['streak-meter-base']} />
+      <img
+        src={StreakMeterArm}
+        className={styles['streak-meter-arm']}
+        style={{ transform: `translate(-50%, -50%) rotate(${rotation}deg)` }}
+      />
+    </div>
+  )
 }
 
 export function Score({ score, fadeHUD }) {
