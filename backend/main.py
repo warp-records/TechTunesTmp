@@ -136,9 +136,9 @@ def handle_score(_t: str, token: str, user: UserDB, db: Session):
     encoded = int(_t.replace('-', '')[:8], 16)
     bucket = int(time.time() // 5)
     score = encoded ^ token_key ^ bucket
-    if not (0 < score <= 10000 and score % 10 == 0):
+    if not (10 <= score <= 10000):
         score = encoded ^ token_key ^ (bucket - 1)
-    if not (0 < score <= 10000 and score % 10 == 0):
+    if not (10 <= score <= 10000):
         return
     _last_score_token[user.id] = _t
     user.score += score

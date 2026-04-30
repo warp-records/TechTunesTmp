@@ -23,6 +23,7 @@ import BackToHomeImg from '../../assets/Lesson Page Assets/Back to Home Button.p
 import BattleFriendImg from '../../assets/Lesson Page Assets/Battle Friend Button.png'
 import StreakMeterBase from '../../assets/Lesson Page Assets/Streak Meter/steakmeter_base.png'
 import StreakMeterArm from '../../assets/Lesson Page Assets/Streak Meter/steakmeter_arm.png'
+import StreakMeterFlame from '../../assets/Lesson Page Assets/Streak Meter/steakmeter_flame.png'
 import Countdown1 from '../../assets/Lesson Page Assets/Countdown 1.png'
 import Countdown2 from '../../assets/Lesson Page Assets/Countdown 2.png'
 import Countdown3 from '../../assets/Lesson Page Assets/Countdown 3.png'
@@ -199,7 +200,8 @@ function LessonGame({ onRetry }) {
         // }
         return prev
       }
-      scoreRef.current += 10
+      const streakBonus = Math.floor(streakRotRef.current / STREAK_HIT_DEGREES + 0.5) * 5
+      scoreRef.current += 10 + streakBonus
       setScore(scoreRef.current)
       streakRotRef.current = Math.min(streakRotRef.current + STREAK_HIT_DEGREES, STREAK_MAX_DEGREES)
       setStreakRot(streakRotRef.current)
@@ -464,8 +466,9 @@ function LessonGame({ onRetry }) {
     setTimeout(() => setFadeHUD(true), 2000)
     setTimeout(() => setShowBlur(true), 2250)
     setTimeout(() => {
-      const maxScore = songChartRef.current.length * 10
-      const pct = maxScore > 0 ? scoreRef.current / maxScore * 100 : 0
+      const totalNotes = songChartRef.current.length
+      const hitNotes = inputHistory.current.filter(e => e.type === 'hit').length
+      const pct = totalNotes > 0 ? hitNotes / totalNotes * 100 : 0
       const stars = pct >= 90 ? 5 : pct >= 80 ? 4 : pct >= 65 ? 3 : pct >= 50 ? 2 : 1
       if (stars > 1) {
         const drumroll = new Audio(drumrollSrc)
@@ -608,6 +611,8 @@ export function ScreenBlur({ show }) {
 }
 
 export function StreakMeter({ rotation }) {
+  const onFire = rotation >= STREAK_MAX_DEGREES * 0.8
+
   return (
     <div className={styles['streak-meter']}>
       <img src={StreakMeterBase} className={styles['streak-meter-base']} />
@@ -616,6 +621,7 @@ export function StreakMeter({ rotation }) {
         className={styles['streak-meter-arm']}
         style={{ transform: `translate(-50%, -50%) rotate(${rotation}deg)` }}
       />
+      {onFire && <img src={StreakMeterFlame} className={styles['streak-meter-flame']} />}
     </div>
   )
 }
