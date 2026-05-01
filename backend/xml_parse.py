@@ -88,19 +88,20 @@ class Song:
 # output:
 # {"bpm": float,
 #     [
-#         { 
-#           beat_time: int, 
-#           string: str, 
-#           fret: int 
+#         {
+#           beat_time: int,
+#           string: str,
+#           fret: int,
+#           slide_to?: { fret: int, beat: float }  -- present if note slides; visual indicator only, destination note still emitted
 #         },
 #         ...
 #     ]
 # }
-# 
+#
 # beat_time is how many beats into the song when the note occurs
 # string is one of 'E', 'A', 'D', 'G', 'B', 'E_HIGH'
-# E3, A3, D4, G4, B4, E5
 # fret is from 0..=5
+# cross-string slides are ignored (slide_to assumes same string as source)
 
 
 # returns [song_output, unplayable_note_count]
@@ -142,6 +143,8 @@ def parse_song(file: BytesIO, allow_unplayable: bool = False) -> tuple[Song, int
 
     output = []
     skipped_notes = 0
+    # maps slide/glissando number -> output index of the source note
+    pending_slides: dict[str, int] = {}
 
     for measure in root.iter("measure"):
         divisions_el = measure.find("attributes/divisions")
@@ -182,11 +185,37 @@ def parse_song(file: BytesIO, allow_unplayable: bool = False) -> tuple[Song, int
                     skipped_notes += 1
                     continue
                 raise ValueError(f"Note {step}{octave} is outside playable range")
+
+            encoded_string = GUITAR_STRINGS_ENCODED[n.getString()]  # type: ignore[index]
+
+            # check if this note is the stop of a slide/glissando
+            slide_stop = None
+            for tag in ("slide", "glissando"):
+                el = note.find(f"notations/{tag}[@type='stop']")
+                if el is not None:
+                    slide_stop = el.get("number", "1")
+                    break
+
+            if slide_stop is not None and slide_stop in pending_slides:
+                src_idx = pending_slides.pop(slide_stop)
+                src = output[src_idx]
+                if src["string"] == encoded_string:
+                    src["slide_to"] = {"fret": n.getFret(), "beat": curr_time}
+                # cross-string slide — ignore and emit destination normally
+
             output_note = {
                 'beat_time': curr_time,
-                'string': GUITAR_STRINGS_ENCODED[n.getString()],  # type: ignore[index]
+                'string': encoded_string,
                 'fret': n.getFret(),
             }
+
+            # check if this note starts a slide/glissando
+            for tag in ("slide", "glissando"):
+                el = note.find(f"notations/{tag}[@type='start']")
+                if el is not None:
+                    pending_slides[el.get("number", "1")] = len(output)
+                    break
+
             output.append(output_note)
 
     return Song(name, instrument, bpm, output), skipped_notes
