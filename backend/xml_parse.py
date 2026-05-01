@@ -9,7 +9,7 @@ import sys
 
 # mapping to each string as encoded in the json
 GUITAR_STRINGS_ENCODED = {
-    'E3': 'E', 
+    'E3': 'E',
     'A3': 'A',
     'D4': 'D',
     'G4': 'G',
@@ -189,21 +189,34 @@ def parse_song(file: BytesIO, allow_unplayable: bool = False) -> tuple[Song, int
 
             encoded_string = GUITAR_STRINGS_ENCODED[n.getString()]  # type: ignore[index]
 
-            # check if this note is the stop of a slide/glissando
-            slide_stop = None
+            # collect all slide/glissando stops and starts on this note
+            is_grace = note.find("grace") is not None
+            slide_stops = []
+            slide_starts = []
             for tag in ("slide", "glissando"):
-                el = note.find(f"notations/{tag}[@type='stop']")
-                if el is not None:
-                    slide_stop = el.get("number", "1")
-                    break
+                for el in note.findall(f"notations/{tag}"):
+                    num = el.get("number", "1")
+                    if el.get("type") == "stop":
+                        slide_stops.append(num)
+                    elif el.get("type") == "start":
+                        slide_starts.append(num)
 
             is_slide_stop = False
-            if slide_stop is not None and slide_stop in pending_slides:
-                src_idx = pending_slides.pop(slide_stop)
-                src = output[src_idx]
-                if src["string"] == encoded_string:
-                    src["slide_start"] = True
-                    is_slide_stop = True
+            for num in slide_stops:
+                if num in pending_slides:
+                    src_idx = pending_slides.pop(num)
+                    src = output[src_idx]
+                    if src["string"] == encoded_string:
+                        src["slide_start"] = True
+                        is_slide_stop = True
+
+            # grace notes act as slide sources but aren't real notes
+            if is_grace:
+                for num in slide_starts:
+                    pending_slides[num] = len(output) - 1  # point to last real note as placeholder
+                # skip adding grace note to output
+                prev_beat_len = 0
+                continue
 
             output_note = {
                 'beat_time': curr_time,
@@ -213,12 +226,9 @@ def parse_song(file: BytesIO, allow_unplayable: bool = False) -> tuple[Song, int
             if is_slide_stop:
                 output_note["slide_stop"] = True
 
-            # check if this note starts a slide/glissando
-            for tag in ("slide", "glissando"):
-                el = note.find(f"notations/{tag}[@type='start']")
-                if el is not None:
-                    pending_slides[el.get("number", "1")] = len(output)
-                    break
+            # register any starts on this note
+            for num in slide_starts:
+                pending_slides[num] = len(output)
 
             output.append(output_note)
 
