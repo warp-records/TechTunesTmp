@@ -508,7 +508,7 @@ function LessonGame({ onRetry }) {
       <ScreenBlur show={showBlur} />
       {isPaused && <PauseMenu show={showPauseMenu} progress={progress} levelNum={levelNum} />}
       <CountDown num={countdown} />
-      <StreakMeter rotation={streakRot} />
+      <StreakMeter rotation={streakRot} fadeHUD={fadeHUD} />
       <BpmControl bpm={bpm} updateBpm={updateBpm} fadeHUD={fadeHUD} />
       <SongTitleBanner title={songName.toUpperCase()} gameOver={showBlur} />
       <div className={[styles['seek-bar'], fadeHUD ? styles['fade-hud'] : ''].filter(Boolean).join(' ')}>
@@ -610,11 +610,11 @@ export function ScreenBlur({ show }) {
   return <div className={[styles['screen-blur'], show ? styles['visible'] : ''].filter(Boolean).join(' ')} />
 }
 
-export function StreakMeter({ rotation }) {
+export function StreakMeter({ rotation, fadeHUD }) {
   const onFire = rotation >= STREAK_MAX_DEGREES * 0.8
 
   return (
-    <div className={styles['streak-meter']}>
+    <div className={[styles['streak-meter'], fadeHUD ? styles['fade-hud'] : ''].filter(Boolean).join(' ')}>
       <img src={StreakMeterFlame} className={[styles['streak-meter-flame'], onFire ? '' : styles['streak-meter-flame-hidden']].join(' ')} />
       <img src={StreakMeterBase} className={styles['streak-meter-base']} />
       <img
