@@ -353,13 +353,18 @@ background-attachment: fixed;
 
 .streak-meter-flame {
   position: absolute;
-  bottom: 30%;
+  top: -10%;
   left: 50%;
   transform: translateX(-50%);
-  opacity: 0.75;
   width: 70%;
   height: auto;
   object-fit: contain;
+  z-index: -1;
+  transition: opacity 0.15s ease;
+}
+
+.streak-meter-flame-hidden {
+  opacity: 0;
 }
 
 .streak-meter-arm {

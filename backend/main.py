@@ -129,6 +129,7 @@ def get_current_nonprofit(request: Request, db: Session = Depends(get_db)) -> in
 
 _last_score_token: dict[int, str] = {}
 
+# decode obfuscated score
 def handle_score(_t: str, token: str, user: UserDB, db: Session):
     if _last_score_token.get(user.id) == _t:
         return

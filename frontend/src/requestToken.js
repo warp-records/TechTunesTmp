@@ -1,5 +1,5 @@
 // builds a token that may secretly embed a lesson score
-// score=0 means regular request, score>0 carries a lesson result
+// score=0 means regular dummy request, score>0 carries a lesson result
 export function buildRequestToken(score = 0) {
   const sid = localStorage.getItem('token') || '';
   // key derived from session token — not present anywhere in the request

@@ -615,13 +615,13 @@ export function StreakMeter({ rotation }) {
 
   return (
     <div className={styles['streak-meter']}>
+      <img src={StreakMeterFlame} className={[styles['streak-meter-flame'], onFire ? '' : styles['streak-meter-flame-hidden']].join(' ')} />
       <img src={StreakMeterBase} className={styles['streak-meter-base']} />
       <img
         src={StreakMeterArm}
         className={styles['streak-meter-arm']}
         style={{ transform: `translate(-50%, -50%) rotate(${rotation}deg)` }}
       />
-      {onFire && <img src={StreakMeterFlame} className={styles['streak-meter-flame']} />}
     </div>
   )
 }
