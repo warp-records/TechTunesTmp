@@ -92,7 +92,8 @@ class Song:
 #           beat_time: int,
 #           string: str,
 #           fret: int,
-#           slide_to?: { fret: int, beat: float }  -- present if note slides; visual indicator only, destination note still emitted
+#           slide_start?: true  -- this note slides into the next
+#           slide_stop?: true   -- this note is the destination of a slide
 #         },
 #         ...
 #     ]
@@ -101,7 +102,7 @@ class Song:
 # beat_time is how many beats into the song when the note occurs
 # string is one of 'E', 'A', 'D', 'G', 'B', 'E_HIGH'
 # fret is from 0..=5
-# cross-string slides are ignored (slide_to assumes same string as source)
+# cross-string slides are ignored
 
 
 # returns [song_output, unplayable_note_count]
@@ -196,18 +197,21 @@ def parse_song(file: BytesIO, allow_unplayable: bool = False) -> tuple[Song, int
                     slide_stop = el.get("number", "1")
                     break
 
+            is_slide_stop = False
             if slide_stop is not None and slide_stop in pending_slides:
                 src_idx = pending_slides.pop(slide_stop)
                 src = output[src_idx]
                 if src["string"] == encoded_string:
-                    src["slide_to"] = {"fret": n.getFret(), "beat": curr_time}
-                # cross-string slide — ignore and emit destination normally
+                    src["slide_start"] = True
+                    is_slide_stop = True
 
             output_note = {
                 'beat_time': curr_time,
                 'string': encoded_string,
                 'fret': n.getFret(),
             }
+            if is_slide_stop:
+                output_note["slide_stop"] = True
 
             # check if this note starts a slide/glissando
             for tag in ("slide", "glissando"):
