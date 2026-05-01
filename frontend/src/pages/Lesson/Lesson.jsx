@@ -54,6 +54,23 @@ const HIT_DURATION = 300 // ms to display glowing note after a hit
 const STREAK_HIT_DEGREES = 36     // degrees added per hit
 const STREAK_MAX_DEGREES = 180    // maximum rotation
 
+const STRING_IDX = { 'E': 0, 'A': 1, 'D': 2, 'G': 3, 'B': 4, 'E_HIGH': 5 }
+const STRING_COLORS = {
+  'E':      '#ff3366',
+  'A':      '#ff8800',
+  'D':      '#ffdd00',
+  'G':      '#44dd00',
+  'B':      '#00ccff',
+  'E_HIGH': '#cc44ff',
+}
+
+function notePosition(string, progress) {
+  const idx = STRING_IDX[string]
+  const x = (20 + 11.5 * idx) + ((10 + idx * 16.05) - (20 + 11.5 * idx)) * progress
+  const y = 91 * progress
+  return { x, y }
+}
+
 export default function Lesson() {
   const [retryKey, setRetryKey] = useState(0)
   return <LessonGame key={retryKey} onRetry={() => setRetryKey(k => k + 1)} />
@@ -94,7 +111,10 @@ function LessonGame({ onRetry }) {
           time: n.beat_time,  // keep raw, don't convert yet
           string: n.string,
           fret: n.fret,
+          slide_to: n.slide_to ?? null,
         }))
+        
+        console.log(notes)
 
         songChartRef.current = notes
         setSongName(data.name)
@@ -264,6 +284,7 @@ function LessonGame({ onRetry }) {
         fret: chartNote.fret,
         glow: false,
         beatTime: chartNote.time,
+        slide_to: chartNote.slide_to ?? null,
         progress: Math.min(progress, 1.0),
       })
     }
@@ -344,7 +365,8 @@ function LessonGame({ onRetry }) {
           string: chartNote.string,
           fret: chartNote.fret,
           glow: false,
-          beatTime: chartNote.time,  // store beat time, not ms
+          beatTime: chartNote.time,
+          slide_to: chartNote.slide_to ?? null,
         })
         nextNoteIdx.current++
       }
@@ -560,6 +582,7 @@ function LessonGame({ onRetry }) {
         <img className={[styles['layer-strings'], fadeStrings ? styles['fade-strings-letters'] : ''].filter(Boolean).join(' ')} src={Strings} alt="Strings" />
         <img className={[styles['layer-string-names'], fadeStrings ? styles['fade-strings-letters'] : ''].filter(Boolean).join(' ')} src={StringNames} alt="String Names" />
 
+        <SlideOverlay notes={notes} />
         {notes.map(note => (
           <Note
             key={note.id}
@@ -603,6 +626,49 @@ export function PickbotButton({ gameOver }) {
         </div>
       )}
     </div>
+  )
+}
+
+export function Slide({ x1, y1, x2, y2, color }) {
+  const vh = window.innerHeight / 100
+  const id = `slide-glow-${color.replace('#', '')}`
+  return (
+    <>
+      <defs>
+        <filter id={id} x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="3" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+      <line
+        x1={x1 * vh} y1={y1 * vh}
+        x2={x2 * vh} y2={y2 * vh}
+        stroke={color}
+        strokeWidth={3}
+        strokeLinecap="round"
+        filter={`url(#${id})`}
+        className={styles['slide-line']}
+      />
+    </>
+  )
+}
+
+export function SlideOverlay({ notes }) {
+  const slides = notes.filter(n => n.slide_to && !n.hit && !n.miss)
+  return (
+    <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', overflow: 'visible', zIndex: 16 }}>
+      {slides.map(src => {
+        const dest = notes.find(n => n.beatTime === src.slide_to.beat && !n.hit && !n.miss)
+        if (!dest) return null
+        const { x: x1, y: y1 } = notePosition(src.string, src.progress)
+        const { x: x2, y: y2 } = notePosition(src.string, dest.progress)
+        return <Slide key={src.id} x1={x1} y1={y1} x2={x2} y2={y2} color="white" />
+      })}
+    </svg>
   )
 }
 

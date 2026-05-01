@@ -336,6 +336,13 @@ background-attachment: fixed;
   text-shadow: 3px 3px 0px #475dbf;
 }
 
+/* Slide Line */
+.slide-line {
+  opacity: 0.9;
+  stroke-width: 3px;
+  stroke-linecap: round;
+}
+
 /* Streak Meter */
 .streak-meter {
   position: fixed;
@@ -647,7 +654,7 @@ background-attachment: fixed;
 .note {
   width: 12vh;
   transform: translate(-50%, -50%);
-  z-index: 15;
+  z-index: 17;
   transition: left 17ms linear, top 17ms linear;
 }
 
