@@ -16,6 +16,7 @@ GUITAR_STRINGS_ENCODED = {
     'B4': 'B',
     'E5': 'E_HIGH',
 }
+ENCODED_TO_GUITAR = {v: k for k, v in GUITAR_STRINGS_ENCODED.items()}
 
 TYPE_BEATS = {
     'whole': 4,
@@ -60,6 +61,10 @@ class Note:
         if string is None:
             return None
         return self._semitone() - Note.from_str(string)._semitone()
+
+    def getFretOnString(self, string_name: str) -> int | None:
+        fret = self._semitone() - Note.from_str(string_name)._semitone()
+        return fret if 0 <= fret <= 20 else None
 
     # string which note should be played on
     def getString(self) -> str | None:
@@ -202,6 +207,7 @@ def parse_song(file: BytesIO, allow_unplayable: bool = False) -> tuple[Song, int
                         slide_starts.append(num)
 
             is_slide_stop = False
+            forced_fret = None
             for num in slide_stops:
                 if num in pending_slides:
                     src_idx = pending_slides.pop(num)
@@ -209,6 +215,15 @@ def parse_song(file: BytesIO, allow_unplayable: bool = False) -> tuple[Song, int
                     if src["string"] == encoded_string:
                         src["slide_start"] = True
                         is_slide_stop = True
+                    else:
+                        # destination is on a different string — try to force it onto source string
+                        src_string_name = ENCODED_TO_GUITAR[src["string"]]
+                        fret = n.getFretOnString(src_string_name)
+                        if fret is not None:
+                            encoded_string = src["string"]
+                            forced_fret = fret
+                            src["slide_start"] = True
+                            is_slide_stop = True
 
             # grace notes act as slide sources but aren't real notes
             if is_grace:
@@ -221,7 +236,7 @@ def parse_song(file: BytesIO, allow_unplayable: bool = False) -> tuple[Song, int
             output_note = {
                 'beat_time': curr_time,
                 'string': encoded_string,
-                'fret': n.getFret(),
+                'fret': forced_fret if forced_fret is not None else n.getFret(),
             }
             if is_slide_stop:
                 output_note["slide_stop"] = True
