@@ -78,6 +78,7 @@ export default function Lesson() {
 
 function LessonGame({ onRetry }) {
   const { fetchUser } = useAuth()
+  const [isStereo, setIsStereo] = useState(false)
   // contains the tile number, instrument, and level number
   const [searchParams] = useSearchParams()
   const [songName, setSongName] = useState('')
@@ -422,6 +423,10 @@ function LessonGame({ onRetry }) {
 
   useEffect(() => {
     function handleKeyDown(e) {
+      if (e.code === 'KeyC') {
+        setIsStereo(prev => !prev)
+        return
+      }
       if (e.code !== 'Space') return
       if (reviewModeRef.current) return
       processInput(null)
@@ -528,43 +533,47 @@ function LessonGame({ onRetry }) {
   }, [gameOver])
 
   return (
-    <div className="lesson-active">
+    <div className={['lesson-active', isStereo ? styles['stereo-mode'] : ''].filter(Boolean).join(' ')}>
       <canvas ref={confettiCanvasRef} className={styles['confetti-canvas']} />
       <ScreenBlur show={showBlur} />
       {isPaused && <PauseMenu show={showPauseMenu} progress={progress} levelNum={levelNum} />}
-      <CountDown num={countdown} />
-      <StreakMeter rotation={streakRot} fadeHUD={fadeHUD} />
-      <BpmControl bpm={bpm} updateBpm={updateBpm} fadeHUD={fadeHUD} />
-      <SongTitleBanner title={songName.toUpperCase()} gameOver={showBlur} />
-      <div className={[styles['seek-bar'], fadeHUD ? styles['fade-hud'] : ''].filter(Boolean).join(' ')}>
-        <SeekBar
-          progress={progress}
-          onSeek={seekTo}
-          pause={pause}
-          unpause={unpause}
-          updateHistory={updateHistory}
-          disabled={gameOver && !reviewMode}
-          errorMarkers={inputHistory.current
-            .filter(e => e.type === 'off-beat' || e.type === 'miss')
-            .map(e => e.progress)}
-        />
-      </div>
-      <PickbotButton gameOver={showBlur} />
-      <PauseButton
-        isPaused={showPauseMenu}
-        fadeHUD={fadeHUD}
-        handleClick={() => {
-          if (gameOver && !reviewMode) return
-          if (showPauseMenu) {
-            setShowPauseMenu(false)
-            unpause()
-          } else {
-            setShowPauseMenu(true)
-            pause()
-          }
-        }}
-      />
-      <Score score={score} fadeHUD={fadeHUD} />
+      {!isStereo && (
+        <>
+          <CountDown num={countdown} />
+          <StreakMeter rotation={streakRot} fadeHUD={fadeHUD} />
+          <BpmControl bpm={bpm} updateBpm={updateBpm} fadeHUD={fadeHUD} />
+          <SongTitleBanner title={songName.toUpperCase()} gameOver={showBlur} />
+          <div className={[styles['seek-bar'], fadeHUD ? styles['fade-hud'] : ''].filter(Boolean).join(' ')}>
+            <SeekBar
+              progress={progress}
+              onSeek={seekTo}
+              pause={pause}
+              unpause={unpause}
+              updateHistory={updateHistory}
+              disabled={gameOver && !reviewMode}
+              errorMarkers={inputHistory.current
+                .filter(e => e.type === 'off-beat' || e.type === 'miss')
+                .map(e => e.progress)}
+            />
+          </div>
+          <PickbotButton gameOver={showBlur} />
+          <PauseButton
+            isPaused={showPauseMenu}
+            fadeHUD={fadeHUD}
+            handleClick={() => {
+              if (gameOver && !reviewMode) return
+              if (showPauseMenu) {
+                setShowPauseMenu(false)
+                unpause()
+              } else {
+                setShowPauseMenu(true)
+                pause()
+              }
+            }}
+          />
+          <Score score={score} fadeHUD={fadeHUD} />
+        </>
+      )}
       <FinalScore score={score} show={showFinalScore} />
       {showStars && <div className={styles['gameover-stars']}><LessonStars stars={starRating} /></div>}
       
@@ -579,26 +588,44 @@ function LessonGame({ onRetry }) {
         </div>
       )}
       <BackToHomeButton show={showBackToHome} />
-      <div className={styles['lesson-stage']}>
-        <img className={[styles['layer-board'], fadeBoard ? styles['fade-frets'] : ''].filter(Boolean).join(' ')} src={Board} alt="Board" />
-        <img className={[styles['layer-frame'], fadeFrets ? styles['fade-frets'] : ''].filter(Boolean).join(' ')} src={NeonFrame} alt="Neon Board Frame" />
-        <img className={[styles['layer-strings'], fadeStrings ? styles['fade-strings-letters'] : ''].filter(Boolean).join(' ')} src={Strings} alt="Strings" />
-        <img className={[styles['layer-string-names'], fadeStrings ? styles['fade-strings-letters'] : ''].filter(Boolean).join(' ')} src={StringNames} alt="String Names" />
+      <div className={isStereo ? styles['stereo-container'] : ''}>
+        {[0, 1].slice(0, isStereo ? 2 : 1).map(eye => (
+          <div key={eye} className={[styles['lesson-stage'], isStereo ? (eye === 0 ? styles['right-eye'] : styles['left-eye']) : ''].filter(Boolean).join(' ')}>
+            <StageLayers fadeBoard={fadeBoard} fadeFrets={fadeFrets} fadeStrings={fadeStrings} eye={isStereo ? eye : null} />
 
-        <SlideOverlay notes={notes} />
-        {notes.map(note => (
-          <Note
-            key={note.id}
-            string={note.string}
-            fret={note.fret}
-            progress={note.progress}
-            miss={note.miss}
-            hit={note.hit}
-            fadeFrets={fadeFrets}
-          />
+            <SlideOverlay notes={notes} eye={isStereo ? eye : null} />
+            {notes.map(note => (
+              <Note
+                key={note.id}
+                string={note.string}
+                fret={note.fret}
+                progress={note.progress}
+                miss={note.miss}
+                hit={note.hit}
+                fadeFrets={fadeFrets}
+                eye={isStereo ? eye : null}
+              />
+            ))}
+          </div>
         ))}
       </div>
     </div>
+  )
+}
+
+export function StageLayers({ fadeBoard, fadeFrets, fadeStrings, eye }) {
+  // Keep background at zero-disparity (the screen plane) 
+  // so it acts as the stable reference for the strings
+  const dx = 0 
+  const style = { transform: `translateX(${dx}vh)` }
+
+  return (
+    <>
+      <img className={[styles['layer-board'], fadeBoard ? styles['fade-frets'] : ''].filter(Boolean).join(' ')} style={style} src={Board} alt="Board" />
+      <img className={[styles['layer-frame'], fadeFrets ? styles['fade-frets'] : ''].filter(Boolean).join(' ')} style={style} src={NeonFrame} alt="Neon Board Frame" />
+      <img className={[styles['layer-strings'], fadeStrings ? styles['fade-strings-letters'] : ''].filter(Boolean).join(' ')} style={style} src={Strings} alt="Strings" />
+      <img className={[styles['layer-string-names'], fadeStrings ? styles['fade-strings-letters'] : ''].filter(Boolean).join(' ')} style={style} src={StringNames} alt="String Names" />
+    </>
   )
 }
 
@@ -632,9 +659,22 @@ export function PickbotButton({ gameOver }) {
   )
 }
 
-export function Slide({ x1, y1, x2, y2, color }) {
+export function Slide({ x1, y1, x2, y2, color, eye }) {
   const vh = window.innerHeight / 100
   const id = `slide-glow-${color.replace('#', '')}`
+  
+  // Cross-eye stereoscopy disparity
+  // eye 0 = Right Eye (rendered on left side), eye 1 = Left Eye (rendered on right side)
+  const getDisparity = (y) => {
+    if (eye === null) return 0
+    // Cross-eye: Right eye (eye 0) must see left shift, Left eye (eye 1) must see right shift
+    const depth = (y / 91) * 1.5
+    return (eye === 0 ? -1 : 1) * depth
+  }
+
+  const dx1 = getDisparity(y1)
+  const dx2 = getDisparity(y2)
+
   return (
     <>
       <defs>
@@ -648,8 +688,8 @@ export function Slide({ x1, y1, x2, y2, color }) {
         </filter>
       </defs>
       <line
-        x1={x1 * vh} y1={y1 * vh}
-        x2={x2 * vh} y2={y2 * vh}
+        x1={(x1 + dx1) * vh} y1={y1 * vh}
+        x2={(x2 + dx2) * vh} y2={y2 * vh}
         stroke={color}
         strokeWidth={3}
         strokeLinecap="round"
@@ -660,7 +700,7 @@ export function Slide({ x1, y1, x2, y2, color }) {
   )
 }
 
-export function SlideOverlay({ notes }) {
+export function SlideOverlay({ notes, eye }) {
   const stops = notes.filter(n => n.slide_stop && !n.hit && !n.miss)
   return (
     <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', overflow: 'visible', zIndex: 16 }}>
@@ -669,7 +709,7 @@ export function SlideOverlay({ notes }) {
         if (unhitStart) return null
         const { x: x1, y: y1 } = notePosition(stop.string, 1.0)
         const { x: x2, y: y2 } = notePosition(stop.string, stop.progress)
-        return <Slide key={stop.id} x1={x1} y1={y1} x2={x2} y2={y2} color="white" />
+        return <Slide key={stop.id} x1={x1} y1={y1} x2={x2} y2={y2} color="white" eye={eye} />
       })}
     </svg>
   )
@@ -849,7 +889,7 @@ string: string path note takes ['E', 'A', 'D', 'G', 'B', 'E_HIGH']
 fret: fret number from 1 - 5 (for now)
 glowing: use glowing or non glowing image
 */
-export function Note({ progress, string, fret, miss, hit }) {
+export function Note({ progress, string, fret, miss, hit, eye }) {
   let string_filename = string;
   if (string == 'E_HIGH') {
     string_filename = "E2";
@@ -875,10 +915,14 @@ export function Note({ progress, string, fret, miss, hit }) {
   const currX = xStart + (xEnd - xStart) * progress
   const currY = yStart + (yEnd - yStart) * progress
   
+  // Cross-eye: Right eye (eye 0) must see left shift, Left eye (eye 1) must see right shift
+  const depth = progress * 1.5 
+  const dx = eye === null ? 0 : (eye === 0 ? -1 : 1) * depth
+  
   const missImgPath = `../../assets/Lesson Page Assets/Notes/${string_filename}/X ${string_filename}.png`;
   const normalImgPath = `../../assets/Lesson Page Assets/Notes/${string_filename}/${fret}.png`;
   const glowImgPath = `../../assets/Lesson Page Assets/Notes/${string_filename}/${fret} Glow.png`;
-  const pos = { position: 'absolute', left: `${currX}vh`, top: `${currY}vh` }
+  const pos = { position: 'absolute', left: `${currX + dx}vh`, top: `${currY}vh` }
 
   if (miss) {
     return <img src={noteImages[missImgPath]} className={[styles['note'], styles['miss']].join(' ')} style={pos} />

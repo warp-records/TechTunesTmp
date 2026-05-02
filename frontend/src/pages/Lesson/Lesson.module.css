@@ -715,6 +715,35 @@ assets got fucked up and for some reason glowing note is 4x as big
   place-items: center;
 }
 
+.stereo-container {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  background: black;
+  z-index: 10;
+}
+
+.stereo-container .lesson-stage {
+  position: relative;
+  top: auto;
+  left: auto;
+  transform: scale(0.65);
+  margin: 0 -15vw;
+}
+
+.stereo-mode .pickbot-button,
+.stereo-mode .streak-meter,
+.stereo-mode .score,
+.stereo-mode .bpm-control,
+.stereo-mode .song-title,
+.stereo-mode .seek-bar,
+.stereo-mode .pause-play-button {
+  display: none !important;
+}
+
+
 .lesson-stage img {
   grid-area: 1 / 1;
   max-width: none;
