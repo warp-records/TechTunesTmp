@@ -419,6 +419,17 @@ def is_admin(user_id: int = Depends(get_current_user), db: Session = Depends(get
     if not user or not user.admin:
         raise HTTPException(status_code=403, detail="Forbidden")
 
+def _generate_license_key() -> str:
+    rand = secrets.token_bytes(11)
+    mac = hmac.new(LICENSE_SECRET.encode(), rand, hashlib.sha256).digest()[:4]
+    raw = rand + mac
+    encoded = base64.b32encode(raw).decode()
+    return f"{encoded[0:4]}-{encoded[4:8]}-{encoded[8:12]}-{encoded[12:16]}-{encoded[16:20]}-{encoded[20:24]}"
+
+@app.post("/api/generate_invite_key", tags=["admin"])
+def generate_invite_key(_: None = Depends(is_admin)):
+    return { "key": _generate_license_key() }
+
 class BanRequest(BaseModel):
     ban_user_id: int
     ban_time: datetime

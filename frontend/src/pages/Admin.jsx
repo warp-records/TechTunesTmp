@@ -31,6 +31,7 @@ export default function Admin() {
         <h1 className={styles['welcome']}>Welcome, {username}</h1>
         <div className={styles['grid']}>
           <AddSongCard />
+          <InviteKeyCard />
           <DashCard
             title="Assign Lesson"
             description="Create a new lesson for students using a song from the song database"
@@ -201,6 +202,52 @@ function AddSongCard() {
       {status === 'success' && warnMsg && (
         <p className={styles['upload-warn']}>{warnMsg}</p>
       )}
+    </div>
+  )
+}
+
+function InviteKeyCard() {
+  const [key, setKey] = useState(null)
+  const [copied, setCopied] = useState(false)
+  const [loading, setLoading] = useState(false)
+
+  async function generate() {
+    setLoading(true)
+    const token = localStorage.getItem('token')
+    const res = await fetch('/api/generate_invite_key', {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + token },
+    })
+    const data = await res.json()
+    setKey(data.key)
+    setLoading(false)
+    setCopied(false)
+  }
+
+  function copy() {
+    navigator.clipboard.writeText(key)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  return (
+    <div className={styles['card']}>
+      <div className={styles['card-icon']}>🔑</div>
+      <h2 className={styles['card-title']}>Invite Key</h2>
+      <p className={styles['card-desc']}>Generate a one-time invite key for a new user</p>
+      {key && (
+        <div className={styles['invite-key']} onClick={copy} title="Click to copy">
+          {key}
+          <span className={styles['invite-copy']}>{copied ? '✔ Copied' : 'Copy'}</span>
+        </div>
+      )}
+      <button
+        className={[styles['card-btn'], styles['btn-default']].join(' ')}
+        onClick={generate}
+        disabled={loading}
+      >
+        {loading ? 'Generating...' : 'Generate Key'}
+      </button>
     </div>
   )
 }

@@ -29,6 +29,30 @@
   100% { opacity: 0; }
 }
 
+.invite-key {
+  font-family: monospace;
+  font-size: 0.85rem;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 10px 12px;
+  word-break: break-all;
+  cursor: pointer;
+  color: #ccc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.invite-copy {
+  font-size: 0.75rem;
+  color: #888;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
 .dashboard {
   max-width: 900px;
   margin: 0 auto;
