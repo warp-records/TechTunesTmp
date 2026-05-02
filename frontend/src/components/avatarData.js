@@ -3,7 +3,7 @@ const avatars = import.meta.glob('../assets/Avatar/Avatar[0-9].png', { eager: tr
 export const avatarList = Object.values(avatars)
 
 // plain skins are free; anything else requires premium
-export const PLAIN_SKINS = new Set(['yellow', 'purple', 'white', 'green', 'blue', 'orange', 'pink'])
+export const PLAIN_SKINS = new Set(['yellow', 'purple', 'white', 'red', 'green', 'blue', 'orange', 'pink'])
 
 export const DEFAULT_SKIN = 'white'
 
@@ -12,6 +12,7 @@ export const TORSO_COLORS = [
   { name: 'yellow', hex: '#FACF43', glowClass: 'glow-yellow' },
   { name: 'purple', hex: '#6924CF', glowClass: 'glow-purple' },
   { name: 'white',  hex: '#FFFFFF', glowClass: 'glow-white' },
+  { name: 'red',    hex: '#EE0940', glowClass: 'glow-red' },
   { name: 'green',  hex: '#32CD32', glowClass: 'glow-green' },
   { name: 'blue',   hex: '#1353C1', glowClass: 'glow-blue' },
   { name: 'orange', hex: '#FF8C00', glowClass: 'glow-orange' },
