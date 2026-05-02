@@ -6,7 +6,7 @@ import styles from './Create.module.css'
 import Avatar from '../../components/Avatar'
 import TutorialPopup, { ArrowIndicator } from '../../components/TutorialPopup'
 import { useTutorial } from '../../components/tutorial'
-import { avatarList, serializeAvatar, resolveBodyBg, TORSO_COLORS } from '../../components/avatarData'
+import { avatarList, serializeAvatar, resolveBodyBg, TORSO_COLORS, isPremiumSkin, DEFAULT_SKIN } from '../../components/avatarData'
 import { eyeAssets, mouthAssets, accessoryAssets, bodyTextureAssets } from '../../assetRegistry'
 import eyesBtn from '../../assets/DressingRoom/Dressing/Eyes Button.png'
 import mouthBtn from '../../assets/DressingRoom/Dressing/Mouth Button.png'
@@ -25,7 +25,7 @@ export default function PickbotEdit() {
   const prevForm = slideDir === 'right'
     ? (form - 1 + avatarList.length) % avatarList.length
     : (form + 1) % avatarList.length
-  const [bodyBg, setBodyBg] = useState({ isTexture: false, colorIdx: 3 })
+  const [bodyBg, setBodyBg] = useState(DEFAULT_SKIN)
   const [activeItems, setActiveItems] = useState({})
   const [isPremium, setIsPremium] = useState(false)
   const [premiumPopupVisible, setPremiumPopupVisible] = useState(false)
@@ -112,11 +112,11 @@ export default function PickbotEdit() {
       </div>
       <div className={styles['action-buttons']}>
         <button
-          className={[styles['save-button'], bodyBg.isTexture && !isPremium ? styles['save-button-locked'] : '', tutorialIndex === 7 ? styles['tutorial-glow-save'] : ''].join(' ')}
-          disabled={bodyBg.isTexture && !isPremium}
+          className={[styles['save-button'], isPremiumSkin(bodyBg) && !isPremium ? styles['save-button-locked'] : '', tutorialIndex === 7 ? styles['tutorial-glow-save'] : ''].join(' ')}
+          disabled={isPremiumSkin(bodyBg) && !isPremium}
           onClick={saveAvatar}
         >Save</button>
-        <button className={styles['reset-button']} onClick={() => { setActiveItems({}); setForm(0); setBodyBg({ isTexture: false, colorIdx: 3 }); } }>
+        <button className={styles['reset-button']} onClick={() => { setActiveItems({}); setForm(0); setBodyBg(DEFAULT_SKIN); } }>
           Reset
         </button>
         <button className={styles['tutorial-button']} onClick={startTutorial}>?</button>
@@ -254,7 +254,7 @@ export function BodyTexturePicker({ setBodyBg, isPremium, onPremiumRequired, onP
     (rotationValue) => {
       const { color, idx } = getColorForRotation(rotationValue)
       setSelectedColor(color)
-      setBodyBg({ isTexture: false, colorIdx: idx })
+      setBodyBg(color.name)
       onPremiumDismissed?.()
     },
     [getColorForRotation, setBodyBg]
@@ -392,7 +392,7 @@ export function BodyTexturePicker({ setBodyBg, isPremium, onPremiumRequired, onP
               key={name}
               className={styles['texture-cell']}
               style={{ backgroundImage: `url(${url})` }}
-              onClick={() => { setBodyBg({ isTexture: true, bgSrc: name }); if (!isPremium) onPremiumRequired(); }}
+              onClick={() => { setBodyBg(name); if (!isPremium) onPremiumRequired(); }}
             >
               {!isPremium && <img src={padlock} className={styles['texture-padlock']} alt="locked" />}
             </div>

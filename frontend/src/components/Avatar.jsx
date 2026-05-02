@@ -3,7 +3,7 @@ import Draggable from 'react-draggable'
 
 import styles from './Avatar.module.css'
 import { assetRegistry } from '../assetRegistry'
-import { avatarList } from './avatarData'
+import { avatarList, PLAIN_SKINS } from './avatarData'
 
 const avatarMasks = import.meta.glob('../assets/Avatar/Avatar[0-9]Mask.png', { eager: true, import: 'default' })
 
@@ -78,7 +78,18 @@ export default function Avatar({ form, activeItems = {}, bodyTexture, onAccessor
       <div className={styles['body-image']} style={{backgroundImage: `url(${avatarList[form]})`}}></div>
       <div className={styles['body-color-layer']} style={{
         ...(bodyTextures[bodyTexture]
-          ? { backgroundImage: `url(${bodyTextures[bodyTexture]})`, backgroundSize: 'cover' }
+          ? PLAIN_SKINS.has(bodyTexture)
+            // plain skins: scale image to match mask's contain-sizing so characters align
+            ? {
+                backgroundImage: `url(${bodyTextures[bodyTexture]})`,
+                backgroundSize: 'contain',
+                backgroundPosition: 'bottom center',
+                backgroundRepeat: 'no-repeat',
+                WebkitMaskSize: 'contain', maskSize: 'contain',
+                WebkitMaskPosition: 'bottom center', maskPosition: 'bottom center',
+              }
+            // patterns fill the whole masked area
+            : { backgroundImage: `url(${bodyTextures[bodyTexture]})`, backgroundSize: 'cover' }
           : { background: bodyTexture || 'transparent' }
         ),
         WebkitMaskImage: `url(${maskList[form]})`,

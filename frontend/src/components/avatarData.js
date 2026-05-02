@@ -2,25 +2,29 @@ const avatars = import.meta.glob('../assets/Avatar/Avatar[0-9].png', { eager: tr
 
 export const avatarList = Object.values(avatars)
 
+// plain skins are free; anything else requires premium
+export const PLAIN_SKINS = new Set(['yellow', 'purple', 'white', 'green', 'blue', 'orange', 'pink'])
+
+export const DEFAULT_SKIN = 'white'
+
+// colors used by the wheel UI — hex/glowClass only, no gradient needed
 export const TORSO_COLORS = [
-  { name: 'yellow', hex: '#FFD700', gradient: 'linear-gradient(135deg, #FFFF66, #FFD000)', glowClass: 'glow-yellow' },
-  { name: 'teal', hex: '#008B8B', gradient: 'linear-gradient(135deg, #00FFFF, #005555)', glowClass: 'glow-teal' },
-  { name: 'purple', hex: '#8A2BE2', gradient: 'linear-gradient(135deg, #DA70D6, #2E0854)', glowClass: 'glow-purple' },
-  { name: 'white', hex: '#D0D0D0', gradient: 'linear-gradient(135deg, #FFFFFF 50%, #A0C4FF)', glowClass: 'glow-white' },
-  { name: 'red', hex: '#FF2200', gradient: 'linear-gradient(135deg, #FF6666, #8B0000)', glowClass: 'glow-red' },
-  { name: 'green', hex: '#32CD32', gradient: 'linear-gradient(135deg, #90EE90, #006400)', glowClass: 'glow-green' },
-  { name: 'blue', hex: '#4169E1', gradient: 'linear-gradient(135deg, #6495ED, #0000CD)', glowClass: 'glow-blue' },
-  { name: 'orange', hex: '#FF8C00', gradient: 'linear-gradient(135deg, #FFB300, #FF6600)', glowClass: 'glow-orange' },
-  { name: 'pink', hex: '#FF69B4', gradient: 'linear-gradient(135deg, #FFB6C1, #FF1493)', glowClass: 'glow-pink' },
+  { name: 'yellow', hex: '#FFD700', glowClass: 'glow-yellow' },
+  { name: 'purple', hex: '#8A2BE2', glowClass: 'glow-purple' },
+  { name: 'white', hex: '#D0D0D0', glowClass: 'glow-white' },
+  { name: 'green', hex: '#32CD32', glowClass: 'glow-green' },
+  { name: 'blue', hex: '#4169E1', glowClass: 'glow-blue' },
+  { name: 'orange', hex: '#FF8C00', glowClass: 'glow-orange' },
+  { name: 'pink', hex: '#FF69B4', glowClass: 'glow-pink' },
 ]
 
-const WHITE_IDX = 3
+export function isPremiumSkin(skinName) {
+  return !PLAIN_SKINS.has(skinName)
+}
 
-// bodyBg: { isTexture: bool, colorIdx?: number, bgSrc?: string }
-export function resolveBodyBg(bodyBg) {
-  if (!bodyBg) return TORSO_COLORS[WHITE_IDX].gradient
-  if (bodyBg.isTexture) return bodyBg.bgSrc
-  return TORSO_COLORS[bodyBg.colorIdx]?.gradient ?? TORSO_COLORS[WHITE_IDX].gradient
+// bodyBg is now just a skin name string
+export function resolveBodyBg(skinName) {
+  return skinName || DEFAULT_SKIN
 }
 
 export function serializeAvatar({ form, bodyBg, activeItems }) {

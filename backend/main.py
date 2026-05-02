@@ -63,14 +63,11 @@ class RegisterRequest(BaseModel):
     password: str
     license_key: str
     
-class BodyBg(BaseModel):
-    isTexture: bool
-    colorIdx: int | None = None
-    bgSrc: str | None = None
+PLAIN_SKINS = {'yellow', 'purple', 'white', 'green', 'blue', 'orange', 'pink'}
 
 class Avatar(BaseModel):
     form: int
-    bodyBg: BodyBg
+    bodyBg: str  # skin name
     activeItems: dict
 
 # decoy: actual score is transmitted via cache_id on /api/me
@@ -207,7 +204,7 @@ def register(user: RegisterRequest, underage: bool, db: Session = Depends(get_db
     db_avatar = AvatarDB(
         user_id=db_user.id,
         form=0,
-        bodyTexture=json.dumps({"isTexture": False, "colorIdx": 3}),
+        bodyTexture=json.dumps("white"),
         active_items=json.dumps({}),
     )
     db.add(db_avatar)
@@ -248,8 +245,8 @@ def login(user: User, db: Session = Depends(get_db)):
 
 @app.post("/api/save-avatar/", tags=["avatar"])
 def save_avatar(avatar: Avatar, user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
-    if avatar.bodyBg.isTexture and not is_premium(user_id, db):
-        raise HTTPException(status_code=403, detail="Premium required to use textures")
+    if avatar.bodyBg not in PLAIN_SKINS and not is_premium(user_id, db):
+        raise HTTPException(status_code=403, detail="Premium required to use this skin")
         
     db_avatar = db.query(AvatarDB).filter(AvatarDB.user_id == user_id).first()
     # solid colors use a numeric index, textures use a filename string
@@ -258,13 +255,13 @@ def save_avatar(avatar: Avatar, user_id: int = Depends(get_current_user), db: Se
 
     if db_avatar:
         db_avatar.form = avatar.form
-        db_avatar.bodyTexture = json.dumps(avatar.bodyBg.model_dump())
+        db_avatar.bodyTexture = json.dumps(avatar.bodyBg)
         db_avatar.active_items = json.dumps(avatar.activeItems)
     else:
         db_avatar = AvatarDB(
             user_id=user_id,
             form=avatar.form,
-            bodyTexture=json.dumps(avatar.bodyBg.model_dump()),
+            bodyTexture=json.dumps(avatar.bodyBg),
             active_items=json.dumps(avatar.activeItems),
         )
         db.add(db_avatar)
@@ -277,10 +274,13 @@ def get_avatar(user_id: int = Depends(get_current_user), db: Session = Depends(g
     if not db_avatar:
         raise HTTPException(status_code=404, detail="No avatar found")
 
+    raw = json.loads(db_avatar.bodyTexture)
+    body_skin = raw if isinstance(raw, str) else 'white'  # backward compat with old dict format
+
     return {
         "avatar": {
             "form": db_avatar.form,
-            "bodyBg": json.loads(db_avatar.bodyTexture),
+            "bodyBg": body_skin,
             "activeItems": json.loads(db_avatar.active_items),
         }
     }
