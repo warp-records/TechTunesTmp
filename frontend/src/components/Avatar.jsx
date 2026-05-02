@@ -13,19 +13,19 @@ const bodyTextures = Object.fromEntries(
 )
 
 const EYE_POSITIONS = [
-  { top: '50%', left: '57%', width: '90px', height: '45px' },
+  { top: '48%', left: '57%', width: '90px', height: '45px' },
   { top: '50%', left: '56%', width: '80px', height: '40px' },
-  { top: '45%', left: '50%', width: '90px', height: '45px' },
+  { top: '42%', left: '50%', width: '90px', height: '45px' },
   { top: '55%', left: '49%', width: '80px', height: '40px' },
   { top: '55%', left: '50%', width: '80px', height: '40px' },
 ]
 
 const MOUTH_POSITIONS = [
-  { top: '70%', left: 'calc(50%)', width: '60px', height: '30px' },
-  { top: '70%', left: 'calc(50%)', width: '50px', height: '25px' },
-  { top: '65%', left: 'calc(50% - 10px)', width: '60px', height: '30px' },
-  { top: '75%', left: 'calc(50% - 10px)', width: '45px', height: '22px' },
-  { top: '75%', left: 'calc(50% - 12px)', width: '45px', height: '22px' },
+  { top: '70%', left: '50%', width: '60px', height: '30px' },
+  { top: '70%', left: '50%', width: '50px', height: '25px' },
+  { top: '65%', left: '44%', width: '60px', height: '30px' },
+  { top: '75%', left: '44%', width: '45px', height: '22px' },
+  { top: '75%', left: '45%', width: '45px', height: '22px' },
 ]
 
 /**
