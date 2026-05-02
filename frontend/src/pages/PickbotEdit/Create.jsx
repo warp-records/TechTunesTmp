@@ -6,7 +6,7 @@ import styles from './Create.module.css'
 import Avatar from '../../components/Avatar'
 import TutorialPopup, { ArrowIndicator } from '../../components/TutorialPopup'
 import { useTutorial } from '../../components/tutorial'
-import { avatarList, serializeAvatar, resolveBodyBg, TORSO_COLORS, isPremiumSkin, DEFAULT_SKIN } from '../../components/avatarData'
+import { avatarList, serializeAvatar, resolveBodyBg, TORSO_COLORS, isPremiumSkin, DEFAULT_SKIN, PLAIN_SKINS } from '../../components/avatarData'
 import { eyeAssets, mouthAssets, accessoryAssets, bodyTextureAssets } from '../../assetRegistry'
 import eyesBtn from '../../assets/DressingRoom/Dressing/Eyes Button.png'
 import mouthBtn from '../../assets/DressingRoom/Dressing/Mouth Button.png'
@@ -385,9 +385,9 @@ export function BodyTexturePicker({ setBodyBg, isPremium, onPremiumRequired, onP
                style={selectedColor ? { borderTopColor: selectedColor.hex } : {}}></div>
         </div>
       </div>
-      {Object.entries(bodyTextureAssets).length > 0 && (
+      {Object.entries(bodyTextureAssets).filter(([name]) => !/^[^_]+_\d$/.test(name)).length > 0 && (
         <div className={styles['texture-grid']}>
-          {Object.entries(bodyTextureAssets).map(([name, url]) => (
+          {Object.entries(bodyTextureAssets).filter(([name]) => !/^[^_]+_\d$/.test(name)).map(([name, url]) => (
             <div
               key={name}
               className={styles['texture-cell']}

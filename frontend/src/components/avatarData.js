@@ -9,13 +9,13 @@ export const DEFAULT_SKIN = 'white'
 
 // colors used by the wheel UI — hex/glowClass only, no gradient needed
 export const TORSO_COLORS = [
-  { name: 'yellow', hex: '#FFD700', glowClass: 'glow-yellow' },
-  { name: 'purple', hex: '#8A2BE2', glowClass: 'glow-purple' },
-  { name: 'white', hex: '#D0D0D0', glowClass: 'glow-white' },
-  { name: 'green', hex: '#32CD32', glowClass: 'glow-green' },
-  { name: 'blue', hex: '#4169E1', glowClass: 'glow-blue' },
+  { name: 'yellow', hex: '#FACF43', glowClass: 'glow-yellow' },
+  { name: 'purple', hex: '#6924CF', glowClass: 'glow-purple' },
+  { name: 'white',  hex: '#FFFFFF', glowClass: 'glow-white' },
+  { name: 'green',  hex: '#32CD32', glowClass: 'glow-green' },
+  { name: 'blue',   hex: '#1353C1', glowClass: 'glow-blue' },
   { name: 'orange', hex: '#FF8C00', glowClass: 'glow-orange' },
-  { name: 'pink', hex: '#FF69B4', glowClass: 'glow-pink' },
+  { name: 'pink',   hex: '#DF4078', glowClass: 'glow-pink' },
 ]
 
 export function isPremiumSkin(skinName) {

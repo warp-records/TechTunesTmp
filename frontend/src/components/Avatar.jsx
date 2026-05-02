@@ -77,20 +77,18 @@ export default function Avatar({ form, activeItems = {}, bodyTexture, onAccessor
   <div ref={avatarRef} className={styles['avatar-image']}>
       <div className={styles['body-image']} style={{backgroundImage: `url(${avatarList[form]})`}}></div>
       <div className={styles['body-color-layer']} style={{
-        ...(bodyTextures[bodyTexture]
-          ? PLAIN_SKINS.has(bodyTexture)
-            // plain skins: scale image to match mask's contain-sizing so characters align
-            ? {
-                backgroundImage: `url(${bodyTextures[bodyTexture]})`,
-                backgroundSize: 'contain',
-                backgroundPosition: 'bottom center',
-                backgroundRepeat: 'no-repeat',
-                WebkitMaskSize: 'contain', maskSize: 'contain',
-                WebkitMaskPosition: 'bottom center', maskPosition: 'bottom center',
-              }
+        ...(PLAIN_SKINS.has(bodyTexture)
+          // plain skins: per-form image pre-aligned to match the form's mask
+          ? {
+              backgroundImage: `url(${bodyTextures[`${bodyTexture}_${form}`]})`,
+              backgroundSize: 'contain',
+              backgroundPosition: 'bottom center',
+              backgroundRepeat: 'no-repeat',
+            }
+          : bodyTextures[bodyTexture]
             // patterns fill the whole masked area
-            : { backgroundImage: `url(${bodyTextures[bodyTexture]})`, backgroundSize: 'cover' }
-          : { background: bodyTexture || 'transparent' }
+            ? { backgroundImage: `url(${bodyTextures[bodyTexture]})`, backgroundSize: 'cover' }
+            : { background: bodyTexture || 'transparent' }
         ),
         WebkitMaskImage: `url(${maskList[form]})`,
         maskImage: `url(${maskList[form]})`,

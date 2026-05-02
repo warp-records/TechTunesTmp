@@ -630,15 +630,13 @@
     border: 3px solid #000;
     position: relative;
     background: conic-gradient(
-      #FFFF00 0deg 40deg,
-      #008B8B 40deg 80deg,
-      #8A2BE2 80deg 120deg,
-      #FFFFFF 120deg 160deg,
-      #FF0000 160deg 200deg,
-      #32CD32 200deg 240deg,
-      #0000FF 240deg 280deg,
-      #FF8C00 280deg 320deg,
-      #FF69B4 320deg 360deg
+      #FACF43 0deg 51.43deg,
+      #6924CF 51.43deg 102.86deg,
+      #FFFFFF 102.86deg 154.29deg,
+      #32CD32 154.29deg 205.71deg,
+      #1353C1 205.71deg 257.14deg,
+      #FF8C00 257.14deg 308.57deg,
+      #DF4078 308.57deg 360deg
     );
     transition: transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     cursor: grab;
