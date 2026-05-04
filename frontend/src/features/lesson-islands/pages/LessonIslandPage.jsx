@@ -2,6 +2,7 @@ import { useEffect, useCallback, useState, useRef } from 'react'
 import { Link, useParams, useSearchParams, useNavigate } from 'react-router-dom'
 
 import LessonIslandScene from '../components/LessonIslandScene'
+import { resolveBodyBg } from '../../../components/avatarData'
 import DebugTileMapper from '../components/DebugTileMapper'
 import { getLessonIslandScene } from '../config/lessonIslandScenes'
 import TutorialPopup, { ArrowIndicator } from '../../../components/TutorialPopup'
@@ -30,6 +31,15 @@ export default function LessonIslandPage() {
   const scene = getLessonIslandScene(instrument, level)
   const { showTutorial, close: closeTutorial, popupProps: tutorialPopupProps } = useTutorial(TUTORIAL_MESSAGES, 5)
   const [arrowPos, setArrowPos] = useState(null)
+  const [avatarData, setAvatarData] = useState(null)
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (!token) return
+    fetch('/api/get-avatar/', { headers: { Authorization: 'Bearer ' + token } })
+      .then(res => res.ok ? res.json() : null)
+      .then(data => { if (data) setAvatarData(data.avatar) })
+  }, [])
 
   useEffect(() => {
     if (!showTutorial) { setArrowPos(null); return }
@@ -75,7 +85,7 @@ export default function LessonIslandPage() {
 
   return (
     <>
-      <LessonIslandScene scene={scene} assignSongId={assignSongId} onAssignTile={assignSongId ? onAssignTile : null} showTutorial={showTutorial} closeTutorial={closeTutorial} />
+      <LessonIslandScene scene={scene} assignSongId={assignSongId} onAssignTile={assignSongId ? onAssignTile : null} showTutorial={showTutorial} closeTutorial={closeTutorial} avatarData={avatarData} />
       {debug && <DebugTileMapper />}
       {showTutorial && <TutorialPopup {...tutorialPopupProps} />}
       {arrowPos && <ArrowIndicator x={arrowPos.x} y={arrowPos.y} direction="right" />}

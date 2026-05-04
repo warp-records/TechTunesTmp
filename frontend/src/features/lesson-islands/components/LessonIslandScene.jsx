@@ -1,6 +1,8 @@
 import { Link, useNavigate } from 'react-router-dom'
 
 import styles from './LessonIslandScene.module.css'
+import Avatar from '../../../components/Avatar'
+import { resolveBodyBg } from '../../../components/avatarData'
 
 function toPercent(value) {
   return typeof value === 'number' ? `${value}%` : value
@@ -99,7 +101,7 @@ function SceneHotspot({ hotspot, isAssigning, onAssignTile, instrument, level, s
   )
 }
 
-export default function LessonIslandScene({ scene, assignSongId, onAssignTile, showTutorial, closeTutorial }) {
+export default function LessonIslandScene({ scene, assignSongId, onAssignTile, showTutorial, closeTutorial, avatarData }) {
   const sceneStyle = {
     '--lesson-island-page-fill': scene.canvas.pageFill,
     '--lesson-island-stage-fill': scene.canvas.stageFill,
@@ -141,6 +143,19 @@ export default function LessonIslandScene({ scene, assignSongId, onAssignTile, s
           {scene.hotspots?.map((hotspot) => (
             <SceneHotspot key={hotspot.id} hotspot={hotspot} isAssigning={!!assignSongId} onAssignTile={onAssignTile} instrument={scene.instrument} level={scene.level} showTutorial={showTutorial} closeTutorial={closeTutorial} />
           ))}
+
+          {avatarData && (() => {
+            const tile1 = scene.hotspots?.find(h => h.tile_number === 1)
+            if (!tile1) return null
+            return (
+              <div
+                className={styles['scene-avatar']}
+                style={{ left: `${tile1.left + tile1.width / 2}%`, top: `${tile1.top + tile1.height / 2}%` }}
+              >
+                <Avatar form={avatarData.form} activeItems={avatarData.activeItems} bodyTexture={resolveBodyBg(avatarData.bodyBg)} />
+              </div>
+            )
+          })()}
         </div>
       </div>
     </section>

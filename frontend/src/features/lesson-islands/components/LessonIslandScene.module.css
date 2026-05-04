@@ -160,6 +160,15 @@
   pointer-events: none;
 }
 
+.scene-avatar {
+  position: absolute;
+  width: 8%;
+  transform: translate(-50%, -100%);
+  z-index: 25;
+  pointer-events: none;
+  transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1), top 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .lesson-island-scene__sr-only {
   position: absolute;
   width: 1px;
