@@ -294,7 +294,7 @@ background-attachment: fixed;
   height: 100%;
   background: linear-gradient(to right, #1a3fff, #00cfff);
   border-radius: 999px;
-  transition: width 0.15s linear;
+  /*transition: width 0.15s linear;*/
 }
 
 .seek-error-marker {
@@ -318,7 +318,7 @@ background-attachment: fixed;
   border-radius: 50%;
   box-shadow: 0 0 12px 6px #3a7fff, 0 0 28px 12px rgba(58, 127, 255, 0.5);
   will-change: transform;
-  transition: transform 0.15s linear;
+  /*transition: transform 0.15s linear;*/
 }
 
 .song-title-img {
@@ -710,6 +710,8 @@ assets got fucked up and for some reason glowing note is 4x as big
   position: absolute;
   top: 50%;
   left: 50%;
+  width: 100vh;
+  height: 100vh;
   transform: translate(-50%, -50%);
   display: grid;
   place-items: center;
