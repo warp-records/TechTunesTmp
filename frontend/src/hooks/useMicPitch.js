@@ -71,7 +71,12 @@ export function useMicPitch({ onNoteRef } = {}) {
   }, [])
 
   const start = useCallback(async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+    let stream
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+    } catch {
+      return
+    }
     streamRef.current = stream
     const audioCtx = new AudioContext()
     audioCtxRef.current = audioCtx

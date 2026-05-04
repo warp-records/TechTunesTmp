@@ -115,8 +115,6 @@ function LessonGame({ onRetry }) {
           slide_stop: n.slide_stop ?? false,
         }))
         
-        console.log(notes)
-
         songChartRef.current = notes
         setSongName(data.name)
         setReady(true)
@@ -206,7 +204,7 @@ function LessonGame({ onRetry }) {
         if (dist > PLAY_WINDOW || dist >= bestDist) continue
         if (playedNote) {
           const expected = stringFretToNote(note.string, note.fret)
-          console.log(`expected: ${expected?.note}${expected?.octave}, played: ${playedNote.note}${playedNote.octave}`)
+          // console.log(`expected: ${expected?.note}${expected?.octave}, played: ${playedNote.note}${playedNote.octave}`)
           if (!expected || expected.note !== playedNote.note || expected.octave !== playedNote.octave) continue
         }
         bestNote = note
@@ -353,6 +351,10 @@ function LessonGame({ onRetry }) {
       }
 
       const elapsed = rawElapsedTime.current - START_DELAY;
+      
+      // console.log(elapsed)
+      // console.log(songProgress())
+      // console.log(noteTime(currentBeat()))
       
       const chart = songChartRef.current
       // Collect all notes to spawn this frame
