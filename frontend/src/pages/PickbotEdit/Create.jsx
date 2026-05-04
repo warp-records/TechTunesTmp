@@ -1,6 +1,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../App'
 
 import styles from './Create.module.css'
 import Avatar from '../../components/Avatar'
@@ -30,6 +31,8 @@ export default function PickbotEdit() {
   const [isPremium, setIsPremium] = useState(false)
   const [premiumPopupVisible, setPremiumPopupVisible] = useState(false)
   const navigate = useNavigate()
+  const { user } = useAuth()
+  const isBetaTester = user?.beta_tester ?? false
   const { tutorialIndex, showTutorial, start: startTutorial, popupProps: tutorialPopupProps } = useTutorial(TUTORIAL_MESSAGES, 0)
   
   const eyesBtnRef = useRef(null)
@@ -84,7 +87,7 @@ export default function PickbotEdit() {
   
   return (
     <>
-      <ChoiceFrame category={category} setCategory={setCategory} setActiveItems={setActiveItems} setBodyBg={setBodyBg} isPremium={isPremium} onPremiumRequired={() => setPremiumPopupVisible(true)} onPremiumDismissed={() => setPremiumPopupVisible(false)} tutorialIndex={tutorialIndex} eyesBtnRef={eyesBtnRef} firstEyeRef={firstEyeRef} mouthBtnRef={mouthBtnRef} accessoryBtnRef={accessoryBtnRef} bodyBtnRef={bodyBtnRef} />
+      <ChoiceFrame category={category} setCategory={setCategory} setActiveItems={setActiveItems} setBodyBg={setBodyBg} isPremium={isPremium} isBetaTester={isBetaTester} onPremiumRequired={() => setPremiumPopupVisible(true)} onPremiumDismissed={() => setPremiumPopupVisible(false)} tutorialIndex={tutorialIndex} eyesBtnRef={eyesBtnRef} firstEyeRef={firstEyeRef} mouthBtnRef={mouthBtnRef} accessoryBtnRef={accessoryBtnRef} bodyBtnRef={bodyBtnRef} />
       <div className={[styles['premium-popup'], premiumPopupVisible ? styles['premium-popup-visible'] : ''].join(' ')}>
         <p>Go premium to unlock this skin!</p>
         <button onClick={() => navigate('/payment')}>Go Premium</button>
@@ -147,13 +150,15 @@ export default function PickbotEdit() {
  * @param {(color: string|undefined) => void} props.setBodyTexture Body color setter.
  * @returns {JSX.Element}
  */
-export function ChoiceFrame({ category, setCategory, setActiveItems, setBodyBg, isPremium, onPremiumRequired, onPremiumDismissed, tutorialIndex, eyesBtnRef, firstEyeRef, mouthBtnRef, accessoryBtnRef, bodyBtnRef }) {
+const BETA_ACCESSORIES = new Set(["beta badge"])
+
+export function ChoiceFrame({ category, setCategory, setActiveItems, setBodyBg, isPremium, isBetaTester, onPremiumRequired, onPremiumDismissed, tutorialIndex, eyesBtnRef, firstEyeRef, mouthBtnRef, accessoryBtnRef, bodyBtnRef }) {
   const tutorialGlowFor = { 1: 'eye', 3: 'mouth', 4: 'accessory', 5: 'body' }
-  
+
   const categoryAssets = {
     "eye": Object.entries(eyeAssets),
     "mouth": Object.entries(mouthAssets),
-    "accessory": Object.entries(accessoryAssets),
+    "accessory": Object.entries(accessoryAssets).filter(([name]) => !BETA_ACCESSORIES.has(name) || isBetaTester),
   }
   
   const itemsPerRow = {

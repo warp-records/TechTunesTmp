@@ -257,13 +257,9 @@ section {
 .lessons-grid {
     display: grid;
     gap: var(--gap);
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 360px));
+    justify-content: center;
     padding: 8px;
-}
-@media (min-width: 900px) {
-    .lessons-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
 }
 .lesson-card {
     padding: 16px;

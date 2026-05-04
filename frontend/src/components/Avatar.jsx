@@ -12,6 +12,10 @@ const bodyTextures = Object.fromEntries(
   Object.entries(bodyTextureGlobs).map(([path, url]) => [path.split('/').pop().replace(/\.[^.]+$/, ''), url])
 )
 
+const ACCESSORY_SIZE_OVERRIDES = {
+  'beta badge': { width: '60px', height: '60px' },
+}
+
 const EYE_POSITIONS = [
   { top: '48%', left: '57%', width: '90px', height: '45px' },
   { top: '50%', left: '56%', width: '80px', height: '40px' },
@@ -105,10 +109,10 @@ export default function Avatar({ form, activeItems = {}, bodyTexture, onAccessor
         onAccessoryDrag ? (
           <Draggable nodeRef={accessoryRef} position={accessoryPos}
             onStop={handleAccessoryStop}>
-            <div ref={accessoryRef} className={styles['avatar-accessory']} style={{backgroundImage: `url(${accessoryUrl})`}}></div>
+            <div ref={accessoryRef} className={styles['avatar-accessory']} style={{backgroundImage: `url(${accessoryUrl})`, ...ACCESSORY_SIZE_OVERRIDES[accessoryName]}}></div>
           </Draggable>
         ) : (
-          <div className={styles['avatar-accessory']} style={{backgroundImage: `url(${accessoryUrl})`, transform: `translate(${accessoryPos.x}px, ${accessoryPos.y}px)`}}></div>
+          <div className={styles['avatar-accessory']} style={{backgroundImage: `url(${accessoryUrl})`, transform: `translate(${accessoryPos.x}px, ${accessoryPos.y}px)`, ...ACCESSORY_SIZE_OVERRIDES[accessoryName]}}></div>
         )
       )}
   </div>

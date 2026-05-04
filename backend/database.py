@@ -16,6 +16,8 @@ class UserDB(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String, unique=True, nullable=False)
     password_hash = Column(String, nullable=False)
+    join_date = Column(DateTime, nullable=False)
+    beta_tester = Column(Boolean, nullable=False)
     stripe_customer_id = Column(String, nullable=True)
     subscription_end = Column(DateTime, nullable=True)
     auto_donate = Column(String, nullable=True)

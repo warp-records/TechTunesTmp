@@ -200,19 +200,19 @@ export default function Userpage() {
         total={25}
         />
         
-        <LessonCard 
+        {/* <LessonCard 
         instrument={"Piano"}
         emoji={"🎹"}
         completed={2}
         total={25}
-        />
+        />*/}
         
-        <LessonCard 
+        {/* <LessonCard 
         instrument={"Drums"}
         emoji={"🥁"}
         completed={15}
         total={25}
-        />
+        />*/}
       </div>
     </section>
     

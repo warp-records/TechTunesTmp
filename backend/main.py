@@ -64,6 +64,7 @@ class RegisterRequest(BaseModel):
     license_key: str
     
 PLAIN_SKINS = {'yellow', 'purple', 'white', 'green', 'blue', 'orange', 'pink'}
+BETA_ACCESSORIES = {'beta badge'}
 
 class Avatar(BaseModel):
     form: int
@@ -158,6 +159,7 @@ def me(request: Request, user_id: int = Depends(get_current_user), db: Session =
             "restricted": user.restricted,
             "banned": user.banned,
             "ban_message": user.ban_message,
+            "beta_tester": user.beta_tester,
         }
     else:
         raise HTTPException(status_code=404, detail="User not found")
@@ -190,7 +192,9 @@ def register(user: RegisterRequest, underage: bool, db: Session = Depends(get_db
         username=user.username,
         password_hash=hashed.decode(),
         underage=underage,
-        admin=False
+        admin=False,
+        join_date=datetime.utcnow(),
+        beta_tester=False,
     )
     db.add(db_user)
     db.flush()
@@ -247,6 +251,12 @@ def login(user: User, db: Session = Depends(get_db)):
 def save_avatar(avatar: Avatar, user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
     if avatar.bodyBg not in PLAIN_SKINS and not is_premium(user_id, db):
         raise HTTPException(status_code=403, detail="Premium required to use this skin")
+
+    accessory = avatar.activeItems.get("accessory") if isinstance(avatar.activeItems, dict) else None
+    if isinstance(accessory, dict) and accessory.get("name") in BETA_ACCESSORIES:
+        user_db = db.query(UserDB).filter(UserDB.id == user_id).first()
+        if not user_db or not user_db.beta_tester:
+            raise HTTPException(status_code=403, detail="Beta tester exclusive accessory")
         
     db_avatar = db.query(AvatarDB).filter(AvatarDB.user_id == user_id).first()
     # solid colors use a numeric index, textures use a filename string
