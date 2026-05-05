@@ -74,6 +74,14 @@ class NonProfitDB(Base):
     balance            = Column(Integer, nullable=False, default=0)
     stripe_bank_token   = Column(String, nullable=True)
 
+class ProgressDB(Base):
+    __tablename__ = "progress"
+
+    user_id       = Column(Integer, ForeignKey("users.id"), primary_key=True)
+    instrument    = Column(String, primary_key=True)
+    level         = Column(String, primary_key=True)
+    unlocked_tile = Column(Integer, nullable=False, default=1)
+
 class UsedKeyDB(Base):
     __tablename__ = "used_keys"
 
