@@ -32,14 +32,24 @@ export default function LessonIslandPage() {
   const { showTutorial, close: closeTutorial, popupProps: tutorialPopupProps } = useTutorial(TUTORIAL_MESSAGES, 5)
   const [arrowPos, setArrowPos] = useState(null)
   const [avatarData, setAvatarData] = useState(null)
+  const [currentTile, setCurrentTile] = useState(null)
 
   useEffect(() => {
     const token = localStorage.getItem('token')
     if (!token) return
+
     fetch('/api/get-avatar/', { headers: { Authorization: 'Bearer ' + token } })
       .then(res => res.ok ? res.json() : null)
       .then(data => { if (data) setAvatarData(data.avatar) })
-  }, [])
+
+    fetch('/api/get_progress', { headers: { Authorization: 'Bearer ' + token } })
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (!data) return
+        const row = data.progress.find(p => p.instrument === instrument && p.level === level)
+        if (row) setCurrentTile(row.unlocked_tile)
+      })
+  }, [instrument, level])
 
   useEffect(() => {
     if (!showTutorial) { setArrowPos(null); return }
@@ -85,7 +95,7 @@ export default function LessonIslandPage() {
 
   return (
     <>
-      <LessonIslandScene scene={scene} assignSongId={assignSongId} onAssignTile={assignSongId ? onAssignTile : null} showTutorial={showTutorial} closeTutorial={closeTutorial} avatarData={avatarData} />
+      <LessonIslandScene scene={scene} assignSongId={assignSongId} onAssignTile={assignSongId ? onAssignTile : null} showTutorial={showTutorial} closeTutorial={closeTutorial} avatarData={avatarData} currentTile={currentTile} />
       {debug && <DebugTileMapper />}
       {showTutorial && <TutorialPopup {...tutorialPopupProps} />}
       {arrowPos && <ArrowIndicator x={arrowPos.x} y={arrowPos.y} direction="right" />}

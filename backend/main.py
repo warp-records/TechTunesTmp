@@ -36,7 +36,7 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 from sqlalchemy.orm import Session
-from database import SessionLocal, init_db, UserDB, SessionDB, AvatarDB, SongDB, LessonTileDB, NonProfitDB, UsedKeyDB
+from database import SessionLocal, init_db, UserDB, SessionDB, AvatarDB, SongDB, LessonTileDB, NonProfitDB, UsedKeyDB, ProgressDB
 
 from datetime import datetime
 import stripe
@@ -293,6 +293,16 @@ def get_avatar(user_id: int = Depends(get_current_user), db: Session = Depends(g
             "bodyBg": body_skin,
             "activeItems": json.loads(db_avatar.active_items),
         }
+    }
+
+@app.get("/api/get_progress")
+def get_progress(user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
+    rows = db.query(ProgressDB).filter(ProgressDB.user_id == user_id).all()
+    return {
+        "progress": [
+            {"instrument": r.instrument, "level": r.level, "unlocked_tile": r.unlocked_tile}
+            for r in rows
+        ]
     }
 
 def is_premium(user_id: int, db: Session):

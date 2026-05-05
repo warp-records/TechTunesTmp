@@ -101,7 +101,7 @@ function SceneHotspot({ hotspot, isAssigning, onAssignTile, instrument, level, s
   )
 }
 
-export default function LessonIslandScene({ scene, assignSongId, onAssignTile, showTutorial, closeTutorial, avatarData }) {
+export default function LessonIslandScene({ scene, assignSongId, onAssignTile, showTutorial, closeTutorial, avatarData, currentTile }) {
   const sceneStyle = {
     '--lesson-island-page-fill': scene.canvas.pageFill,
     '--lesson-island-stage-fill': scene.canvas.stageFill,
@@ -144,13 +144,13 @@ export default function LessonIslandScene({ scene, assignSongId, onAssignTile, s
             <SceneHotspot key={hotspot.id} hotspot={hotspot} isAssigning={!!assignSongId} onAssignTile={onAssignTile} instrument={scene.instrument} level={scene.level} showTutorial={showTutorial} closeTutorial={closeTutorial} />
           ))}
 
-          {avatarData && (() => {
-            const tile1 = scene.hotspots?.find(h => h.tile_number === 1)
-            if (!tile1) return null
+          {avatarData && currentTile != null && (() => {
+            const tile = scene.hotspots?.find(h => h.tile_number === currentTile)
+            if (!tile) return null
             return (
               <div
                 className={styles['scene-avatar']}
-                style={{ left: `${tile1.left + tile1.width / 2}%`, top: `${tile1.top + tile1.height / 2}%` }}
+                style={{ left: `${tile.left + tile.width / 2}%`, top: `${tile.top + tile.height / 2}%` }}
               >
                 <Avatar form={avatarData.form} activeItems={avatarData.activeItems} bodyTexture={resolveBodyBg(avatarData.bodyBg)} />
               </div>
