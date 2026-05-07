@@ -33,6 +33,7 @@ export default function LessonIslandPage() {
   const [arrowPos, setArrowPos] = useState(null)
   const [avatarData, setAvatarData] = useState(null)
   const [currentTile, setCurrentTile] = useState(null)
+  const [tileResults, setTileResults] = useState({ 1: 5, 2: 3, 3: 1, 4: 4, 5: 2 })
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -95,7 +96,7 @@ export default function LessonIslandPage() {
 
   return (
     <>
-      <LessonIslandScene scene={scene} assignSongId={assignSongId} onAssignTile={assignSongId ? onAssignTile : null} showTutorial={showTutorial} closeTutorial={closeTutorial} avatarData={avatarData} currentTile={currentTile} />
+      <LessonIslandScene scene={scene} assignSongId={assignSongId} onAssignTile={assignSongId ? onAssignTile : null} showTutorial={showTutorial} closeTutorial={closeTutorial} avatarData={avatarData} currentTile={currentTile} tileResults={tileResults} />
       {debug && <DebugTileMapper />}
       {showTutorial && <TutorialPopup {...tutorialPopupProps} />}
       {arrowPos && <ArrowIndicator x={arrowPos.x} y={arrowPos.y} direction="right" />}

@@ -138,6 +138,7 @@
 .lesson-island-scene__hotspot--interactive:focus-visible {
   transform: translateY(-0.6%);
   box-shadow: inset 0 0 0 3px rgba(250, 226, 107, 0.9), 0 0 12px rgba(250, 226, 107, 0.5);
+  z-index: 21;
 }
 
 .lesson-island-scene__hotspot--interactive:focus-visible {
@@ -178,6 +179,29 @@
   z-index: 25;
   pointer-events: none;
   transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1), top 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hotspot-stars {
+  position: absolute;
+  bottom: 4%;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 180ms ease;
+  pointer-events: none;
+}
+
+.hotspot-stars img {
+  width: 80%;
+  height: auto;
+  filter: drop-shadow(0 0 1px black) drop-shadow(0 0 1px black);
+}
+
+.lesson-island-scene__hotspot--interactive:hover .hotspot-stars,
+.lesson-island-scene__hotspot--interactive:focus-visible .hotspot-stars {
+  opacity: 0.75;
 }
 
 .lesson-island-scene__sr-only {
