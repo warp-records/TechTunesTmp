@@ -90,6 +90,7 @@ class TileResultDB(Base):
     level       = Column(String, primary_key=True)
     tile_number = Column(Integer, primary_key=True)
     best_stars  = Column(Integer, nullable=False, default=0)
+    best_score  = Column(Integer, nullable=False, default=0)
 
 class UsedKeyDB(Base):
     __tablename__ = "used_keys"
