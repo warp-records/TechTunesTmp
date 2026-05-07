@@ -53,6 +53,8 @@ export default function Userpage() {
   let [username, setUsername] = useState("");
   let [isPremium, setIsPremium] = useState(false)
   const [score, setScore] = useState(0)
+  const [guitarBeginnerTile, setGuitarBeginnerTile] = useState(0)
+  const [lessonProgress, setLessonProgress] = useState({})
   const [selectedMenu, setSelectedMenu] = useState(null)
   const [notifications, setNotifications] = useState([
     { title: "Donation", subtext: "$5 was just donated to your select charity, Generation Music!" },
@@ -126,9 +128,19 @@ export default function Userpage() {
       }
     }
 
+    async function getProgress() {
+      const res = await fetch('/api/get_progress', { headers: { Authorization: 'Bearer ' + token } })
+      if (res.ok) {
+        const data = await res.json()
+        const row = data.progress.find(r => r.instrument === 'guitar' && r.level === 'beginner')
+        if (row) setGuitarBeginnerTile(row.unlocked_tile)
+      }
+    }
+
     getAvatar();
     checkPremium();
     getScore();
+    getProgress();
 
     setUsername(localStorage.getItem("username"));
   }, []);
@@ -193,10 +205,10 @@ export default function Userpage() {
     <section id="lessons" aria-labelledby="lessons-title">
       <h3 className={styles['section-title']}>Lesson Island</h3>
       <div className={styles['lessons-grid']}>
-        <LessonCard 
+        <LessonCard
         instrument={"Guitar"}
         emoji={"🎸"}
-        completed={10}
+        completed={guitarBeginnerTile}
         total={25}
         />
         
@@ -281,7 +293,7 @@ export function LessonCard({ instrument, emoji, completed, total }) {
       <h4>{emoji} {instrument}</h4>
       <div className={styles['progress']}><span style={{width: `${completed/total*100}%`}}></span></div>
       <div className={styles['tiny']}>{completed} / {total} lessons</div>
-      <div style={{ marginTop: '16px' }}><a href="" className={styles['chip']}>Continue {instrument}</a></div>
+      <div style={{ marginTop: '16px' }}><Link to="/lesson-islands/guitar/beginner" className={styles['chip']}>Continue {instrument}</Link></div>
     </div>
   )
 }
