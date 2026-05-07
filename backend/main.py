@@ -78,7 +78,6 @@ class LessonScoreSubmission(BaseModel):
     level: str
     score: int
 
-
 # for webhooks
 class StripeEventType(str, Enum):
     INVOICE_PAID           = "invoice.paid"
