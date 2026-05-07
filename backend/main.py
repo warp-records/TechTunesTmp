@@ -651,6 +651,15 @@ def get_lesson_tile(tile_number: int, instrument: str, level: str, user_id: int 
 def submit_lesson_score(body: LessonScoreSubmission, _: int = Depends(get_current_user)):
     return {"ok": True}
 
+@app.patch("/api/rename_song", tags=["songs", "admin"])
+def rename_song(song_id: int, name: str, _: None = Depends(is_admin), db: Session = Depends(get_db)):
+    song = db.query(SongDB).filter(SongDB.id == song_id).first()
+    if song is None:
+        raise HTTPException(status_code=404, detail="Song not found")
+    song.name = name
+    db.commit()
+    return {"ok": True}
+
 @app.delete("/api/unassign_song", tags=["songs", "admin"])
 def unassign_song(song_id: int, _: None = Depends(is_admin), db: Session = Depends(get_db)):
     db.query(LessonTileDB).filter(LessonTileDB.song_id == song_id).delete()

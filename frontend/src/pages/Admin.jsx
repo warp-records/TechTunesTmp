@@ -282,6 +282,8 @@ function LessonPanel({ onClose }) {
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState(null);
   const [songs, setSongs] = useState([]);
+  const [editingId, setEditingId] = useState(null);
+  const [editingName, setEditingName] = useState('');
   const navigate = useNavigate();
 
   function fetchSongs() {
@@ -292,6 +294,17 @@ function LessonPanel({ onClose }) {
   }
 
   useEffect(() => { fetchSongs() }, []);
+
+  async function handleRename(song) {
+    if (!editingName.trim() || editingName === song.name) { setEditingId(null); return }
+    const token = localStorage.getItem('token')
+    await fetch(`/api/rename_song?song_id=${song.id}&name=${encodeURIComponent(editingName.trim())}`, {
+      method: 'PATCH',
+      headers: { Authorization: 'Bearer ' + token },
+    })
+    setEditingId(null)
+    fetchSongs()
+  }
 
   async function handleDelete(song, e) {
     e.stopPropagation()
@@ -338,7 +351,29 @@ function LessonPanel({ onClose }) {
                 className={[styles['song-row'], selected === song ? styles['result-row-selected'] : ''].filter(Boolean).join(' ')}
                 onClick={() => setSelected(song)}
               >
-                <span>{song.name}</span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  {editingId === song.id ? (
+                    <input
+                      className={styles['search-input']}
+                      style={{ padding: '2px 6px', fontSize: '0.875rem' }}
+                      value={editingName}
+                      autoFocus
+                      onChange={e => setEditingName(e.target.value)}
+                      onBlur={() => handleRename(song)}
+                      onKeyDown={e => { if (e.key === 'Enter') handleRename(song); if (e.key === 'Escape') setEditingId(null) }}
+                      onClick={e => e.stopPropagation()}
+                    />
+                  ) : (
+                    <>
+                      {song.name}
+                      <button
+                        className={styles['rename-btn']}
+                        onClick={e => { e.stopPropagation(); setEditingId(song.id); setEditingName(song.name) }}
+                        title="Rename"
+                      >✏️</button>
+                    </>
+                  )}
+                </span>
                 <span>{song.instrument}</span>
                 <span className={styles['song-difficulty']}>{song.difficulty != null ? DIFFICULTY_LABELS[song.difficulty] : '—'}</span>
                 <span>{song.tiles?.length > 0 ? song.tiles.map(t => `${t.level} #${t.tile_number}`).join(', ') : '—'}</span>
@@ -444,7 +479,7 @@ function ModPanel({ onClose }) {
                 <div className={styles['result-actions']}>
                   {u.banned && new Date() < new Date(u.banned)
                     ? <button className={styles['btn-unban']} onClick={() => handleUnban(u)}>Unban</button>
-                    : <button className={styles['btn-ban']} onClick={() => setBanTarget(u)}>Ban</button>
+                    : !u.admin && <button className={styles['btn-ban']} onClick={() => setBanTarget(u)}>Ban</button>
                   }
                 </div>
               </div>
