@@ -33,10 +33,10 @@ export default function Admin() {
           <AddSongCard />
           <InviteKeyCard />
           <DashCard
-            title="Assign Lesson"
-            description="Create a new lesson for students using a song from the song database"
-            icon="📖"
-            action="Assign Lesson"
+            title="Song Database"
+            description="Browse the song database and assign songs to lesson tiles"
+            icon="📂"
+            action="View Songs"
             onClick={() => setShowLessonPanel(true)}
           />
           <DashCard
@@ -299,7 +299,7 @@ function LessonPanel({ onClose }) {
     <div className={styles['overlay']} onClick={onClose}>
       <div className={styles['lesson-panel']} onClick={e => e.stopPropagation()}>
         <div className={styles['mod-header']}>
-          <h2>Assign Lesson</h2>
+          <h2>Song Database</h2>
           <button className={styles['close-btn']} onClick={onClose}>✕</button>
         </div>
         <input
@@ -327,7 +327,7 @@ function LessonPanel({ onClose }) {
                 <span>{song.name}</span>
                 <span>{song.instrument}</span>
                 <span className={styles['song-difficulty']}>{song.difficulty != null ? DIFFICULTY_LABELS[song.difficulty] : '—'}</span>
-                <span>—</span>
+                <span>{song.tiles?.length > 0 ? song.tiles.map(t => `${t.level} #${t.tile_number}`).join(', ') : '—'}</span>
               </div>
             ))
           }

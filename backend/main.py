@@ -595,8 +595,12 @@ async def upload_song(song_file: UploadFile, _: None = Depends(is_admin), db: Se
 @app.get("/api/all_songs_meta", tags=["songs"])
 def all_songs_meta(db: Session = Depends(get_db)):
     songs = db.query(SongDB).all()
+    tiles = db.query(LessonTileDB).all()
+    tile_map: dict[int, list] = {}
+    for t in tiles:
+        tile_map.setdefault(t.song_id, []).append({"tile_number": t.tile_number, "instrument": t.instrument, "level": t.level})
     return [
-        { "id": s.id, "name": s.name, "instrument": s.instrument, "tempo": s.tempo, "difficulty": s.difficulty }
+        { "id": s.id, "name": s.name, "instrument": s.instrument, "tempo": s.tempo, "difficulty": s.difficulty, "tiles": tile_map.get(s.id, []) }
         for s in songs
     ]
 
@@ -819,8 +823,3 @@ def nonprofit_withdrawal(nonprofit_id: int, db: Session = Depends(get_db)):
 #         "billing_details": {"name": "John Doe"},
 #     }
 # )
-
-
-    
-    
-    
