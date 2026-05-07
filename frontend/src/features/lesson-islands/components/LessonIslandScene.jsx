@@ -62,6 +62,7 @@ function SceneHotspot({ hotspot, isAssigning, onAssignTile, instrument, level, s
 
   const isTile = hotspot.tile_number != null
   const isUnlocked = isTile && currentTile != null && hotspot.tile_number <= currentTile
+  const isCurrentTile = isTile && hotspot.tile_number === currentTile
   const isInteractive = isAssigning ? isTile : isUnlocked
 
   const classes = [
@@ -71,6 +72,7 @@ function SceneHotspot({ hotspot, isAssigning, onAssignTile, instrument, level, s
       : isInteractive
         ? styles['lesson-island-scene__hotspot--interactive']
         : styles['lesson-island-scene__hotspot--static'],
+    isCurrentTile ? styles['lesson-island-scene__hotspot--current'] : '',
     hotspot.status ? styles[`lesson-island-scene__hotspot--${hotspot.status}`] : '',
     `lesson-island-scene__hotspot--${hotspot.id}`,
   ].filter(Boolean).join(' ')
