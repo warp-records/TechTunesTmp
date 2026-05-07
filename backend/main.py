@@ -169,6 +169,15 @@ def handle_score(_t: str, token: str, user: UserDB, db: Session):
         else:
             db.add(TileResultDB(user_id=user.id, instrument=instrument, level=level, tile_number=tile_number, best_stars=stars))
 
+        if stars >= 4:
+            progress = db.query(ProgressDB).filter(
+                ProgressDB.user_id == user.id,
+                ProgressDB.instrument == instrument,
+                ProgressDB.level == level,
+            ).first()
+            if progress and tile_number == progress.unlocked_tile:
+                progress.unlocked_tile = tile_number + 1
+
     _last_score_token[user.id] = _t
     user.score += score
     db.commit()
