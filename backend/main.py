@@ -600,7 +600,7 @@ def all_songs_meta(db: Session = Depends(get_db)):
     for t in tiles:
         tile_map.setdefault(t.song_id, []).append({"tile_number": t.tile_number, "instrument": t.instrument, "level": t.level})
     return [
-        { "id": s.id, "name": s.name, "instrument": s.instrument, "tempo": s.tempo, "difficulty": s.difficulty, "tiles": tile_map.get(s.id, []) }
+        { "id": s.id, "name": s.name, "instrument": s.instrument, "tempo": s.tempo, "difficulty": s.difficulty, "tiles": tile_map.get(s.id, []), "show_in_search": s.show_in_search }
         for s in songs
     ]
 
@@ -657,6 +657,15 @@ def rename_song(song_id: int, name: str, _: None = Depends(is_admin), db: Sessio
     if song is None:
         raise HTTPException(status_code=404, detail="Song not found")
     song.name = name
+    db.commit()
+    return {"ok": True}
+
+@app.patch("/api/song_show_in_search", tags=["songs", "admin"])
+def song_show_in_search(song_id: int, show: bool, _: None = Depends(is_admin), db: Session = Depends(get_db)):
+    song = db.query(SongDB).filter(SongDB.id == song_id).first()
+    if song is None:
+        raise HTTPException(status_code=404, detail="Song not found")
+    song.show_in_search = show
     db.commit()
     return {"ok": True}
 

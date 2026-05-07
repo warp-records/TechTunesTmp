@@ -54,6 +54,7 @@ class SongDB(Base):
     
     musicxml_path = Column(String, nullable=False)
     json_path = Column(String, nullable=False)
+    show_in_search = Column(Boolean, nullable=False, default=True)
 
 class LessonTileDB(Base):
     __tablename__ = "lesson_tiles"

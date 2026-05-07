@@ -290,7 +290,10 @@ function LessonPanel({ onClose }) {
     const token = localStorage.getItem('token');
     fetch('/api/all_songs_meta', { headers: { Authorization: 'Bearer ' + token } })
       .then(r => r.json())
-      .then(setSongs);
+      .then(data => {
+        setSongs(data);
+        setSelected(prev => prev ? data.find(s => s.id === prev.id) ?? null : null);
+      });
   }
 
   useEffect(() => { fetchSongs() }, []);
@@ -403,6 +406,23 @@ function LessonPanel({ onClose }) {
           >
             {!selected ? 'Select a song' : selected.tiles?.length > 0 ? `Unassign "${selected.name}"` : `Assign "${selected.name}"`}
           </button>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '6px', opacity: selected ? 1 : 0.4, cursor: selected ? 'pointer' : 'default', whiteSpace: 'nowrap', color: '#ccc', fontSize: '0.875rem' }}>
+            <input
+              type="checkbox"
+              checked={selected?.show_in_search ?? false}
+              disabled={!selected}
+              onChange={async e => {
+                if (!selected) return
+                const token = localStorage.getItem('token')
+                await fetch(`/api/song_show_in_search?song_id=${selected.id}&show=${e.target.checked}`, {
+                  method: 'PATCH',
+                  headers: { Authorization: 'Bearer ' + token },
+                })
+                fetchSongs()
+              }}
+            />
+            Show in search
+          </label>
           <button
             className={styles['delete-btn']}
             disabled={!selected}
