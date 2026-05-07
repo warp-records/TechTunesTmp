@@ -569,7 +569,15 @@ def song_meta(song_id: int, db: Session = Depends(get_db)):
     }
 
 @app.get("/api/lesson_tile", tags=["songs"])
-def get_lesson_tile(tile_number: int, instrument: str, level: str, db: Session = Depends(get_db)):
+def get_lesson_tile(tile_number: int, instrument: str, level: str, user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
+    progress = db.query(ProgressDB).filter(
+        ProgressDB.user_id == user_id,
+        ProgressDB.instrument == instrument,
+        ProgressDB.level == level,
+    ).first()
+    if progress is None or tile_number > progress.unlocked_tile:
+        raise HTTPException(status_code=403, detail="Tile not unlocked")
+
     tile = db.query(LessonTileDB).filter(
         LessonTileDB.tile_number == tile_number,
         LessonTileDB.instrument == instrument,

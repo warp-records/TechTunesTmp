@@ -49,7 +49,7 @@ function SceneAsset({ asset, className }) {
   )
 }
 
-function SceneHotspot({ hotspot, isAssigning, onAssignTile, instrument, level, showTutorial, closeTutorial }) {
+function SceneHotspot({ hotspot, isAssigning, onAssignTile, instrument, level, showTutorial, closeTutorial, currentTile }) {
   const navigate = useNavigate()
   const hotspotStyle = {
     left: toPercent(hotspot.left),
@@ -61,7 +61,8 @@ function SceneHotspot({ hotspot, isAssigning, onAssignTile, instrument, level, s
   }
 
   const isTile = hotspot.tile_number != null
-  const isInteractive = isAssigning ? isTile : isTile
+  const isUnlocked = isTile && currentTile != null && hotspot.tile_number <= currentTile
+  const isInteractive = isAssigning ? isTile : isUnlocked
 
   const classes = [
     styles['lesson-island-scene__hotspot'],
@@ -141,7 +142,7 @@ export default function LessonIslandScene({ scene, assignSongId, onAssignTile, s
           ))}
 
           {scene.hotspots?.map((hotspot) => (
-            <SceneHotspot key={hotspot.id} hotspot={hotspot} isAssigning={!!assignSongId} onAssignTile={onAssignTile} instrument={scene.instrument} level={scene.level} showTutorial={showTutorial} closeTutorial={closeTutorial} />
+            <SceneHotspot key={hotspot.id} hotspot={hotspot} isAssigning={!!assignSongId} onAssignTile={onAssignTile} instrument={scene.instrument} level={scene.level} showTutorial={showTutorial} closeTutorial={closeTutorial} currentTile={currentTile} />
           ))}
 
           {avatarData && currentTile != null && (() => {

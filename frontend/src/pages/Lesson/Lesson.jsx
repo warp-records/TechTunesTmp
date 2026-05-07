@@ -78,6 +78,7 @@ export default function Lesson() {
 
 function LessonGame({ onRetry }) {
   const { fetchUser } = useAuth()
+  const navigate = useNavigate()
   // contains the tile number, instrument, and level number
   const [searchParams] = useSearchParams()
   const [songName, setSongName] = useState('')
@@ -100,9 +101,14 @@ function LessonGame({ onRetry }) {
       instrument: searchParams.get('instrument'),
       level: searchParams.get('level'),
     })
-    fetch(`/api/lesson_tile?${params}`)
-      .then(r => r.json())
+    fetch(`/api/lesson_tile?${params}`, {
+      headers: { Authorization: 'Bearer ' + localStorage.getItem('token') }
+    }).then(r => {
+        if (!r.ok) { navigate('/bad_page'); return null }
+        return r.json()
+      })
       .then(data => {
+        if (!data) return
         // replace songChartRef notes mapping in the fetch:
         const baseBpm = data.data.bpm
         updateBpm(baseBpm)
