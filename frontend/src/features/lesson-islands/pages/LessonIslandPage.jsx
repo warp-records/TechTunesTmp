@@ -33,7 +33,7 @@ export default function LessonIslandPage() {
   const [arrowPos, setArrowPos] = useState(null)
   const [avatarData, setAvatarData] = useState(null)
   const [currentTile, setCurrentTile] = useState(null)
-  const [tileResults, setTileResults] = useState({ 1: 5, 2: 3, 3: 1, 4: 4, 5: 2 })
+  const [tileResults, setTileResults] = useState({})
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -49,6 +49,13 @@ export default function LessonIslandPage() {
         if (!data) return
         const row = data.progress.find(p => p.instrument === instrument && p.level === level)
         if (row) setCurrentTile(row.unlocked_tile)
+        const results = {}
+        for (const r of data.tile_results ?? []) {
+          if (r.instrument === instrument && r.level === level) {
+            results[r.tile_number] = r.best_stars
+          }
+        }
+        setTileResults(results)
       })
   }, [instrument, level])
 

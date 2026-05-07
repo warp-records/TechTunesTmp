@@ -328,11 +328,16 @@ def get_avatar(user_id: int = Depends(get_current_user), db: Session = Depends(g
 @app.get("/api/get_progress")
 def get_progress(user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
     rows = db.query(ProgressDB).filter(ProgressDB.user_id == user_id).all()
+    tile_results = db.query(TileResultDB).filter(TileResultDB.user_id == user_id).all()
     return {
         "progress": [
             {"instrument": r.instrument, "level": r.level, "unlocked_tile": r.unlocked_tile}
             for r in rows
-        ]
+        ],
+        "tile_results": [
+            {"instrument": r.instrument, "level": r.level, "tile_number": r.tile_number, "best_stars": r.best_stars}
+            for r in tile_results
+        ],
     }
 
 def is_premium(user_id: int, db: Session):
