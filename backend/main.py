@@ -36,7 +36,7 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 from sqlalchemy.orm import Session
-from database import SessionLocal, init_db, UserDB, SessionDB, AvatarDB, SongDB, LessonTileDB, NonProfitDB, UsedKeyDB, ProgressDB
+from database import SessionLocal, init_db, UserDB, SessionDB, AvatarDB, SongDB, LessonTileDB, NonProfitDB, UsedKeyDB, ProgressDB, TileResultDB
 
 from datetime import datetime
 import stripe
@@ -127,18 +127,47 @@ def get_current_nonprofit(request: Request, db: Session = Depends(get_db)) -> in
 
 _last_score_token: dict[int, str] = {}
 
-# decode obfuscated score
+INSTRUMENTS = ['guitar', 'piano', 'drums']
+LEVELS = ['beginner', 'medium', 'hard', 'expert']
+
+# decode obfuscated score, stars, tile, instrument, and level
 def handle_score(_t: str, token: str, user: UserDB, db: Session):
     if _last_score_token.get(user.id) == _t:
         return
-    token_key = int(token.replace('-', '')[:8], 16)
-    encoded = int(_t.replace('-', '')[:8], 16)
+    token_clean = token.replace('-', '')
+    t_clean = _t.replace('-', '')
+    token_key = int(token_clean[:8], 16)
+    encoded = int(t_clean[:8], 16)
     bucket = int(time.time() // 5)
     score = encoded ^ token_key ^ bucket
+    used_bucket = bucket
     if not (10 <= score <= 10000):
         score = encoded ^ token_key ^ (bucket - 1)
+        used_bucket = bucket - 1
     if not (10 <= score <= 10000):
         return
+
+    stars       = int(t_clean[8:12],  16) ^ int(token_clean[8:12],  16) ^ used_bucket
+    tile_number = int(t_clean[12:16], 16) ^ int(token_clean[12:16], 16) ^ used_bucket
+    li          = int(t_clean[16:20], 16) ^ int(token_clean[16:20], 16) ^ used_bucket
+    level_idx      = li // 4
+    instrument_idx = li % 4
+
+    if 1 <= stars <= 5 and 1 <= tile_number <= 25 and instrument_idx < len(INSTRUMENTS) and level_idx < len(LEVELS):
+        instrument = INSTRUMENTS[instrument_idx]
+        level = LEVELS[level_idx]
+        tile_result = db.query(TileResultDB).filter(
+            TileResultDB.user_id == user.id,
+            TileResultDB.instrument == instrument,
+            TileResultDB.level == level,
+            TileResultDB.tile_number == tile_number,
+        ).first()
+        if tile_result:
+            if stars > tile_result.best_stars:
+                tile_result.best_stars = stars
+        else:
+            db.add(TileResultDB(user_id=user.id, instrument=instrument, level=level, tile_number=tile_number, best_stars=stars))
+
     _last_score_token[user.id] = _t
     user.score += score
     db.commit()

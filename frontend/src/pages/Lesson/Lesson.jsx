@@ -481,7 +481,17 @@ function LessonGame({ onRetry }) {
 
   useEffect(() => {
     if (!gameOver) return
-    fetchUser(buildRequestToken(scoreRef.current))
+    const totalNotes = songChartRef.current.length
+    const hitNotes = inputHistory.current.filter(e => e.type === 'hit').length
+    const pct = totalNotes > 0 ? hitNotes / totalNotes * 100 : 0
+    const gameOverStars = pct >= 90 ? 5 : pct >= 80 ? 4 : pct >= 65 ? 3 : pct >= 50 ? 2 : 1
+    fetchUser(buildRequestToken(
+      scoreRef.current,
+      gameOverStars,
+      Number(searchParams.get('tile_number')),
+      searchParams.get('instrument'),
+      searchParams.get('level'),
+    ))
     const token = localStorage.getItem('token')
     fetch('/api/submit_lesson_score', {
       method: 'POST',

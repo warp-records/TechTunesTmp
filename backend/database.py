@@ -82,6 +82,15 @@ class ProgressDB(Base):
     level         = Column(String, primary_key=True)
     unlocked_tile = Column(Integer, nullable=False, default=1)
 
+class TileResultDB(Base):
+    __tablename__ = "tile_results"
+
+    user_id     = Column(Integer, ForeignKey("users.id"), primary_key=True)
+    instrument  = Column(String, primary_key=True)
+    level       = Column(String, primary_key=True)
+    tile_number = Column(Integer, primary_key=True)
+    best_stars  = Column(Integer, nullable=False, default=0)
+
 class UsedKeyDB(Base):
     __tablename__ = "used_keys"
 
