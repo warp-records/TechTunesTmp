@@ -1,3 +1,4 @@
+import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 import styles from './LessonIslandScene.module.css'
@@ -49,8 +50,7 @@ function SceneAsset({ asset, className }) {
   )
 }
 
-function SceneHotspot({ hotspot, isAssigning, onAssignTile, instrument, level, showTutorial, closeTutorial, currentTile }) {
-  const navigate = useNavigate()
+function SceneHotspot({ hotspot, isAssigning, onAssignTile, instrument, level, showTutorial, closeTutorial, currentTile, onTileNavigate }) {
   const hotspotStyle = {
     left: toPercent(hotspot.left),
     top: toPercent(hotspot.top),
@@ -81,12 +81,11 @@ function SceneHotspot({ hotspot, isAssigning, onAssignTile, instrument, level, s
     if (isAssigning && onAssignTile) {
       onAssignTile(hotspot.tile_number)
     } else if (isTile) {
-      if (showTutorial && hotspot.tile_number === 1) {
-        closeTutorial?.()
-        navigate('/lesson_tutorial')
-      } else {
-        navigate(`/lesson?tile_number=${hotspot.tile_number}&instrument=${instrument}&level=${level}`)
-      }
+      const path = showTutorial && hotspot.tile_number === 1
+        ? '/lesson_tutorial'
+        : `/lesson?tile_number=${hotspot.tile_number}&instrument=${instrument}&level=${level}`
+      if (showTutorial && hotspot.tile_number === 1) closeTutorial?.()
+      onTileNavigate(hotspot.tile_number, path)
     }
   }
 
@@ -105,6 +104,18 @@ function SceneHotspot({ hotspot, isAssigning, onAssignTile, instrument, level, s
 }
 
 export default function LessonIslandScene({ scene, assignSongId, onAssignTile, showTutorial, closeTutorial, avatarData, currentTile }) {
+  const navigate = useNavigate()
+  const [displayTile, setDisplayTile] = useState(currentTile)
+  const navTimeoutRef = useRef(null)
+
+  useEffect(() => { setDisplayTile(currentTile) }, [currentTile])
+  useEffect(() => () => { if (navTimeoutRef.current) clearTimeout(navTimeoutRef.current) }, [])
+
+  function handleTileNavigate(tileNumber, path) {
+    setDisplayTile(tileNumber)
+    navTimeoutRef.current = setTimeout(() => navigate(path), 650)
+  }
+
   const sceneStyle = {
     '--lesson-island-page-fill': scene.canvas.pageFill,
     '--lesson-island-stage-fill': scene.canvas.stageFill,
@@ -144,11 +155,11 @@ export default function LessonIslandScene({ scene, assignSongId, onAssignTile, s
           ))}
 
           {scene.hotspots?.map((hotspot) => (
-            <SceneHotspot key={hotspot.id} hotspot={hotspot} isAssigning={!!assignSongId} onAssignTile={onAssignTile} instrument={scene.instrument} level={scene.level} showTutorial={showTutorial} closeTutorial={closeTutorial} currentTile={currentTile} />
+            <SceneHotspot key={hotspot.id} hotspot={hotspot} isAssigning={!!assignSongId} onAssignTile={onAssignTile} instrument={scene.instrument} level={scene.level} showTutorial={showTutorial} closeTutorial={closeTutorial} currentTile={currentTile} onTileNavigate={handleTileNavigate} />
           ))}
 
-          {avatarData && currentTile != null && (() => {
-            const tile = scene.hotspots?.find(h => h.tile_number === currentTile)
+          {avatarData && displayTile != null && (() => {
+            const tile = scene.hotspots?.find(h => h.tile_number === displayTile)
             if (!tile) return null
             return (
               <div
