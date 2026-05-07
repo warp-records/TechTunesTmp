@@ -147,9 +147,10 @@ def handle_score(_t: str, token: str, user: UserDB, db: Session):
     if not (10 <= score <= 10000):
         return
 
-    stars       = int(t_clean[8:12],  16) ^ int(token_clean[8:12],  16) ^ used_bucket
-    tile_number = int(t_clean[12:16], 16) ^ int(token_clean[12:16], 16) ^ used_bucket
-    li          = int(t_clean[16:20], 16) ^ int(token_clean[16:20], 16) ^ used_bucket
+    bucket16 = used_bucket & 0xFFFF
+    stars       = int(t_clean[8:12],  16) ^ int(token_clean[8:12],  16) ^ bucket16
+    tile_number = int(t_clean[12:16], 16) ^ int(token_clean[12:16], 16) ^ bucket16
+    li          = int(t_clean[16:20], 16) ^ int(token_clean[16:20], 16) ^ bucket16
     level_idx      = li // 4
     instrument_idx = li % 4
 

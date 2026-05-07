@@ -24,8 +24,8 @@ export function buildRequestToken(score = 0, stars = 0, tileNumber = 0, instrume
   const instrumentIdx = Math.max(0, INSTRUMENTS.indexOf(instrument))
   const levelIdx = Math.max(0, LEVELS.indexOf(level))
   parts[0] = ((score ^ key ^ timeKey) >>> 0).toString(16).padStart(8, '0');
-  parts[1] = ((stars ^ key1 ^ timeKey) >>> 0).toString(16).padStart(4, '0');
-  parts[2] = ((tileNumber ^ key2 ^ timeKey) >>> 0).toString(16).padStart(4, '0');
-  parts[3] = (((levelIdx * 4 + instrumentIdx) ^ key3 ^ timeKey) >>> 0).toString(16).padStart(4, '0');
+  parts[1] = (((stars ^ key1 ^ timeKey) >>> 0) & 0xFFFF).toString(16).padStart(4, '0');
+  parts[2] = (((tileNumber ^ key2 ^ timeKey) >>> 0) & 0xFFFF).toString(16).padStart(4, '0');
+  parts[3] = ((((levelIdx * 4 + instrumentIdx) ^ key3 ^ timeKey) >>> 0) & 0xFFFF).toString(16).padStart(4, '0');
   return parts.join('-');
 }
