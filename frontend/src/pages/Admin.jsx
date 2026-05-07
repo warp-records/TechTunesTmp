@@ -284,12 +284,26 @@ function LessonPanel({ onClose }) {
   const [songs, setSongs] = useState([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
+  function fetchSongs() {
     const token = localStorage.getItem('token');
     fetch('/api/all_songs_meta', { headers: { Authorization: 'Bearer ' + token } })
       .then(r => r.json())
       .then(setSongs);
-  }, []);
+  }
+
+  useEffect(() => { fetchSongs() }, []);
+
+  async function handleDelete(song, e) {
+    e.stopPropagation()
+    if (!confirm(`Delete "${song.name}"? This will also unassign it from any tiles.`)) return
+    const token = localStorage.getItem('token')
+    await fetch(`/api/delete_song?song_id=${song.id}`, {
+      method: 'DELETE',
+      headers: { Authorization: 'Bearer ' + token },
+    })
+    if (selected?.id === song.id) setSelected(null)
+    fetchSongs()
+  }
 
   const results = query
     ? songs.filter(s => s.name.toLowerCase().includes(query.toLowerCase()))
@@ -332,14 +346,36 @@ function LessonPanel({ onClose }) {
             ))
           }
         </div>
-        <button
-          className={[styles['card-btn'], styles['btn-default']].join(' ')}
-          disabled={!selected}
-          style={{ opacity: selected ? 1 : 0.4 }}
-          onClick={() => selected && navigate(`/guitar_island?assignSongId=${selected.id}`)}
-        >
-          {selected ? `Assign lesson for "${selected.name}"` : 'Select a song'}
-        </button>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button
+            className={[styles['card-btn'], selected?.tiles?.length > 0 ? styles['btn-mod'] : styles['btn-default']].join(' ')}
+            disabled={!selected}
+            style={{ opacity: selected ? 1 : 0.4, flex: 1 }}
+            onClick={async () => {
+              if (!selected) return
+              if (selected.tiles?.length > 0) {
+                if (!confirm(`Unassign "${selected.name}" from all tiles?`)) return
+                const token = localStorage.getItem('token')
+                await fetch(`/api/unassign_song?song_id=${selected.id}`, {
+                  method: 'DELETE',
+                  headers: { Authorization: 'Bearer ' + token },
+                })
+                fetchSongs()
+              } else {
+                navigate(`/guitar_island?assignSongId=${selected.id}`)
+              }
+            }}
+          >
+            {!selected ? 'Select a song' : selected.tiles?.length > 0 ? `Unassign "${selected.name}"` : `Assign "${selected.name}"`}
+          </button>
+          <button
+            className={styles['delete-btn']}
+            disabled={!selected}
+            style={{ opacity: selected ? 1 : 0.4 }}
+            onClick={() => selected && handleDelete(selected, { stopPropagation: () => {} })}
+            title="Delete song"
+          >🗑️</button>
+        </div>
       </div>
     </div>
   )

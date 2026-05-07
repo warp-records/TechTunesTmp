@@ -651,6 +651,22 @@ def get_lesson_tile(tile_number: int, instrument: str, level: str, user_id: int 
 def submit_lesson_score(body: LessonScoreSubmission, _: int = Depends(get_current_user)):
     return {"ok": True}
 
+@app.delete("/api/unassign_song", tags=["songs", "admin"])
+def unassign_song(song_id: int, _: None = Depends(is_admin), db: Session = Depends(get_db)):
+    db.query(LessonTileDB).filter(LessonTileDB.song_id == song_id).delete()
+    db.commit()
+    return {"ok": True}
+
+@app.delete("/api/delete_song", tags=["songs", "admin"])
+def delete_song(song_id: int, _: None = Depends(is_admin), db: Session = Depends(get_db)):
+    song = db.query(SongDB).filter(SongDB.id == song_id).first()
+    if song is None:
+        raise HTTPException(status_code=404, detail="Song not found")
+    db.query(LessonTileDB).filter(LessonTileDB.song_id == song_id).delete()
+    db.delete(song)
+    db.commit()
+    return {"ok": True}
+
 @app.post("/api/assign_lesson_tile", tags=["songs", "admin"])
 def assign_lesson_tile(
     tile_number: int,
