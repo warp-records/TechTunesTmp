@@ -2,6 +2,7 @@ import { useEffect, useCallback, useState, useRef } from 'react'
 import { Link, useParams, useSearchParams, useNavigate } from 'react-router-dom'
 
 import LessonIslandScene from '../components/LessonIslandScene'
+import levelUnlockSrc from '../../../assets/sounds/level_unlock.mp3'
 import { resolveBodyBg } from '../../../components/avatarData'
 import DebugTileMapper from '../components/DebugTileMapper'
 import { getLessonIslandScene } from '../config/lessonIslandScenes'
@@ -34,6 +35,8 @@ export default function LessonIslandPage() {
   const [avatarData, setAvatarData] = useState(null)
   const [currentTile, setCurrentTile] = useState(null)
   const [tileResults, setTileResults] = useState({})
+  const [tileUnlocked] = useState(() => localStorage.getItem('tileUnlocked') === 'true')
+  useEffect(() => { localStorage.removeItem('tileUnlocked') }, [])
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -48,7 +51,17 @@ export default function LessonIslandPage() {
       .then(data => {
         if (!data) return
         const row = data.progress.find(p => p.instrument === instrument && p.level === level)
-        if (row) setCurrentTile(row.unlocked_tile)
+        if (row) {
+          if (tileUnlocked && row.unlocked_tile > 1) {
+            setCurrentTile(row.unlocked_tile - 1)
+            setTimeout(() => {
+              setCurrentTile(row.unlocked_tile)
+              new Audio(levelUnlockSrc).play()
+            }, 800)
+          } else {
+            setCurrentTile(row.unlocked_tile)
+          }
+        }
         const results = {}
         for (const r of data.tile_results ?? []) {
           if (r.instrument === instrument && r.level === level) {

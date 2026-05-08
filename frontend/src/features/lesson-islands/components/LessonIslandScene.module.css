@@ -157,10 +157,37 @@
   box-shadow: inset 0 0 0 3px rgba(0, 230, 255, 1);
 }
 
-.lesson-island-scene__hotspot--planned,
-.lesson-island-scene__hotspot--static {
+.lesson-island-scene__hotspot--planned {
   cursor: default;
   pointer-events: none;
+}
+
+.lesson-island-scene__hotspot--static {
+  cursor: default;
+  transition: background 180ms ease, box-shadow 180ms ease;
+}
+
+.lesson-island-scene__hotspot--static:hover {
+  background: rgba(120, 120, 140, 0.35);
+  box-shadow: inset 0 0 0 2px rgba(180, 180, 200, 0.25);
+}
+
+.lock-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.4vw;
+  opacity: 0;
+  transition: opacity 180ms ease;
+  pointer-events: none;
+  background: rgba(30, 30, 40, 0.5);
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.lesson-island-scene__hotspot--static:hover .lock-icon {
+  opacity: 1;
 }
 
 .lesson-island-scene__hotspot--current {

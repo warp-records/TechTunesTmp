@@ -491,6 +491,7 @@ function LessonGame({ onRetry }) {
     ))
     const token = localStorage.getItem('token')
     localStorage.setItem('pointsGained', scoreRef.current)
+    if (gameOverStars >= 4) localStorage.setItem('tileUnlocked', 'true')
     fetch('/api/submit_lesson_score', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },

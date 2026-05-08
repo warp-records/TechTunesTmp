@@ -100,6 +100,7 @@ function SceneHotspot({ hotspot, isAssigning, onAssignTile, instrument, level, s
       title={hotspot.title ?? hotspot.label}
     >
       <span className={styles['lesson-island-scene__sr-only']}>{hotspot.label}</span>
+      {!isInteractive && isTile && <span className={styles['lock-icon']}>🔒</span>}
       {bestStars > 0 && (
         <div className={styles['hotspot-stars']}>
           <LessonStars stars={bestStars} />
