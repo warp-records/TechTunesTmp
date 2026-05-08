@@ -488,6 +488,12 @@ section {
         rgba(0, 61, 77, 0.7)
     );
     border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.lesson-card.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45), 0 0 20px rgba(120, 50, 200, 0.2);
 }
 
 .lesson-card .chip {
