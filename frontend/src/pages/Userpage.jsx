@@ -4,6 +4,7 @@ import { Route, Link, useNavigate } from 'react-router-dom'
 import { AuthContext } from '../App'
 
 import Avatar from "../components/Avatar"
+import Points from "../components/Points"
 import { resolveBodyBg } from "../components/avatarData"
 import styles from './Userpage.module.css'
 import PremiumBadge from '../components/PremiumBadge'
@@ -53,6 +54,8 @@ export default function Userpage() {
   let [username, setUsername] = useState("");
   let [isPremium, setIsPremium] = useState(false)
   const [score, setScore] = useState(0)
+  const [pointsGained] = useState(() => Number(localStorage.getItem('pointsGained')) || undefined)
+  useEffect(() => { localStorage.removeItem('pointsGained') }, [])
   const [guitarBeginnerTile, setGuitarBeginnerTile] = useState(0)
   const [lessonProgress, setLessonProgress] = useState({})
   const [selectedMenu, setSelectedMenu] = useState(null)
@@ -198,7 +201,7 @@ export default function Userpage() {
               <AvatarFrame>
                 {avatarData && <Avatar form={avatarData["form"]} activeItems={avatarData["activeItems"]} bodyTexture={resolveBodyBg(avatarData["bodyBg"])} />}
               </AvatarFrame>
-              <Points points={score} />
+              <Points points={score} animateFrom={pointsGained != null ? score - pointsGained : undefined} />
         </div>
       </section>
         
@@ -273,14 +276,6 @@ export function AvatarFrame({ children }) {
       <div className={styles['avatar-frame-inner']}>
         {children}
       </div>
-    </div>
-  )
-}
-
-export function Points({ points }) {
-  return (
-    <div className={styles['points']}>
-      ⭐ {points.toLocaleString()} pts
     </div>
   )
 }

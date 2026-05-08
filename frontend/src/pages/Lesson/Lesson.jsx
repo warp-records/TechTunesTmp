@@ -490,6 +490,7 @@ function LessonGame({ onRetry }) {
       searchParams.get('level'),
     ))
     const token = localStorage.getItem('token')
+    localStorage.setItem('pointsGained', scoreRef.current)
     fetch('/api/submit_lesson_score', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
