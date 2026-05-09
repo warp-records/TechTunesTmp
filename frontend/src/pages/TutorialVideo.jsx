@@ -16,7 +16,7 @@ export default function TutorialVideo({ name }) {
   let videoSrc = null;
   switch (name) {
     case "lessonTutorial":
-      videoSrc = "https://techtunes-assets-public-955030484305-us-east-2-an.s3.us-east-2.amazonaws.com/lesson_tutorial"
+      videoSrc = "https://techtunes-assets-public.s3.us-east-1.amazonaws.com/lesson_tutorial"
   }
     
   
