@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { MdOutlineModeEdit } from 'react-icons/md'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import styles from './Admin.module.css'
 import PremiumBadge from '../components/PremiumBadge'
@@ -284,6 +285,8 @@ function LessonPanel({ onClose }) {
   const [songs, setSongs] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [editingName, setEditingName] = useState('');
+  const [editingGenreId, setEditingGenreId] = useState(null);
+  const [editingGenre, setEditingGenre] = useState('');
   const navigate = useNavigate();
 
   function fetchSongs() {
@@ -307,6 +310,17 @@ function LessonPanel({ onClose }) {
       body: JSON.stringify({ name: editingName.trim() }),
     })
     setEditingId(null)
+    fetchSongs()
+  }
+
+  async function handleGenreEdit(song) {
+    const token = localStorage.getItem('token')
+    await fetch(`/api/update_song?song_id=${song.id}`, {
+      method: 'PATCH',
+      headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ genre: editingGenre.trim() || null }),
+    })
+    setEditingGenreId(null)
     fetchSongs()
   }
 
@@ -356,7 +370,7 @@ function LessonPanel({ onClose }) {
                 className={[styles['song-row'], selected === song ? styles['result-row-selected'] : ''].filter(Boolean).join(' ')}
                 onClick={() => setSelected(song)}
               >
-                <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span className={styles['song-name-cell']}>
                   {editingId === song.id ? (
                     <input
                       className={styles['search-input']}
@@ -370,18 +384,41 @@ function LessonPanel({ onClose }) {
                     />
                   ) : (
                     <>
-                      {song.name}
+                      <span>{song.name}</span>
                       <button
                         className={styles['rename-btn']}
                         onClick={e => { e.stopPropagation(); setEditingId(song.id); setEditingName(song.name) }}
                         title="Rename"
-                      >✏️</button>
+                      ><MdOutlineModeEdit /></button>
                     </>
                   )}
                 </span>
                 <span>{song.instrument}</span>
                 <span className={styles['song-difficulty']}>{song.difficulty != null ? DIFFICULTY_LABELS[song.difficulty] : '—'}</span>
-                <span>{song.genre ?? '—'}</span>
+                <span className={styles['song-name-cell']}>
+                  {editingGenreId === song.id ? (
+                    <input
+                      className={styles['search-input']}
+                      style={{ padding: '2px 6px', fontSize: '0.875rem' }}
+                      value={editingGenre}
+                      autoFocus
+                      placeholder="Genre"
+                      onChange={e => setEditingGenre(e.target.value)}
+                      onBlur={() => handleGenreEdit(song)}
+                      onKeyDown={e => { if (e.key === 'Enter') handleGenreEdit(song); if (e.key === 'Escape') setEditingGenreId(null) }}
+                      onClick={e => e.stopPropagation()}
+                    />
+                  ) : (
+                    <>
+                      <span>{song.genre ?? '—'}</span>
+                      <button
+                        className={styles['rename-btn']}
+                        onClick={e => { e.stopPropagation(); setEditingGenreId(song.id); setEditingGenre(song.genre ?? '') }}
+                        title="Edit genre"
+                      ><MdOutlineModeEdit /></button>
+                    </>
+                  )}
+                </span>
                 <span>{song.tiles?.length > 0 ? song.tiles.map(t => `${t.level} #${t.tile_number}`).join(', ') : '—'}</span>
               </div>
             ))
@@ -427,24 +464,6 @@ function LessonPanel({ onClose }) {
             />
             Show in search
           </label>
-          <input
-            type="text"
-            placeholder="Genre"
-            disabled={!selected}
-            value={selected?.genre ?? ''}
-            className={styles['genre-input']}
-            onChange={e => setSelected(s => s ? { ...s, genre: e.target.value } : s)}
-            onBlur={async e => {
-              if (!selected) return
-              const token = localStorage.getItem('token')
-              await fetch(`/api/update_song?song_id=${selected.id}`, {
-                method: 'PATCH',
-                headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ genre: e.target.value || null }),
-              })
-              fetchSongs()
-            }}
-          />
           <button
             className={styles['delete-btn']}
             disabled={!selected}

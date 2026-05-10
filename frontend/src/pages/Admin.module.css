@@ -274,15 +274,34 @@
   background: #1e1e1e;
 }
 
+.song-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.song-name-cell > span {
+  flex: 1;
+}
+
+.song-name-cell > .rename-btn {
+  margin-right: 8px;
+}
+
 .rename-btn {
   background: none;
-  border: none;
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
   cursor: pointer;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
+  color: #fff;
   opacity: 0;
-  padding: 2px 5px;
-  line-height: 1;
-  transition: opacity 0.15s ease;
+  padding: 3px;
+  line-height: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.15s ease, background 0.15s ease;
 }
 
 .song-row:hover .rename-btn {
