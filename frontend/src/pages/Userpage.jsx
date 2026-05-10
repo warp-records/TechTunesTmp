@@ -6,6 +6,7 @@ import { AuthContext } from '../App'
 import Avatar from "../components/Avatar"
 import Points from "../components/Points"
 import { resolveBodyBg } from "../components/avatarData"
+import { PiCoatHanger } from 'react-icons/pi'
 import styles from './Userpage.module.css'
 import PremiumBadge from '../components/PremiumBadge'
 import NotificationBell from '../components/NotificationBell'
@@ -171,7 +172,6 @@ export default function Userpage() {
               <div className={styles['chip']} role="button" aria-haspopup="menu" onClick={() => setSelectedMenu(prev => prev === 'settings' ? null : 'settings')}>☰ Settings ▾</div>
               <div className={[styles['menu'], selectedMenu === 'settings' ? styles['menu-open'] : ''].filter(Boolean).join(' ')} role="menu">
                 <a role="menuitem">Add Friends</a>
-                <Link to="/pickbot_edit">Edit PickBot</Link>
                 <a role="menuitem">Privacy Settings</a>
                 <a role="menuitem">Add Spotify</a>
                 <a role="menuitem">Add Apple Music</a>
@@ -276,6 +276,9 @@ export function AvatarFrame({ children }) {
       <div className={styles['avatar-frame-inner']}>
         {children}
       </div>
+      <Link to="/pickbot_edit" className={styles['avatar-hanger-btn']} title="Customize avatar">
+        <PiCoatHanger />
+      </Link>
     </div>
   )
 }

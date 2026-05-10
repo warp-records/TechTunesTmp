@@ -39,13 +39,38 @@
     to { --border-angle: 360deg; }
 }
 
+.avatar-hanger-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(30, 10, 50, 0.85);
+    border: 1.5px solid rgba(212, 158, 251, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(212, 158, 251, 0.85);
+    font-size: 18px;
+    text-decoration: none;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+    z-index: 10;
+}
+
+.avatar-hanger-btn:hover {
+    background: rgba(212, 158, 251, 0.2);
+    color: #fff;
+    transform: scale(1.1);
+}
+
 .avatar-frame {
     position: relative;
     width: 250px;
     height: 290px;
     margin: 16px auto 0;
     border-radius: 28px;
-    overflow: hidden;
+    overflow: visible;
     background: conic-gradient(from var(--border-angle), #9300fc, #ff00cc, #00eaff, #9300fc);
     animation: spin-border 15s linear infinite;
 }
