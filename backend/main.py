@@ -253,6 +253,8 @@ def register(user: RegisterRequest, underage: bool, db: Session = Depends(get_db
     )
     db.add(db_avatar)
 
+    db.add(ProgressDB(user_id=db_user.id, instrument='guitar', level='beginner', unlocked_tile=1))
+
     db.commit()
 
     return {

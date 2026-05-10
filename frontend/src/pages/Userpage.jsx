@@ -136,7 +136,7 @@ export default function Userpage() {
       if (res.ok) {
         const data = await res.json()
         const row = data.progress.find(r => r.instrument === 'guitar' && r.level === 'beginner')
-        if (row) setGuitarBeginnerTile(row.unlocked_tile)
+        if (row) setGuitarBeginnerTile(row.unlocked_tile - 1)
       }
     }
 
