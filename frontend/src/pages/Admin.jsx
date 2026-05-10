@@ -301,9 +301,10 @@ function LessonPanel({ onClose }) {
   async function handleRename(song) {
     if (!editingName.trim() || editingName === song.name) { setEditingId(null); return }
     const token = localStorage.getItem('token')
-    await fetch(`/api/rename_song?song_id=${song.id}&name=${encodeURIComponent(editingName.trim())}`, {
+    await fetch(`/api/update_song?song_id=${song.id}`, {
       method: 'PATCH',
-      headers: { Authorization: 'Bearer ' + token },
+      headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: editingName.trim() }),
     })
     setEditingId(null)
     fetchSongs()
@@ -344,6 +345,7 @@ function LessonPanel({ onClose }) {
             <span>Song</span>
             <span>Instrument</span>
             <span>Difficulty</span>
+            <span>Genre</span>
             <span>Tile</span>
           </div>
           {results.length === 0
@@ -379,12 +381,13 @@ function LessonPanel({ onClose }) {
                 </span>
                 <span>{song.instrument}</span>
                 <span className={styles['song-difficulty']}>{song.difficulty != null ? DIFFICULTY_LABELS[song.difficulty] : '—'}</span>
+                <span>{song.genre ?? '—'}</span>
                 <span>{song.tiles?.length > 0 ? song.tiles.map(t => `${t.level} #${t.tile_number}`).join(', ') : '—'}</span>
               </div>
             ))
           }
         </div>
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div className={styles['song-actions']}>
           <button
             className={[styles['card-btn'], selected?.tiles?.length > 0 ? styles['btn-mod'] : styles['btn-default']].join(' ')}
             disabled={!selected}
@@ -406,7 +409,7 @@ function LessonPanel({ onClose }) {
           >
             {!selected ? 'Select a song' : selected.tiles?.length > 0 ? `Unassign "${selected.name}"` : `Assign "${selected.name}"`}
           </button>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '6px', opacity: selected ? 1 : 0.4, cursor: selected ? 'pointer' : 'default', whiteSpace: 'nowrap', color: '#ccc', fontSize: '0.875rem' }}>
+          <label className={styles['show-in-search-label']}>
             <input
               type="checkbox"
               checked={selected?.show_in_search ?? false}
@@ -414,15 +417,34 @@ function LessonPanel({ onClose }) {
               onChange={async e => {
                 if (!selected) return
                 const token = localStorage.getItem('token')
-                await fetch(`/api/song_show_in_search?song_id=${selected.id}&show=${e.target.checked}`, {
+                await fetch(`/api/update_song?song_id=${selected.id}`, {
                   method: 'PATCH',
-                  headers: { Authorization: 'Bearer ' + token },
+                  headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ show_in_search: e.target.checked }),
                 })
                 fetchSongs()
               }}
             />
             Show in search
           </label>
+          <input
+            type="text"
+            placeholder="Genre"
+            disabled={!selected}
+            value={selected?.genre ?? ''}
+            className={styles['genre-input']}
+            onChange={e => setSelected(s => s ? { ...s, genre: e.target.value } : s)}
+            onBlur={async e => {
+              if (!selected) return
+              const token = localStorage.getItem('token')
+              await fetch(`/api/update_song?song_id=${selected.id}`, {
+                method: 'PATCH',
+                headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ genre: e.target.value || null }),
+              })
+              fetchSongs()
+            }}
+          />
           <button
             className={styles['delete-btn']}
             disabled={!selected}

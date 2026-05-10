@@ -12,7 +12,7 @@ from enum import Enum
 import xml_parse
 
 from dotenv import load_dotenv
-from typing import Any
+from typing import Any, Optional
 load_dotenv()
 
 LICENSE_SECRET = os.environ.get("LICENSE_SECRET", "")
@@ -602,7 +602,7 @@ def all_songs_meta(db: Session = Depends(get_db)):
     for t in tiles:
         tile_map.setdefault(t.song_id, []).append({"tile_number": t.tile_number, "instrument": t.instrument, "level": t.level})
     return [
-        { "id": s.id, "name": s.name, "instrument": s.instrument, "tempo": s.tempo, "difficulty": s.difficulty, "tiles": tile_map.get(s.id, []), "show_in_search": s.show_in_search }
+        { "id": s.id, "name": s.name, "instrument": s.instrument, "tempo": s.tempo, "difficulty": s.difficulty, "genre": s.genre, "tiles": tile_map.get(s.id, []), "show_in_search": s.show_in_search }
         for s in songs
     ]
 
@@ -653,21 +653,22 @@ def get_lesson_tile(tile_number: int, instrument: str, level: str, user_id: int 
 def submit_lesson_score(body: LessonScoreSubmission, _: int = Depends(get_current_user)):
     return {"ok": True}
 
-@app.patch("/api/rename_song", tags=["songs", "admin"])
-def rename_song(song_id: int, name: str, _: None = Depends(is_admin), db: Session = Depends(get_db)):
-    song = db.query(SongDB).filter(SongDB.id == song_id).first()
-    if song is None:
-        raise HTTPException(status_code=404, detail="Song not found")
-    song.name = name
-    db.commit()
-    return {"ok": True}
+class UpdateSongRequest(BaseModel):
+    name: Optional[str] = None
+    show_in_search: Optional[bool] = None
+    genre: Optional[str] = None
 
-@app.patch("/api/song_show_in_search", tags=["songs", "admin"])
-def song_show_in_search(song_id: int, show: bool, _: None = Depends(is_admin), db: Session = Depends(get_db)):
+@app.patch("/api/update_song", tags=["songs", "admin"])
+def update_song(song_id: int, body: UpdateSongRequest, _: None = Depends(is_admin), db: Session = Depends(get_db)):
     song = db.query(SongDB).filter(SongDB.id == song_id).first()
     if song is None:
         raise HTTPException(status_code=404, detail="Song not found")
-    song.show_in_search = show
+    if body.name is not None:
+        song.name = body.name
+    if body.show_in_search is not None:
+        song.show_in_search = body.show_in_search
+    if body.genre is not None:
+        song.genre = body.genre
     db.commit()
     return {"ok": True}
 
