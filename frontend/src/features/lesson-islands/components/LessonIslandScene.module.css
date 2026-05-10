@@ -232,6 +232,29 @@
   opacity: 0.75;
 }
 
+.hotspot-song-name {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+  background: rgba(20, 20, 30, 0.78);
+  color: #fff;
+  font-family: 'Trebuchet MS', 'Gill Sans', sans-serif;
+  font-size: 1vw;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+  opacity: 0;
+  transition: opacity 180ms ease;
+  pointer-events: none;
+}
+
+.lesson-island-scene__hotspot--interactive:hover .hotspot-song-name,
+.lesson-island-scene__hotspot--interactive:focus-visible .hotspot-song-name {
+  opacity: 1;
+}
+
 .lesson-island-scene__sr-only {
   position: absolute;
   width: 1px;

@@ -35,12 +35,27 @@ export default function LessonIslandPage() {
   const [avatarData, setAvatarData] = useState(null)
   const [currentTile, setCurrentTile] = useState(null)
   const [tileResults, setTileResults] = useState({})
+  const [tileSongNames, setTileSongNames] = useState({})
   const [tileUnlocked] = useState(() => localStorage.getItem('tileUnlocked') === 'true')
   useEffect(() => { localStorage.removeItem('tileUnlocked') }, [])
 
   useEffect(() => {
     const token = localStorage.getItem('token')
     if (!token) return
+
+    fetch('/api/all_songs_meta')
+      .then(res => res.ok ? res.json() : [])
+      .then(songs => {
+        const names = {}
+        for (const song of songs) {
+          for (const tile of song.tiles ?? []) {
+            if (tile.instrument === instrument && tile.level === level) {
+              names[tile.tile_number] = song.name
+            }
+          }
+        }
+        setTileSongNames(names)
+      })
 
     fetch('/api/get-avatar/', { headers: { Authorization: 'Bearer ' + token } })
       .then(res => res.ok ? res.json() : null)
@@ -116,7 +131,7 @@ export default function LessonIslandPage() {
 
   return (
     <>
-      <LessonIslandScene scene={scene} assignSongId={assignSongId} onAssignTile={assignSongId ? onAssignTile : null} showTutorial={showTutorial} closeTutorial={closeTutorial} avatarData={avatarData} currentTile={currentTile} tileResults={tileResults} />
+      <LessonIslandScene scene={scene} assignSongId={assignSongId} onAssignTile={assignSongId ? onAssignTile : null} showTutorial={showTutorial} closeTutorial={closeTutorial} avatarData={avatarData} currentTile={currentTile} tileResults={tileResults} tileSongNames={tileSongNames} />
       {debug && <DebugTileMapper />}
       {showTutorial && <TutorialPopup {...tutorialPopupProps} />}
       {arrowPos && <ArrowIndicator x={arrowPos.x} y={arrowPos.y} direction="right" />}

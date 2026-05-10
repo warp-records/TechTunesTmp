@@ -170,7 +170,7 @@ def handle_score(_t: str, token: str, user: UserDB, db: Session):
         else:
             db.add(TileResultDB(user_id=user.id, instrument=instrument, level=level, tile_number=tile_number, best_stars=stars, best_score=score))
 
-        if stars >= 4:
+        if stars >= 2:
             progress = db.query(ProgressDB).filter(
                 ProgressDB.user_id == user.id,
                 ProgressDB.instrument == instrument,

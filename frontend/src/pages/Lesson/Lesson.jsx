@@ -491,7 +491,17 @@ function LessonGame({ onRetry }) {
     ))
     const token = localStorage.getItem('token')
     localStorage.setItem('pointsGained', scoreRef.current)
-    if (gameOverStars >= 4) localStorage.setItem('tileUnlocked', 'true')
+    const playedTile = Number(searchParams.get('tile_number'))
+    const instrument = searchParams.get('instrument')
+    const level = searchParams.get('level')
+    if (gameOverStars >= 2) {
+      fetch('/api/get_progress', { headers: { Authorization: 'Bearer ' + token } })
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+          const row = data?.progress?.find(p => p.instrument === instrument && p.level === level)
+          if (row?.unlocked_tile === playedTile) localStorage.setItem('tileUnlocked', 'true')
+        })
+    }
     fetch('/api/submit_lesson_score', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
