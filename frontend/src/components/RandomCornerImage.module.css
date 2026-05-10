@@ -1,0 +1,20 @@
+.drag-root {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.corner-image {
+  width: 160px;
+  cursor: grab;
+  user-select: none;
+  pointer-events: auto;
+}
+
+.corner-image:active {
+  cursor: grabbing;
+}

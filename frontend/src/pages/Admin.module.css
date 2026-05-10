@@ -3,6 +3,7 @@
   background: #0a0a0a;
   padding: 40px;
   box-sizing: border-box;
+  position: relative;
 }
 
 .assign-toast {

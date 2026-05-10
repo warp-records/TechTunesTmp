@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { MdOutlineModeEdit } from 'react-icons/md'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import styles from './Admin.module.css'
+import RandomCornerImage from '../components/RandomCornerImage'
 import PremiumBadge from '../components/PremiumBadge'
 import HomeButton from '../components/HomeButton';
 
@@ -62,6 +63,7 @@ export default function Admin() {
       {showLessonPanel && <LessonPanel onClose={() => setShowLessonPanel(false)} />}
       {showModPanel && <ModPanel onClose={() => setShowModPanel(false)} />}
       {showNonProfitPanel && <NonProfitPanel onClose={() => setShowNonProfitPanel(false)} />}
+      <RandomCornerImage />
     </div>
   )
 }
