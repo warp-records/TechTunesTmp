@@ -10,6 +10,7 @@ import wahSrc from '../../assets/sounds/wah_wah_wah.mp3'
 
 import styles from './Lesson.module.css'
 import HomeButton from '../../components/HomeButton'
+import NavButton from '../../components/NavButton'
 import Strings from '../../assets/Lesson Page Assets/Strings.png'
 import NeonFrame from '../../assets/Lesson Page Assets/Neon Board Frame.png'
 import Board from '../../assets/Lesson Page Assets/Board.png'
@@ -605,7 +606,10 @@ function LessonGame({ onRetry }) {
           <RetryButton onRetry={onRetry} />
         </div>
       )}
-      <BackToHomeButton show={showBackToHome} />
+      <div className={[styles['back-to-home-gameover'], showBackToHome ? styles['visible'] : ''].filter(Boolean).join(' ')}>
+        <NavButton to="/homepage" text="next lesson >" />
+        <NavButton to={`/lesson-islands/${searchParams.get('instrument')}/${searchParams.get('level')}`} text="back to lesson island" />
+      </div>
       <div className={styles['lesson-stage']}>
         <img className={[styles['layer-board'], fadeBoard ? styles['fade-frets'] : ''].filter(Boolean).join(' ')} src={Board} alt="Board" />
         <img className={[styles['layer-frame'], fadeFrets ? styles['fade-frets'] : ''].filter(Boolean).join(' ')} src={NeonFrame} alt="Neon Board Frame" />
@@ -731,17 +735,6 @@ export function FinalScore({ score, show }) {
   return <div className={styles['final-score']}>{score}</div>
 }
 
-export function BackToHomeButton({ show }) {
-  const navigate = useNavigate()
-  return (
-    <button
-      className={[styles['back-to-home-gameover'], show ? styles['visible'] : ''].filter(Boolean).join(' ')}
-      onClick={() => navigate('/homepage')}
-    >
-      <img src={BackToHomeImg} className={styles['back-to-home-button']} />
-    </button>
-  )
-}
 
 export function ReviewButton({ onClick }) {
   return (
@@ -854,9 +847,7 @@ export function PauseMenu({ show, progress, levelNum }) {
             <p style={{fontSize: '35px'}}>{Math.round(progress * 100)}% Complete</p>
           </div>
           <div className={styles['pause-box-lower']}>
-            <button className={styles['pause-menu-btn']} onClick={() => navigate('/homepage')}>
-              <img src={BackToHomeImg} className={styles['back-to-home-button']} />
-            </button>
+            <NavButton to="/homepage" text="back to home" />
             <img src={BattleFriendImg} className={styles['battle-friend-button']} />
           </div>
         </div>

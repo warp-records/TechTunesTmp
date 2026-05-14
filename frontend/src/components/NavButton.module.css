@@ -1,0 +1,17 @@
+.nav-button {
+  font-family: 'Baumans', sans-serif;
+  font-size: 2rem;
+  color: #ffffff;
+  text-decoration: none;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  background: #5D39E2;
+  padding: 10px 24px;
+  border-radius: 25px;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.nav-button:hover {
+  background: #7454e8;
+  transform: translateX(4px);
+}
