@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import styles from './LessonIslandScene.module.css'
 import Avatar from '../../../components/Avatar'
 import { resolveBodyBg } from '../../../components/avatarData'
+import { LuLock } from 'react-icons/lu'
 import LessonStars from '../../../components/LessonStars'
 
 function toPercent(value) {
@@ -100,7 +101,7 @@ function SceneHotspot({ hotspot, isAssigning, onAssignTile, instrument, level, s
       title={hotspot.title ?? hotspot.label}
     >
       <span className={styles['lesson-island-scene__sr-only']}>{hotspot.label}</span>
-      {!isInteractive && isTile && <span className={styles['lock-icon']}>🔒</span>}
+      {!isInteractive && isTile && <LuLock className={styles['lock-icon']} />}
       {isUnlocked && songName && (
         <span className={styles['hotspot-song-name']}>{songName}</span>
       )}

@@ -37,7 +37,7 @@ const FORM_OFFSETS = [
   { left: '-10px' },
   { left: '0px' },
   { left: '0px' },
-  { left: '0px' },
+  { left: '5px' },
 ]
 
 /**

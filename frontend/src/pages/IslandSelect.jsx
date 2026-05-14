@@ -7,6 +7,8 @@ import { Link } from 'react-router-dom'
 import TutorialPopup, { ArrowIndicator } from '../components/TutorialPopup'
 import { useTutorial } from '../components/tutorial'
 
+import HomeButton from '../components/HomeButton'
+
 const TUTORIAL_MESSAGES = ["Open guitar island"]
 
 export default function IslandSelect() {
@@ -22,6 +24,7 @@ export default function IslandSelect() {
 
   return (
     <div className={styles['lesson-island-page']}>
+    <HomeButton />
     <div className={styles['jukebox-container']}>
       <img src={JukeboxImg} alt="Jukebox" className={styles['jukebox-image']} />
       <div className={styles['screen-overlay']}>

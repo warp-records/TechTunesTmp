@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '../App'
 import { useMemo } from 'react'
+import HomeButton from '../components/HomeButton'
 import backgroundDrawing from '../assets/Badpage/background_drawing.png'
 import stupidPickBlue from '../assets/Badpage/stupid_pick_blue.png'
 import stupidPickLime from '../assets/Badpage/stupid_pick_lime.png'
@@ -24,6 +25,7 @@ export default function BadPage() {
   const { main, sub } = useMemo(() => messages[Math.floor(Math.random() * messages.length)], [])
   return (
     <div style={{ color: "white", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "20px", backgroundImage: `url(${backgroundDrawing})`, backgroundSize: 'cover', backgroundPosition: 'center', minHeight: '100vh' }}>
+      <HomeButton />
       <p style={{ fontSize: "70px", margin: 0, fontWeight: 'bold' }}>{main}</p>
       <p style={{ fontSize: "30px", margin: 0, opacity: 0.8 }}>{sub}</p>
       {user

@@ -9,6 +9,7 @@ import TutorialPopup, { ArrowIndicator } from '../../components/TutorialPopup'
 import { useTutorial } from '../../components/tutorial'
 import { avatarList, serializeAvatar, resolveBodyBg, TORSO_COLORS, isPremiumSkin, DEFAULT_SKIN, PLAIN_SKINS } from '../../components/avatarData'
 import { eyeAssets, mouthAssets, accessoryAssets, bodyTextureAssets } from '../../assetRegistry'
+import { LuLock } from 'react-icons/lu'
 import eyesBtn from '../../assets/DressingRoom/Dressing/Eyes Button.png'
 import mouthBtn from '../../assets/DressingRoom/Dressing/Mouth Button.png'
 import accessoryBtn from '../../assets/DressingRoom/Dressing/AccessoryButton.png'
@@ -399,7 +400,7 @@ export function BodyTexturePicker({ setBodyBg, isPremium, onPremiumRequired, onP
               style={{ backgroundImage: `url(${url})` }}
               onClick={() => { setBodyBg(name); if (!isPremium) onPremiumRequired(); }}
             >
-              {!isPremium && <img src={padlock} className={styles['texture-padlock']} alt="locked" />}
+              {!isPremium && <LuLock className={styles['texture-padlock']} />}
             </div>
           ))}
         </div>

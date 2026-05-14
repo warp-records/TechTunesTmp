@@ -1,4 +1,5 @@
 import { useRef } from 'react'
+import { LuBell } from 'react-icons/lu'
 import styles from './NotificationBell.module.css'
 
 /**
@@ -13,7 +14,7 @@ export default function NotificationBell({ notifications = [], onClearAll, open,
   return (
     <div className={styles.wrap} ref={wrapRef}>
       <div className={styles.bell} onClick={onToggle} role="button" aria-label="Notifications">
-        🔔
+        <LuBell />
       </div>
       {notifications.length > 0 && (
         <span className={styles.badge}>{notifications.length}</span>

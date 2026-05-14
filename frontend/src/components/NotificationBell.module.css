@@ -5,9 +5,12 @@
 .bell {
   background: rgba(212, 158, 251, 0.12);
   border: 1px solid rgba(212, 158, 251, 0.35);
-  padding: 8px 12px;
+  padding: 6px 10px;
   border-radius: 999px;
-  font-size: 0.9rem;
+  font-size: 1.35rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   transition: transform 0.15s ease, background 0.15s ease;
   user-select: none;

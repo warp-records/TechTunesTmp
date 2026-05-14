@@ -2,12 +2,14 @@
 import { useState, useContext, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../App';
+import { LuEye, LuEyeOff } from 'react-icons/lu'
 import styles from './Login.module.css'
 
 export default function Login() {
   const [badLogin, setBadLogin] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   
   const navigate = useNavigate();
   const { fetchUser } = useContext(AuthContext);
@@ -52,9 +54,9 @@ export default function Login() {
           <div className={styles['form-group']}>
             <label htmlFor="login-password">Password</label>
             <div className={styles['password-group']}>
-              <input type="password" id="login-password" placeholder="Enter your password" required value={password} onChange={e => setPassword(e.target.value)} />
-              <button type="button" className={styles['password-toggle']} id="password-toggle">
-                <span className={styles['eye-icon']}>👁️</span>
+              <input type={showPassword ? "text" : "password"} id="login-password" placeholder="Enter your password" required value={password} onChange={e => setPassword(e.target.value)} />
+              <button type="button" className={styles['password-toggle']} onClick={() => setShowPassword(!showPassword)} aria-label={showPassword ? "Hide password" : "Show password"}>
+                {showPassword ? <LuEyeOff /> : <LuEye />}
               </button>
             </div>
           </div>

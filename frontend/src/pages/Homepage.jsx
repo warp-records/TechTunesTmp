@@ -5,6 +5,8 @@ import styles from './Homepage.module.css'
 import TutorialPopup, { ArrowIndicator } from '../components/TutorialPopup'
 import { useTutorial } from '../components/tutorial'
 
+import HomeButton from '../components/HomeButton'
+
 const TUTORIAL_MESSAGES = [
   "You can tune your instrument here",
   "Check out the impact page!",

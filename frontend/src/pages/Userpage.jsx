@@ -7,6 +7,8 @@ import Avatar from "../components/Avatar"
 import Points from "../components/Points"
 import { resolveBodyBg } from "../components/avatarData"
 import { PiCoatHanger } from 'react-icons/pi'
+import HomeButton from '../components/HomeButton'
+import { LuUserPlus, LuDownload, LuBook, LuShield, LuLogOut, LuCheck } from 'react-icons/lu'
 import styles from './Userpage.module.css'
 import PremiumBadge from '../components/PremiumBadge'
 import NotificationBell from '../components/NotificationBell'
@@ -81,6 +83,7 @@ export default function Userpage() {
   ]
   
   const [avatarData, setAvatarData] = useState(null);
+  const [downloaded, setDownloaded] = useState(false);
   const navigate = useNavigate();
   const homeBtnRef = useRef(null)
   const { tutorialIndex, showTutorial, start: startTutorial, close, popupProps: tutorialPopupProps } = useTutorial(TUTORIAL_MESSAGES, 1)
@@ -97,6 +100,9 @@ export default function Userpage() {
     a.download = `user_${data.account.id}.json`
     a.click()
     URL.revokeObjectURL(url)
+    
+    setDownloaded(true)
+    setTimeout(() => setDownloaded(false), 2000)
   }
 
   async function logout() {
@@ -168,9 +174,7 @@ export default function Userpage() {
         <nav className={[styles['nav'], styles['container']].join(' ')} aria-label="Top Navigation">
           <div className={styles['nav-left']}>
             <div ref={homeBtnRef} onClick={() => showTutorial && close()}>
-              <Link to="/homepage">
-                <div className={styles['chip']} title="Go to Home">🏠</div>
-              </Link>
+              <HomeButton style={{ position: 'static' }} />
             </div>
           </div>
           <div className={styles['logo']}>🎧 TuneVerse 🎶</div>
@@ -184,14 +188,31 @@ export default function Userpage() {
             <div className={styles['settings']}>
               <div className={styles['chip']} role="button" aria-haspopup="menu" onClick={() => setSelectedMenu(prev => prev === 'settings' ? null : 'settings')}>☰ Settings ▾</div>
               <div className={[styles['menu'], selectedMenu === 'settings' ? styles['menu-open'] : ''].filter(Boolean).join(' ')} role="menu">
-                <a role="menuitem">Add Friends</a>
+                <a role="menuitem">
+                  <span>Add Friends</span>
+                  <LuUserPlus />
+                </a>
                 {/* <a role="menuitem">Privacy Settings</a> */}
-                <a role="menuitem" onClick={downloadMyData}>Download My Data</a>
+                <a role="menuitem" onClick={downloadMyData}>
+                  <span>Download Data</span>
+                  {downloaded ? <LuCheck /> : <LuDownload />}
+                </a>
                 {/* <a role="menuitem">Add Spotify</a> */}
                 {/* <a role="menuitem">Add Apple Music</a> */}
-                <a role="menuitem">SongBook</a>
-                {authUser?.admin && <Link to="/admin" style={{ color: "#66aaff" }}>Admin</Link>}
-                <a role="menuitem" className={styles['logout']} onClick={logout}>Log out</a>
+                <a role="menuitem">
+                  <span>SongBook</span>
+                  <LuBook />
+                </a>
+                {authUser?.admin && (
+                  <Link to="/admin" style={{ color: "#66aaff" }}>
+                    <span>Admin</span>
+                    <LuShield />
+                  </Link>
+                )}
+                <a role="menuitem" className={styles['logout']} onClick={logout}>
+                  <span>Log out</span>
+                  <LuLogOut />
+                </a>
               </div>
             </div>
           </div>
