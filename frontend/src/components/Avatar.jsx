@@ -32,6 +32,14 @@ const MOUTH_POSITIONS = [
   { top: '75%', left: '45%', width: '45px', height: '22px' },
 ]
 
+const FORM_OFFSETS = [
+  { left: '-15px' },
+  { left: '-10px' },
+  { left: '0px' },
+  { left: '0px' },
+  { left: '0px' },
+]
+
 /**
  * Avatar preview renderer with draggable accessory support.
  *
@@ -77,8 +85,10 @@ export default function Avatar({ form, activeItems = {}, bodyTexture, onAccessor
     onAccessoryDrag?.(accessoryPos.x, accessoryPos.y)
   }
   
+  const formOffset = FORM_OFFSETS[form] || FORM_OFFSETS[0]
+
   return (
-  <div ref={avatarRef} className={styles['avatar-image']}>
+  <div ref={avatarRef} className={styles['avatar-image']} style={formOffset}>
       <div className={styles['body-image']} style={{backgroundImage: `url(${avatarList[form]})`}}></div>
       <div className={styles['body-color-layer']} style={{
         ...(PLAIN_SKINS.has(bodyTexture)
