@@ -205,6 +205,47 @@ def me(request: Request, user_id: int = Depends(get_current_user), db: Session =
         raise HTTPException(status_code=404, detail="User not found")
     
     
+@app.get("/api/download_user_data")
+def download_user_data(user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
+    user = db.query(UserDB).filter(UserDB.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    sessions = db.query(SessionDB).filter(SessionDB.user_id == user_id).all()
+    progress = db.query(ProgressDB).filter(ProgressDB.user_id == user_id).all()
+    tile_results = db.query(TileResultDB).filter(TileResultDB.user_id == user_id).all()
+    avatar = db.query(AvatarDB).filter(AvatarDB.user_id == user_id).first()
+    return {
+        "account": {
+            "id": user.id,
+            "username": user.username,
+            "password_hash": "[redacted - stored as a bcrypt hash]",
+            "join_date": str(user.join_date),
+            "score": user.score,
+            "underage": user.underage,
+            "beta_tester": user.beta_tester,
+            "stripe_customer_id": "[redacted - managed by Stripe]" if user.stripe_customer_id else None,
+            "subscription_end": str(user.subscription_end) if user.subscription_end else None,
+            "auto_donate": user.auto_donate,
+            "restricted": str(user.restricted) if user.restricted else None,
+            "banned": str(user.banned) if user.banned else None,
+            "ban_message": user.ban_message,
+        },
+        "sessions": {"active_sessions": len(sessions)},
+        "avatar": {
+            "form": avatar.form,
+            "body_texture": avatar.bodyTexture,
+            "active_items": avatar.active_items,
+        } if avatar else None,
+        "progress": [
+            {"instrument": p.instrument, "level": p.level, "unlocked_tile": p.unlocked_tile}
+            for p in progress
+        ],
+        "tile_results": [
+            {"instrument": r.instrument, "level": r.level, "tile_number": r.tile_number, "best_stars": r.best_stars, "best_score": r.best_score}
+            for r in tile_results
+        ],
+    }
+
 @app.get("/api/get_score")
 def get_score(user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
     user = db.query(UserDB).filter(UserDB.id == user_id).first()

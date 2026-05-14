@@ -86,6 +86,19 @@ export default function Userpage() {
   const { tutorialIndex, showTutorial, start: startTutorial, close, popupProps: tutorialPopupProps } = useTutorial(TUTORIAL_MESSAGES, 1)
   const { fetchUser, user: authUser } = useContext(AuthContext);
 
+  async function downloadMyData() {
+    const token = localStorage.getItem('token')
+    const res = await fetch('/api/download_user_data', { headers: { Authorization: 'Bearer ' + token } })
+    const data = await res.json()
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `user_${data.account.id}.json`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   async function logout() {
     localStorage.clear();
     await fetchUser();
@@ -172,9 +185,10 @@ export default function Userpage() {
               <div className={styles['chip']} role="button" aria-haspopup="menu" onClick={() => setSelectedMenu(prev => prev === 'settings' ? null : 'settings')}>☰ Settings ▾</div>
               <div className={[styles['menu'], selectedMenu === 'settings' ? styles['menu-open'] : ''].filter(Boolean).join(' ')} role="menu">
                 <a role="menuitem">Add Friends</a>
-                <a role="menuitem">Privacy Settings</a>
-                <a role="menuitem">Add Spotify</a>
-                <a role="menuitem">Add Apple Music</a>
+                {/* <a role="menuitem">Privacy Settings</a> */}
+                <a role="menuitem" onClick={downloadMyData}>Download My Data</a>
+                {/* <a role="menuitem">Add Spotify</a> */}
+                {/* <a role="menuitem">Add Apple Music</a> */}
                 <a role="menuitem">SongBook</a>
                 {authUser?.admin && <Link to="/admin" style={{ color: "#66aaff" }}>Admin</Link>}
                 <a role="menuitem" className={styles['logout']} onClick={logout}>Log out</a>
