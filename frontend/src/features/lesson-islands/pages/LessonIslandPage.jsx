@@ -37,7 +37,8 @@ export default function LessonIslandPage() {
   const [tileResults, setTileResults] = useState({})
   const [tileSongNames, setTileSongNames] = useState({})
   const [tileUnlocked] = useState(() => localStorage.getItem('tileUnlocked') === 'true')
-  useEffect(() => { localStorage.removeItem('tileUnlocked') }, [])
+  const [jumpToNextLesson] = useState(() => localStorage.getItem('jumpToNextLesson') === 'true')
+  useEffect(() => { localStorage.removeItem('tileUnlocked'); localStorage.removeItem('jumpToNextLesson') }, [])
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -72,6 +73,11 @@ export default function LessonIslandPage() {
             setTimeout(() => {
               setCurrentTile(row.unlocked_tile)
               new Audio(levelUnlockSrc).play()
+              if (jumpToNextLesson) {
+                setTimeout(() => {
+                  navigate(`/lesson?tile_number=${row.unlocked_tile}&instrument=${instrument}&level=${level}`)
+                }, 1800)
+              }
             }, 800)
           } else {
             setCurrentTile(row.unlocked_tile)

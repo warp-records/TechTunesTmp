@@ -149,6 +149,7 @@ function LessonGame({ onRetry }) {
   const [showBlur, setShowBlur] = useState(false)
   const [showFinalScore, setShowFinalScore] = useState(false)
   const [showBackToHome, setShowBackToHome] = useState(false)
+  const [didUnlock, setDidUnlock] = useState(false)
   const [showStars, setShowStars] = useState(false)
   const [starRating, setStarRating] = useState(1)
   
@@ -449,6 +450,7 @@ function LessonGame({ onRetry }) {
     setShowBlur(false)
     setShowFinalScore(false)
     setShowBackToHome(false)
+    setDidUnlock(false)
     setShowStars(false)
     setFadeStrings(false)
     setFadeFrets(false)
@@ -500,7 +502,10 @@ function LessonGame({ onRetry }) {
         .then(res => res.ok ? res.json() : null)
         .then(data => {
           const row = data?.progress?.find(p => p.instrument === instrument && p.level === level)
-          if (row?.unlocked_tile === playedTile) localStorage.setItem('tileUnlocked', 'true')
+          if (row?.unlocked_tile === playedTile) {
+            localStorage.setItem('tileUnlocked', 'true')
+            setDidUnlock(true)
+          }
         })
     }
     fetch('/api/submit_lesson_score', {
@@ -607,7 +612,13 @@ function LessonGame({ onRetry }) {
         </div>
       )}
       <div className={[styles['back-to-home-gameover'], showBackToHome ? styles['visible'] : ''].filter(Boolean).join(' ')}>
-        <NavButton to="/homepage" text="next lesson >" />
+        {didUnlock && (
+          <NavButton
+            to={`/lesson-islands/${searchParams.get('instrument')}/${searchParams.get('level')}`}
+            text="next lesson >"
+            onClick={() => localStorage.setItem('jumpToNextLesson', 'true')}
+          />
+        )}
         <NavButton to={`/lesson-islands/${searchParams.get('instrument')}/${searchParams.get('level')}`} text="back to lesson island" />
       </div>
       <div className={styles['lesson-stage']}>

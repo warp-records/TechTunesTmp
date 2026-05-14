@@ -474,7 +474,7 @@ background-attachment: fixed;
 
 .back-to-home-gameover {
   position: fixed;
-  bottom: 60px;
+  bottom: 4vh;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -498,7 +498,7 @@ background-attachment: fixed;
 
 .gameover-action-row {
   position: fixed;
-  bottom: 150px;
+  bottom: 20vh;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -518,36 +518,38 @@ background-attachment: fixed;
   background: none;
   border: 3px solid #ff00cc;
   border-radius: 12px;
-  padding: 14px 48px;
+  padding: 10px 32px;
   font-family: 'CoreSansM', sans-serif;
-  font-size: 32px;
+  font-size: 26px;
   color: white;
-  letter-spacing: 4px;
+  letter-spacing: 3px;
   cursor: pointer;
-  transition: filter 0.2s ease;
+  transition: filter 0.2s ease, transform 0.2s ease;
   text-shadow: 0 0 12px rgba(255, 0, 204, 0.8);
   box-shadow: 0 0 16px rgba(255, 0, 204, 0.6), inset 0 0 12px rgba(255, 0, 204, 0.3);
 }
 
 .review-button-gameover:hover {
   filter: brightness(1.3);
+  transform: translateY(-2px);
 }
 
 .retry-button-gameover {
   background: none;
   border: 3px solid #ff00cc;
   border-radius: 12px;
-  padding: 14px 32px;
-  font-size: 32px;
+  padding: 10px 24px;
+  font-size: 26px;
   color: white;
   cursor: pointer;
-  transition: filter 0.2s ease;
+  transition: filter 0.2s ease, transform 0.2s ease;
   text-shadow: 0 0 12px rgba(255, 0, 204, 0.8);
   box-shadow: 0 0 16px rgba(255, 0, 204, 0.6), inset 0 0 12px rgba(255, 0, 204, 0.3);
 }
 
 .retry-button-gameover:hover {
   filter: brightness(1.3);
+  transform: translateY(-2px);
 }
 
 .review-mode-row {
@@ -613,7 +615,7 @@ background-attachment: fixed;
 
 .gameover-stars {
   position: fixed;
-  top: 68%;
+  top: 62%;
   left: 50%;
   transform: translateX(-50%);
   z-index: 21;
