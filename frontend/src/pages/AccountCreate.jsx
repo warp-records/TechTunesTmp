@@ -28,6 +28,7 @@ export default function AccountCreate() {
   const [keyError, setKeyError] = useState("");
   const [suggestions, setSuggestions] = useState(randSuggestions());
   const [usernameTaken, setUsernameTaken] = useState(false);
+  const [isAppropriate, setIsAppropriate] = useState(true);
   
   const validName = username.length >= 3;
 
@@ -46,6 +47,7 @@ export default function AccountCreate() {
       const data = await res.json();
       
       setUsernameTaken(data.taken);
+      setIsAppropriate(data.appropriate);
     }, 300);
     
     return () => clearTimeout(timer);
@@ -59,6 +61,7 @@ export default function AccountCreate() {
   
   function handleInput(e) {
     setUsername(e.target.value);
+    setIsAppropriate(true);
   }
   
   function handlePassInput(e) {
@@ -98,6 +101,8 @@ export default function AccountCreate() {
       setKeyError("Invalid invite code");
     } else if (data.detail === "KeyAlreadyUsed") {
       setKeyError("This invite code has already been used");
+    } else if (data.detail === "UsernameInappropriate") {
+      setIsAppropriate(false);
     }
   }
   
@@ -116,7 +121,7 @@ export default function AccountCreate() {
         <div className={styles['field-input-container']}>
           <input
             type="text"
-            className={[styles['field-input'], username && (!validName || usernameTaken) ? styles['bad-input'] : ''].filter(Boolean).join(' ')}
+            className={[styles['field-input'], username && (!validName || usernameTaken || !isAppropriate) ? styles['bad-input'] : ''].filter(Boolean).join(' ')}
             placeholder="Enter your username..."
             maxLength="20"
             autoComplete="off"
@@ -128,6 +133,13 @@ export default function AccountCreate() {
           }
           {username && validName && usernameTaken &&
             <div className={styles['error-message']}>Username is taken</div>
+          }
+          {username && validName && !usernameTaken && !isAppropriate &&
+            <div className={styles['error-message']}>
+              Username is inappropriate
+              <br></br>
+              <i style={{ fontSize: '0.75em' }}>cmon bro this is a kids game lol</i>
+            </div>
           }
         </div>
         
@@ -176,7 +188,7 @@ export default function AccountCreate() {
           {keyError && <div className={styles['error-message']}>{keyError}</div>}
         </div>
 
-          <button onClick={register} className={styles['username-continue-btn']} disabled={!validName || !isGoodPassword() || usernameTaken || !licenseKey}>
+          <button onClick={register} className={styles['username-continue-btn']} disabled={!validName || !isGoodPassword() || usernameTaken || !isAppropriate || !licenseKey}>
             Continue to PickBot Creation
           </button>
       </div>

@@ -4,3 +4,4 @@ bcrypt
 sqlalchemy
 stripe
 psycopg2-binary
+glin-profanity

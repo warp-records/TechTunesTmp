@@ -30,6 +30,9 @@ def _validate_key_signature(key: str) -> bool:
         return False
 
 import bcrypt
+from glin_profanity import Filter
+
+_profanity_filter = Filter({'detect_leetspeak': True})
 from fastapi import FastAPI, Request, HTTPException, Depends, APIRouter, Header, UploadFile
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -267,6 +270,10 @@ def register(user: RegisterRequest, underage: bool, db: Session = Depends(get_db
     if existing:
         raise HTTPException(status_code=409, detail="UsernameTaken")
 
+    # need to switch to a better profanity filter soon
+    if _profanity_filter.is_profane(user.username):
+        raise HTTPException(status_code=400, detail="UsernameInappropriate")
+
     hashed = bcrypt.hashpw(user.password.encode(), bcrypt.gensalt())
 
     db_user = UserDB(
@@ -307,8 +314,12 @@ def register(user: RegisterRequest, underage: bool, db: Session = Depends(get_db
 @app.get("/api/check-username/{username}")
 def check_username(username: str, db: Session = Depends(get_db)):
     existing = db.query(UserDB).filter(UserDB.username == username).first()
+    is_appropriate = not _profanity_filter.is_profane(username)
     
-    return { "taken": existing is not None }
+    return { 
+        "taken": existing is not None,
+        "appropriate": is_appropriate
+    }
 
             
 @app.post("/api/login", tags=["auth"])
