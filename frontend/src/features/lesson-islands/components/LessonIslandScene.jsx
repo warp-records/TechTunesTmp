@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import styles from './LessonIslandScene.module.css'
 import Avatar from '../../../components/Avatar'
 import { resolveBodyBg } from '../../../components/avatarData'
-import { LuLock } from 'react-icons/lu'
+import { LuLock, LuConstruction } from 'react-icons/lu'
 import LessonStars from '../../../components/LessonStars'
 
 function toPercent(value) {
@@ -65,15 +65,18 @@ function SceneHotspot({ hotspot, isAssigning, onAssignTile, instrument, level, s
   const isTile = hotspot.tile_number != null
   const isUnlocked = isTile && currentTile != null && hotspot.tile_number <= currentTile
   const isCurrentTile = isTile && hotspot.tile_number === currentTile
-  const isInteractive = isAssigning ? isTile : isUnlocked
+  const hasNoSong = !isAssigning && isUnlocked && !songName
+  const isInteractive = isAssigning ? isTile : (isUnlocked && !hasNoSong)
 
   const classes = [
     styles['lesson-island-scene__hotspot'],
     isAssigning
       ? styles['lesson-island-scene__hotspot--assigning']
-      : isInteractive
-        ? styles['lesson-island-scene__hotspot--interactive']
-        : styles['lesson-island-scene__hotspot--static'],
+      : hasNoSong
+        ? styles['lesson-island-scene__hotspot--no-song']
+        : isInteractive
+          ? styles['lesson-island-scene__hotspot--interactive']
+          : styles['lesson-island-scene__hotspot--static'],
     isCurrentTile ? styles['lesson-island-scene__hotspot--current'] : '',
     hotspot.status ? styles[`lesson-island-scene__hotspot--${hotspot.status}`] : '',
     `lesson-island-scene__hotspot--${hotspot.id}`,
@@ -101,7 +104,8 @@ function SceneHotspot({ hotspot, isAssigning, onAssignTile, instrument, level, s
       title={hotspot.title ?? hotspot.label}
     >
       <span className={styles['lesson-island-scene__sr-only']}>{hotspot.label}</span>
-      {!isInteractive && isTile && <LuLock className={styles['lock-icon']} />}
+      {!isInteractive && isTile && !hasNoSong && <LuLock className={styles['lock-icon']} />}
+      {hasNoSong && <LuConstruction className={styles['construction-icon']} />}
       {isUnlocked && songName && (
         <span className={styles['hotspot-song-name']}>{songName}</span>
       )}
