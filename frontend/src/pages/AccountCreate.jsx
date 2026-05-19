@@ -95,6 +95,7 @@ export default function AccountCreate() {
     const data = await response.json();
     if (response.ok) {
       localStorage.setItem("token", data.token);
+      localStorage.setItem("needLessonTutorial", "true");
       await fetchUser();
       navigate(underage ? '/parent_permission' : '/pickbot_edit?showTutorial');
     } else if (data.detail === "InvalidKey") {

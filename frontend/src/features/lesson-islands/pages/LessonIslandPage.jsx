@@ -30,7 +30,9 @@ export default function LessonIslandPage() {
   const debug = searchParams.has('debug')
   const assignSongId = searchParams.get('assignSongId')
   const scene = getLessonIslandScene(instrument, level)
-  const { showTutorial, close: closeTutorial, popupProps: tutorialPopupProps } = useTutorial(TUTORIAL_MESSAGES, 5)
+  const { showTutorial, close: closeTutorialBase, popupProps: tutorialPopupProps } = useTutorial(TUTORIAL_MESSAGES, 5)
+  const playLessonTutorial = showTutorial || localStorage.getItem('needLessonTutorial') === 'true'
+  function closeTutorial() { localStorage.removeItem('needLessonTutorial'); closeTutorialBase() }
   const [arrowPos, setArrowPos] = useState(null)
   const [avatarData, setAvatarData] = useState(null)
   const [currentTile, setCurrentTile] = useState(null)
@@ -137,7 +139,7 @@ export default function LessonIslandPage() {
 
   return (
     <>
-      <LessonIslandScene scene={scene} assignSongId={assignSongId} onAssignTile={assignSongId ? onAssignTile : null} showTutorial={showTutorial} closeTutorial={closeTutorial} avatarData={avatarData} currentTile={currentTile} tileResults={tileResults} tileSongNames={tileSongNames} />
+      <LessonIslandScene scene={scene} assignSongId={assignSongId} onAssignTile={assignSongId ? onAssignTile : null} showTutorial={showTutorial} playTutorial={playLessonTutorial} closeTutorial={closeTutorial} avatarData={avatarData} currentTile={currentTile} tileResults={tileResults} tileSongNames={tileSongNames} />
       {debug && <DebugTileMapper />}
       {showTutorial && <TutorialPopup {...tutorialPopupProps} />}
       {arrowPos && <ArrowIndicator x={arrowPos.x} y={arrowPos.y} direction="right" />}
