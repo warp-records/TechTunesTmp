@@ -151,7 +151,7 @@ export default function PickbotEdit() {
  * @param {(color: string|undefined) => void} props.setBodyTexture Body color setter.
  * @returns {JSX.Element}
  */
-const BETA_ACCESSORIES = new Set(["beta badge"])
+const BETA_ACCESSORIES = new Set(["techtunes badge"])
 
 export function ChoiceFrame({ category, setCategory, setActiveItems, setBodyBg, isPremium, isBetaTester, onPremiumRequired, onPremiumDismissed, tutorialIndex, eyesBtnRef, firstEyeRef, mouthBtnRef, accessoryBtnRef, bodyBtnRef }) {
   const tutorialGlowFor = { 1: 'eye', 3: 'mouth', 4: 'accessory', 5: 'body' }

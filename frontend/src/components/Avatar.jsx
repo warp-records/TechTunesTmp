@@ -12,8 +12,9 @@ const bodyTextures = Object.fromEntries(
   Object.entries(bodyTextureGlobs).map(([path, url]) => [path.split('/').pop().replace(/\.[^.]+$/, ''), url])
 )
 
+
 const ACCESSORY_SIZE_OVERRIDES = {
-  'beta badge': { width: '60px', height: '60px' },
+  'techtunes badge': { width: '30px', height: '30px' },
 }
 
 const EYE_POSITIONS = [
@@ -101,7 +102,7 @@ export default function Avatar({ form, activeItems = {}, bodyTexture, onAccessor
             }
           : bodyTextures[bodyTexture]
             // patterns fill the whole masked area
-            ? { backgroundImage: `url(${bodyTextures[bodyTexture]})`, backgroundSize: 'cover' }
+            ? { backgroundImage: `url(${bodyTextures[bodyTexture]})`, backgroundSize: 'auto 100%', backgroundPosition: 'bottom center', backgroundRepeat: 'no-repeat' }
             : { background: bodyTexture || 'transparent' }
         ),
         WebkitMaskImage: `url(${maskList[form]})`,
