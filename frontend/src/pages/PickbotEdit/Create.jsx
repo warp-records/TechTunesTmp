@@ -88,7 +88,7 @@ export default function PickbotEdit() {
   
   return (
     <>
-      <ChoiceFrame category={category} setCategory={setCategory} setActiveItems={setActiveItems} setBodyBg={setBodyBg} isPremium={isPremium} isBetaTester={isBetaTester} onPremiumRequired={() => setPremiumPopupVisible(true)} onPremiumDismissed={() => setPremiumPopupVisible(false)} tutorialIndex={tutorialIndex} eyesBtnRef={eyesBtnRef} firstEyeRef={firstEyeRef} mouthBtnRef={mouthBtnRef} accessoryBtnRef={accessoryBtnRef} bodyBtnRef={bodyBtnRef} />
+      <ChoiceFrame category={category} setCategory={setCategory} setActiveItems={setActiveItems} setBodyBg={setBodyBg} isPremium={isPremium} isBetaTester={isBetaTester} username={localStorage.getItem('username')} onPremiumRequired={() => setPremiumPopupVisible(true)} onPremiumDismissed={() => setPremiumPopupVisible(false)} tutorialIndex={tutorialIndex} eyesBtnRef={eyesBtnRef} firstEyeRef={firstEyeRef} mouthBtnRef={mouthBtnRef} accessoryBtnRef={accessoryBtnRef} bodyBtnRef={bodyBtnRef} />
       <div className={[styles['premium-popup'], premiumPopupVisible ? styles['premium-popup-visible'] : ''].join(' ')}>
         <p>Go premium to unlock this skin!</p>
         <button onClick={() => navigate('/payment')}>Go Premium</button>
@@ -153,13 +153,23 @@ export default function PickbotEdit() {
  */
 const BETA_ACCESSORIES = new Set(["techtunes badge"])
 
-export function ChoiceFrame({ category, setCategory, setActiveItems, setBodyBg, isPremium, isBetaTester, onPremiumRequired, onPremiumDismissed, tutorialIndex, eyesBtnRef, firstEyeRef, mouthBtnRef, accessoryBtnRef, bodyBtnRef }) {
+const BADGE_FILTERS = {
+  'pride': ({ username }) => username === 'courtney',
+}
+
+function showBadge(name, ctx) {
+if (BETA_ACCESSORIES.has(name) && !ctx.isBetaTester) return false
+  if (BADGE_FILTERS[name] && !BADGE_FILTERS[name](ctx)) return false
+  return true
+}
+
+export function ChoiceFrame({ category, setCategory, setActiveItems, setBodyBg, isPremium, isBetaTester, username, onPremiumRequired, onPremiumDismissed, tutorialIndex, eyesBtnRef, firstEyeRef, mouthBtnRef, accessoryBtnRef, bodyBtnRef }) {
   const tutorialGlowFor = { 1: 'eye', 3: 'mouth', 4: 'accessory', 5: 'body' }
 
   const categoryAssets = {
     "eye": Object.entries(eyeAssets),
     "mouth": Object.entries(mouthAssets),
-    "accessory": Object.entries(accessoryAssets).filter(([name]) => !BETA_ACCESSORIES.has(name) || isBetaTester),
+    "accessory": Object.entries(accessoryAssets).filter(([name]) => showBadge(name, { isBetaTester, username })),
   }
   
   const itemsPerRow = {

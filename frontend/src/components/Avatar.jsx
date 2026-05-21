@@ -15,6 +15,7 @@ const bodyTextures = Object.fromEntries(
 
 const ACCESSORY_SIZE_OVERRIDES = {
   'techtunes badge': { width: '30px', height: '30px' },
+  'pride': { width: '40px', height: '40px' },
 }
 
 const EYE_POSITIONS = [
