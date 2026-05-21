@@ -16,7 +16,7 @@ export default function TutorialVideo({ name }) {
   let videoSrc = null;
   switch (name) {
     case "lessonTutorial":
-      videoSrc = "https://techtunes-assets-public.s3.us-east-1.amazonaws.com/lesson_tutorial"
+      videoSrc = "https://techtunes-assets-public.s3.us-east-1.amazonaws.com/lesson_tutorial.mp4"
   }
     
   
@@ -33,7 +33,7 @@ export default function TutorialVideo({ name }) {
 
   return (
     <>
-      <video src={videoSrc} autoPlay muted playsInline onLoadedData={handleLoaded} onEnded={handleEnded} />
+      <video src={videoSrc} autoPlay muted playsInline onLoadedData={handleLoaded} onEnded={handleEnded} className={styles['video']} />
       <button onClick={handleSkip} className={styles['skip-button']}>
         <MdSkipNext style={{ width: '100%', height: '100%' }} />
       </button>
