@@ -15,3 +15,10 @@
   background: #7454e8;
   transform: translateX(4px);
 }
+
+.nav-button-disabled {
+  background: #3a3a3a;
+  color: #888888;
+  cursor: not-allowed;
+  pointer-events: none;
+}

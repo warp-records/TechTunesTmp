@@ -79,6 +79,7 @@ function LessonGame({ onRetry }) {
   const navigate = useNavigate()
   // contains the tile number, instrument, and level number
   const [searchParams] = useSearchParams()
+  const islandUrl = `/lesson-islands/${searchParams.get('instrument')}/${searchParams.get('level')}`;
   const [songName, setSongName] = useState('')
   const [levelNum, setLevelNum] = useState(1)
   const [ready, setReady] = useState(false)
@@ -564,7 +565,7 @@ function LessonGame({ onRetry }) {
     <div className="lesson-active">
       <canvas ref={confettiCanvasRef} className={styles['confetti-canvas']} />
       <ScreenBlur show={showBlur} />
-      {isPaused && <PauseMenu show={showPauseMenu} progress={progress} levelNum={levelNum} />}
+      {isPaused && <PauseMenu show={showPauseMenu} progress={progress} levelNum={levelNum} islandUrl={islandUrl} />}
       <CountDown num={countdown} />
       <StreakMeter rotation={streakRot} fadeHUD={fadeHUD} />
       <BpmControl bpm={bpm} updateBpm={updateBpm} fadeHUD={fadeHUD} />
@@ -614,12 +615,12 @@ function LessonGame({ onRetry }) {
       <div className={[styles['back-to-home-gameover'], showBackToHome ? styles['visible'] : ''].filter(Boolean).join(' ')}>
         {didUnlock && (
           <NavButton
-            to={`/lesson-islands/${searchParams.get('instrument')}/${searchParams.get('level')}`}
+            to={islandUrl}
             text="next lesson >"
             onClick={() => localStorage.setItem('jumpToNextLesson', 'true')}
           />
         )}
-        <NavButton to={`/lesson-islands/${searchParams.get('instrument')}/${searchParams.get('level')}`} text="back to lesson island" />
+        <NavButton to={islandUrl} text="back to lesson island" />
       </div>
       <div className={styles['lesson-stage']}>
         <img className={[styles['layer-board'], fadeBoard ? styles['fade-frets'] : ''].filter(Boolean).join(' ')} src={Board} alt="Board" />
@@ -845,7 +846,7 @@ export function CountDown({ num }) {
   )
 }
 
-export function PauseMenu({ show, progress, levelNum }) {
+export function PauseMenu({ show, progress, levelNum, islandUrl }) {
   const navigate = useNavigate()
   return (
     <>
@@ -858,8 +859,8 @@ export function PauseMenu({ show, progress, levelNum }) {
             <p style={{fontSize: '35px'}}>{Math.round(progress * 100)}% Complete</p>
           </div>
           <div className={styles['pause-box-lower']}>
-            <NavButton to="/homepage" text="back to home" />
-            <img src={BattleFriendImg} className={styles['battle-friend-button']} />
+            <NavButton to={islandUrl} text="back to lesson island" />
+            <NavButton disabled text="battle a friend" />
           </div>
         </div>
       </div>
