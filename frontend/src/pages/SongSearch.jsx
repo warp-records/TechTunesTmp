@@ -11,6 +11,54 @@ const PLACEHOLDER_SONGS = [
   { id: 6, name: 'The Fever (Aye Aye)',  artist: 'Death Grips', bpm: 162, genre: 'Experimental Hip-Hop', score: 0 },
 ]
 
+function SongEntry({ song }) {
+  return (
+    <div className={styles['song-card']}>
+      <div className={styles['disc-wrap']}>
+        <LuDisc3 className={styles['disc-icon']} />
+      </div>
+      <div className={styles['sep']} />
+      <div className={`${styles['song-field']} ${styles['field-name']}`}>
+        <span className={styles['info-label']}>Song Name</span>
+        <span className={styles['info-value']}>{song.name}</span>
+      </div>
+      <div className={styles['sep']} />
+      <div className={`${styles['song-field']} ${styles['field-score']}`}>
+        <span className={styles['info-label']}>Score</span>
+        <div className={styles['stars']}>
+          {[1,2,3,4,5].map(i => (
+            <LuStar key={i} className={i <= song.score ? styles['star-filled'] : styles['star-empty']} />
+          ))}
+        </div>
+      </div>
+      <div className={styles['sep']} />
+      <div className={`${styles['song-field']} ${styles['field-artist']}`}>
+        <span className={styles['info-label']}>Artist</span>
+        <span className={styles['info-value']}>{song.artist}</span>
+      </div>
+      <div className={styles['sep']} />
+      <div className={`${styles['song-field']} ${styles['field-bpm']}`}>
+        <span className={styles['info-label']}>BPM</span>
+        <span className={styles['info-value']}>{song.bpm}</span>
+      </div>
+      <div className={styles['sep']} />
+      <div className={`${styles['song-field']} ${styles['field-genre']}`}>
+        <span className={styles['info-label']}>Genre</span>
+        <span className={styles['info-value']}>{song.genre}</span>
+      </div>
+      <div className={styles['sep']} />
+      <button className={styles['play-btn']}>
+        <LuPlay />
+        Start Lesson
+      </button>
+      <button className={styles['save-btn']}>
+        <LuBookOpen />
+        Save
+      </button>
+    </div>
+  )
+}
+
 export default function SongSearch() {
   return (
     <div className={styles['song-search-page']}>
@@ -45,49 +93,7 @@ export default function SongSearch() {
 
           <div className={styles['song-list']}>
             {PLACEHOLDER_SONGS.map(song => (
-              <div key={song.id} className={styles['song-card']}>
-                <div className={styles['disc-wrap']}>
-                  <LuDisc3 className={styles['disc-icon']} />
-                </div>
-                <div className={styles['sep']} />
-                <div className={`${styles['song-field']} ${styles['field-name']}`}>
-                  <span className={styles['info-label']}>Song Name</span>
-                  <span className={styles['info-value']}>{song.name}</span>
-                </div>
-                <div className={styles['sep']} />
-                <div className={`${styles['song-field']} ${styles['field-score']}`}>
-                  <span className={styles['info-label']}>Score</span>
-                  <div className={styles['stars']}>
-                    {[1,2,3,4,5].map(i => (
-                      <LuStar key={i} className={i <= song.score ? styles['star-filled'] : styles['star-empty']} />
-                    ))}
-                  </div>
-                </div>
-                <div className={styles['sep']} />
-                <div className={`${styles['song-field']} ${styles['field-artist']}`}>
-                  <span className={styles['info-label']}>Artist</span>
-                  <span className={styles['info-value']}>{song.artist}</span>
-                </div>
-                <div className={styles['sep']} />
-                <div className={`${styles['song-field']} ${styles['field-bpm']}`}>
-                  <span className={styles['info-label']}>BPM</span>
-                  <span className={styles['info-value']}>{song.bpm}</span>
-                </div>
-                <div className={styles['sep']} />
-                <div className={`${styles['song-field']} ${styles['field-genre']}`}>
-                  <span className={styles['info-label']}>Genre</span>
-                  <span className={styles['info-value']}>{song.genre}</span>
-                </div>
-                <div className={styles['sep']} />
-                <button className={styles['play-btn']}>
-                  <LuPlay />
-                  Start Lesson
-                </button>
-                <button className={styles['save-btn']}>
-                  <LuBookOpen />
-                  Save
-                </button>
-              </div>
+              <SongEntry key={song.id} song={song} />
             ))}
           </div>
         </div>
