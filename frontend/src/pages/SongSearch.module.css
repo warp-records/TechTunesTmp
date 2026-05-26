@@ -318,6 +318,8 @@
   align-items: center;
   gap: 8px;
   padding: 10px 16px;
+  min-width: 110px;
+  justify-content: center;
   background: rgba(235, 235, 242, 0.9);
   color: #1a0e33;
   border: none;
@@ -333,6 +335,31 @@
 
 .save-btn:hover {
   background: #fff;
+  transform: translateY(-1px);
+}
+
+.save-btn-saved {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  min-width: 110px;
+  justify-content: center;
+  background: rgba(0, 210, 185, 0.2);
+  border: 1px solid rgba(0, 210, 185, 0.5);
+  color: #00d2b9;
+  border-radius: 11px;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'Nunito', 'Arial', sans-serif;
+  cursor: pointer;
+  flex-shrink: 0;
+  white-space: nowrap;
+  transition: background 0.18s ease, transform 0.15s ease;
+}
+
+.save-btn-saved:hover {
+  background: rgba(0, 210, 185, 0.32);
   transform: translateY(-1px);
 }
 
