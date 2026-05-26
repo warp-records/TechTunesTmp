@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { LuHouse, LuUser, LuSearch, LuDisc3, LuBookOpen, LuBookMarked, LuStar, LuPlay, LuBookOpenText } from 'react-icons/lu'
+import { LuHouse, LuUser, LuSearch, LuDisc3, LuBookOpen, LuBookMarked, LuStar, LuPlay, LuBookOpenText, LuDog } from 'react-icons/lu'
 import styles from './SongSearch.module.css'
 
 function SongEntry({ song, saved, stars, onToggleSave }) {
@@ -136,15 +136,18 @@ export default function SongSearch() {
           </div>
 
           <div className={styles['song-list']}>
-            {filtered.map(song => (
-              <SongEntry
-                key={song.id}
-                song={song}
-                saved={userSongData[song.id]?.saved ?? false}
-                stars={userSongData[song.id]?.best_stars ?? 0}
-                onToggleSave={() => toggleSave(song.id)}
-              />
-            ))}
+            {filtered.length === 0 && view === 'songbook'
+              ? <div className={styles['empty-msg']}>Nothing to see here <LuDog /></div>
+              : filtered.map(song => (
+                  <SongEntry
+                    key={song.id}
+                    song={song}
+                    saved={userSongData[song.id]?.saved ?? false}
+                    stars={userSongData[song.id]?.best_stars ?? 0}
+                    onToggleSave={() => toggleSave(song.id)}
+                  />
+                ))
+            }
           </div>
         </div>
 
