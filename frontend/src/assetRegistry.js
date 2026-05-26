@@ -1,7 +1,7 @@
 const eyeGlobs = import.meta.glob('./assets/DressingRoom/Dressing/Eyes/*.png', { eager: true, import: 'default' })
 const mouthGlobs = import.meta.glob('./assets/DressingRoom/Dressing/Mouths/*.png', { eager: true, import: 'default' })
 const accessoryGlobs = import.meta.glob('./assets/DressingRoom/Dressing/Accessories/*.png', { eager: true, import: 'default' })
-const bodyTextureGlobs = import.meta.glob('./assets/DressingRoom/BodyTextures/*', { eager: true, import: 'default' })
+const bodyTextureGlobs = import.meta.glob('./assets/DressingRoom/BodyTextures/**/*', { eager: true, import: 'default' })
 
 function buildAssetMap(globs) {
   const map = {}

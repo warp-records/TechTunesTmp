@@ -7,7 +7,7 @@ import { avatarList, PLAIN_SKINS } from './avatarData'
 
 const avatarMasks = import.meta.glob('../assets/Avatar/Avatar[0-9]Mask.png', { eager: true, import: 'default' })
 
-const bodyTextureGlobs = import.meta.glob('../assets/DressingRoom/BodyTextures/*', { eager: true, import: 'default' })
+const bodyTextureGlobs = import.meta.glob('../assets/DressingRoom/BodyTextures/**/*', { eager: true, import: 'default' })
 const bodyTextures = Object.fromEntries(
   Object.entries(bodyTextureGlobs).map(([path, url]) => [path.split('/').pop().replace(/\.[^.]+$/, ''), url])
 )
