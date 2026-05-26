@@ -46,16 +46,27 @@ export default function SongSearch() {
                 <div className={styles['disc-wrap']}>
                   <LuDisc3 className={styles['disc-icon']} />
                 </div>
-                <div className={styles['song-info']}>
+                <div className={styles['sep']} />
+                <div className={styles['song-field']}>
                   <span className={styles['info-label']}>Song Name</span>
                   <span className={styles['info-value']}>{song.name}</span>
+                </div>
+                <div className={styles['sep']} />
+                <div className={styles['song-field']}>
                   <span className={styles['info-label']}>Artist</span>
                   <span className={styles['info-value']}>{song.artist}</span>
                 </div>
-                <div className={styles['song-meta']}>
-                  <span>BPM: {song.bpm}</span>
-                  <span>Genre: {song.genre}</span>
+                <div className={styles['sep']} />
+                <div className={styles['song-field']}>
+                  <span className={styles['info-label']}>BPM</span>
+                  <span className={styles['info-value']}>{song.bpm}</span>
                 </div>
+                <div className={styles['sep']} />
+                <div className={styles['song-field']}>
+                  <span className={styles['info-label']}>Genre</span>
+                  <span className={styles['info-value']}>{song.genre}</span>
+                </div>
+                <div className={styles['sep']} />
                 <button className={styles['save-btn']}>
                   <LuBookOpen />
                   Save to Songbook
