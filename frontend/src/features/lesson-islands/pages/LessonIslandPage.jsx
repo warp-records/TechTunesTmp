@@ -51,10 +51,9 @@ export default function LessonIslandPage() {
       .then(songs => {
         const names = {}
         for (const song of songs) {
-          for (const tile of song.tiles ?? []) {
-            if (tile.instrument === instrument && tile.level === level) {
-              names[tile.tile_number] = song.name
-            }
+          const tile = song.tile
+          if (tile && tile.instrument === instrument && tile.level === level) {
+            names[tile.tile_number] = song.name
           }
         }
         setTileSongNames(names)

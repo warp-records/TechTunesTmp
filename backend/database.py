@@ -63,7 +63,7 @@ class LessonTileDB(Base):
     tile_number = Column(Integer, primary_key=True)
     instrument = Column(String, primary_key=True)
     level = Column(String, primary_key=True)
-    song_id = Column(Integer, ForeignKey("songs.id"), nullable=True)
+    song_id = Column(Integer, ForeignKey("songs.id"), nullable=True, unique=True)
 
 class NonProfitDB(Base):
     __tablename__ = "nonprofits"

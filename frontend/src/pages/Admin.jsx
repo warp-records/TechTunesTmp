@@ -446,7 +446,7 @@ function LessonPanel({ onClose }) {
                           }}
                         />
                       </td>
-                      <td>{song.tiles?.length > 0 ? song.tiles.map(t => `${t.level} #${t.tile_number}`).join(', ') : '—'}</td>
+                      <td>{song.tile ? `${song.tile.level} #${song.tile.tile_number}` : '—'}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -455,13 +455,13 @@ function LessonPanel({ onClose }) {
         </div>
         <div className={styles['song-actions']}>
           <button
-            className={[styles['card-btn'], selected?.tiles?.length > 0 ? styles['btn-mod'] : styles['btn-default']].join(' ')}
+            className={[styles['card-btn'], selected?.tile != null ? styles['btn-mod'] : styles['btn-default']].join(' ')}
             disabled={!selected}
             style={{ opacity: selected ? 1 : 0.4, flex: 1 }}
             onClick={async () => {
               if (!selected) return
-              if (selected.tiles?.length > 0) {
-                if (!confirm(`Unassign "${selected.name}" from all tiles?`)) return
+              if (selected.tile != null) {
+                if (!confirm(`Unassign "${selected.name}" from its tile?`)) return
                 const token = localStorage.getItem('token')
                 await fetch(`/api/unassign_song?song_id=${selected.id}`, {
                   method: 'DELETE',
@@ -473,7 +473,7 @@ function LessonPanel({ onClose }) {
               }
             }}
           >
-            {!selected ? 'Select a song' : selected.tiles?.length > 0 ? `Unassign "${selected.name}"` : `Assign "${selected.name}"`}
+            {!selected ? 'Select a song' : selected.tile != null ? `Unassign "${selected.name}"` : `Assign "${selected.name}"`}
           </button>
           <button
             className={styles['delete-btn']}

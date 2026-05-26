@@ -650,12 +650,12 @@ async def upload_song(song_file: UploadFile, _: None = Depends(is_admin), db: Se
 @app.get("/api/songs", tags=["songs"])
 def get_songs(db: Session = Depends(get_db)):
     songs = db.query(SongDB).all()
-    tiles = db.query(LessonTileDB).all()
-    tile_map: dict[int, list] = {}
-    for t in tiles:
-        tile_map.setdefault(t.song_id, []).append({"tile_number": t.tile_number, "instrument": t.instrument, "level": t.level})
+    tile_map = {
+        t.song_id: {"tile_number": t.tile_number, "instrument": t.instrument, "level": t.level}
+        for t in db.query(LessonTileDB).all() if t.song_id is not None
+    }
     return [
-        {"id": s.id, "name": s.name, "instrument": s.instrument, "tempo": s.tempo, "difficulty": s.difficulty, "genre": s.genre, "tiles": tile_map.get(s.id, []), "show_in_search": s.show_in_search}
+        {"id": s.id, "name": s.name, "instrument": s.instrument, "tempo": s.tempo, "difficulty": s.difficulty, "genre": s.genre, "tile": tile_map.get(s.id), "show_in_search": s.show_in_search}
         for s in songs
     ]
 
@@ -785,6 +785,9 @@ def assign_lesson_tile(
 ):
     if db.query(SongDB).filter(SongDB.id == song_id).first() is None:
         raise HTTPException(status_code=404, detail="Song not found")
+
+    # clear any existing tile assignment for this song
+    db.query(LessonTileDB).filter(LessonTileDB.song_id == song_id).delete()
 
     tile = db.query(LessonTileDB).filter(
         LessonTileDB.tile_number == tile_number,
