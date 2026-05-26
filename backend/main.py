@@ -39,7 +39,7 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 from sqlalchemy.orm import Session
-from database import SessionLocal, init_db, UserDB, SessionDB, AvatarDB, SongDB, LessonTileDB, NonProfitDB, UsedKeyDB, ProgressDB, TileResultDB, SavedSongDB
+from database import SessionLocal, init_db, UserDB, SessionDB, AvatarDB, SongDB, LessonTileDB, NonProfitDB, UsedKeyDB, ProgressDB, SongResultDB, SavedSongDB
 
 from datetime import datetime
 import stripe
@@ -159,19 +159,23 @@ def handle_score(_t: str, token: str, user: UserDB, db: Session):
     if 1 <= stars <= 5 and 1 <= tile_number <= 25 and instrument_idx < len(INSTRUMENTS) and level_idx < len(LEVELS):
         instrument = INSTRUMENTS[instrument_idx]
         level = LEVELS[level_idx]
-        tile_result = db.query(TileResultDB).filter(
-            TileResultDB.user_id == user.id,
-            TileResultDB.instrument == instrument,
-            TileResultDB.level == level,
-            TileResultDB.tile_number == tile_number,
+        tile = db.query(LessonTileDB).filter(
+            LessonTileDB.tile_number == tile_number,
+            LessonTileDB.instrument == instrument,
+            LessonTileDB.level == level,
         ).first()
-        if tile_result:
-            if stars > tile_result.best_stars:
-                tile_result.best_stars = stars
-            if score > tile_result.best_score:
-                tile_result.best_score = score
-        else:
-            db.add(TileResultDB(user_id=user.id, instrument=instrument, level=level, tile_number=tile_number, best_stars=stars, best_score=score))
+        if tile and tile.song_id is not None:
+            song_result = db.query(SongResultDB).filter(
+                SongResultDB.user_id == user.id,
+                SongResultDB.song_id == tile.song_id,
+            ).first()
+            if song_result:
+                if stars > song_result.best_stars:
+                    song_result.best_stars = stars
+                if score > song_result.best_score:
+                    song_result.best_score = score
+            else:
+                db.add(SongResultDB(user_id=user.id, song_id=tile.song_id, best_stars=stars, best_score=score))
 
         if stars >= 2:
             progress = db.query(ProgressDB).filter(
@@ -215,7 +219,7 @@ def download_user_data(user_id: int = Depends(get_current_user), db: Session = D
         raise HTTPException(status_code=404, detail="User not found")
     sessions = db.query(SessionDB).filter(SessionDB.user_id == user_id).all()
     progress = db.query(ProgressDB).filter(ProgressDB.user_id == user_id).all()
-    tile_results = db.query(TileResultDB).filter(TileResultDB.user_id == user_id).all()
+    song_results = db.query(SongResultDB).filter(SongResultDB.user_id == user_id).all()
     avatar = db.query(AvatarDB).filter(AvatarDB.user_id == user_id).first()
     return {
         "account": {
@@ -243,9 +247,9 @@ def download_user_data(user_id: int = Depends(get_current_user), db: Session = D
             {"instrument": p.instrument, "level": p.level, "unlocked_tile": p.unlocked_tile}
             for p in progress
         ],
-        "tile_results": [
-            {"instrument": r.instrument, "level": r.level, "tile_number": r.tile_number, "best_stars": r.best_stars, "best_score": r.best_score}
-            for r in tile_results
+        "song_results": [
+            {"song_id": r.song_id, "best_stars": r.best_stars, "best_score": r.best_score}
+            for r in song_results
         ],
     }
 
@@ -392,15 +396,15 @@ def get_avatar(user_id: int = Depends(get_current_user), db: Session = Depends(g
 @app.get("/api/get_progress")
 def get_progress(user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
     rows = db.query(ProgressDB).filter(ProgressDB.user_id == user_id).all()
-    tile_results = db.query(TileResultDB).filter(TileResultDB.user_id == user_id).all()
+    song_results = db.query(SongResultDB).filter(SongResultDB.user_id == user_id).all()
     return {
         "progress": [
             {"instrument": r.instrument, "level": r.level, "unlocked_tile": r.unlocked_tile}
             for r in rows
         ],
-        "tile_results": [
-            {"instrument": r.instrument, "level": r.level, "tile_number": r.tile_number, "best_stars": r.best_stars}
-            for r in tile_results
+        "song_results": [
+            {"song_id": r.song_id, "best_stars": r.best_stars}
+            for r in song_results
         ],
     }
 
@@ -662,13 +666,7 @@ def get_songs(db: Session = Depends(get_db)):
 @app.get("/api/user_song_data", tags=["songs"])
 def user_song_data(user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
     saved = {r.song_id for r in db.query(SavedSongDB).filter(SavedSongDB.user_id == user_id).all()}
-    tile_results = db.query(TileResultDB).filter(TileResultDB.user_id == user_id).all()
-    tile_to_song = {(t.tile_number, t.instrument, t.level): t.song_id for t in db.query(LessonTileDB).all()}
-    stars_by_song: dict[int, int] = {}
-    for r in tile_results:
-        song_id = tile_to_song.get((r.tile_number, r.instrument, r.level))
-        if song_id is not None:
-            stars_by_song[song_id] = max(stars_by_song.get(song_id, 0), r.best_stars)
+    stars_by_song = {r.song_id: r.best_stars for r in db.query(SongResultDB).filter(SongResultDB.user_id == user_id).all()}
     all_ids = saved | set(stars_by_song.keys())
     return {
         song_id: {"saved": song_id in saved, "best_stars": stars_by_song.get(song_id, 0)}

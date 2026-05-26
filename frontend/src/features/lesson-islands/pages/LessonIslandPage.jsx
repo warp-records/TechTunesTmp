@@ -46,27 +46,22 @@ export default function LessonIslandPage() {
     const token = localStorage.getItem('token')
     if (!token) return
 
-    fetch('/api/songs')
-      .then(res => res.ok ? res.json() : [])
-      .then(songs => {
-        const names = {}
-        for (const song of songs) {
-          const tile = song.tile
-          if (tile && tile.instrument === instrument && tile.level === level) {
-            names[tile.tile_number] = song.name
-          }
+    Promise.all([
+      fetch('/api/songs').then(res => res.ok ? res.json() : []),
+      fetch('/api/get_progress', { headers: { Authorization: 'Bearer ' + token } }).then(res => res.ok ? res.json() : null),
+    ]).then(([songs, data]) => {
+      const names = {}
+      const songTileMap = {}
+      for (const song of songs) {
+        const tile = song.tile
+        if (tile && tile.instrument === instrument && tile.level === level) {
+          names[tile.tile_number] = song.name
+          songTileMap[song.id] = tile.tile_number
         }
-        setTileSongNames(names)
-      })
+      }
+      setTileSongNames(names)
 
-    fetch('/api/get-avatar/', { headers: { Authorization: 'Bearer ' + token } })
-      .then(res => res.ok ? res.json() : null)
-      .then(data => { if (data) setAvatarData(data.avatar) })
-
-    fetch('/api/get_progress', { headers: { Authorization: 'Bearer ' + token } })
-      .then(res => res.ok ? res.json() : null)
-      .then(data => {
-        if (!data) return
+      if (data) {
         const row = data.progress.find(p => p.instrument === instrument && p.level === level)
         if (row) {
           if (tileUnlocked && row.unlocked_tile > 1) {
@@ -85,13 +80,17 @@ export default function LessonIslandPage() {
           }
         }
         const results = {}
-        for (const r of data.tile_results ?? []) {
-          if (r.instrument === instrument && r.level === level) {
-            results[r.tile_number] = r.best_stars
-          }
+        for (const r of data.song_results ?? []) {
+          const tileNumber = songTileMap[r.song_id]
+          if (tileNumber != null) results[tileNumber] = r.best_stars
         }
         setTileResults(results)
-      })
+      }
+    })
+
+    fetch('/api/get-avatar/', { headers: { Authorization: 'Bearer ' + token } })
+      .then(res => res.ok ? res.json() : null)
+      .then(data => { if (data) setAvatarData(data.avatar) })
   }, [instrument, level])
 
   useEffect(() => {
