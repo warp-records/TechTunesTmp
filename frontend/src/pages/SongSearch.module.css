@@ -23,7 +23,7 @@
 .main-panel {
   display: flex;
   flex-direction: row;
-  width: 84vw;
+  width: 75.6vw;
   height: calc(100vh - 40px);
   background: rgba(18, 8, 38, 0.72);
   backdrop-filter: blur(22px);
@@ -232,15 +232,32 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  flex-shrink: 0;
   min-width: 0;
 }
 
-.song-field:nth-child(4) { flex: 2; }  /* Song Name — widest */
-.song-field:nth-child(6) { flex: 1; }  /* Artist */
-.song-field:nth-child(8),
-.song-field:nth-child(10) {             /* BPM, Genre */
-  flex-shrink: 0;
-  min-width: 80px;
+.field-name   { flex: 2; min-width: 120px; }
+.field-score  { width: 100px; flex-shrink: 0; }
+.field-artist { flex: 1; min-width: 100px; }
+.field-bpm    { width: 64px; }
+.field-genre  { width: 160px; }
+
+.stars {
+  display: flex;
+  gap: 3px;
+  align-items: center;
+  padding-top: 2px;
+}
+
+.star-empty {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.star-filled {
+  font-size: 14px;
+  color: #fceabb;
+  fill: #fceabb;
 }
 
 .info-label {
@@ -258,6 +275,31 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* ── Play button ──────────────────────────────────────── */
+
+.play-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: rgba(138, 60, 220, 0.35);
+  border: 1px solid rgba(180, 120, 255, 0.45);
+  color: #d4a0ff;
+  border-radius: 11px;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'Nunito', 'Arial', sans-serif;
+  cursor: pointer;
+  flex-shrink: 0;
+  white-space: nowrap;
+  transition: background 0.18s ease, transform 0.15s ease;
+}
+
+.play-btn:hover {
+  background: rgba(138, 60, 220, 0.5);
+  transform: translateY(-1px);
 }
 
 /* ── Save button ──────────────────────────────────────── */

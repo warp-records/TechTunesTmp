@@ -1,14 +1,14 @@
 import { Link } from 'react-router-dom'
-import { LuHouse, LuUser, LuBookPlus, LuSearch, LuDisc3, LuBookOpen } from 'react-icons/lu'
+import { LuHouse, LuUser, LuBookPlus, LuSearch, LuDisc3, LuBookOpen, LuStar, LuPlay } from 'react-icons/lu'
 import styles from './SongSearch.module.css'
 
 const PLACEHOLDER_SONGS = [
-  { id: 1, name: 'Guillotine',           artist: 'Death Grips', bpm: 140, genre: 'Experimental Hip-Hop' },
-  { id: 2, name: 'Takyon',               artist: 'Death Grips', bpm: 155, genre: 'Noise Rap'            },
-  { id: 3, name: 'I\'ve Seen Footage',   artist: 'Death Grips', bpm: 137, genre: 'Experimental Hip-Hop' },
-  { id: 4, name: 'Hustle Bones',         artist: 'Death Grips', bpm: 158, genre: 'Noise Rap'            },
-  { id: 5, name: 'No Love',              artist: 'Death Grips', bpm: 143, genre: 'Industrial Hip-Hop'   },
-  { id: 6, name: 'The Fever (Aye Aye)',  artist: 'Death Grips', bpm: 162, genre: 'Experimental Hip-Hop' },
+  { id: 1, name: 'Guillotine',           artist: 'Death Grips', bpm: 140, genre: 'Experimental Hip-Hop', score: 0 },
+  { id: 2, name: 'Takyon',               artist: 'Death Grips', bpm: 155, genre: 'Noise Rap',            score: 0 },
+  { id: 3, name: 'I\'ve Seen Footage',   artist: 'Death Grips', bpm: 137, genre: 'Experimental Hip-Hop', score: 0 },
+  { id: 4, name: 'Hustle Bones',         artist: 'Death Grips', bpm: 158, genre: 'Noise Rap',            score: 0 },
+  { id: 5, name: 'No Love',              artist: 'Death Grips', bpm: 143, genre: 'Industrial Hip-Hop',   score: 0 },
+  { id: 6, name: 'The Fever (Aye Aye)',  artist: 'Death Grips', bpm: 162, genre: 'Experimental Hip-Hop', score: 0 },
 ]
 
 export default function SongSearch() {
@@ -47,29 +47,42 @@ export default function SongSearch() {
                   <LuDisc3 className={styles['disc-icon']} />
                 </div>
                 <div className={styles['sep']} />
-                <div className={styles['song-field']}>
+                <div className={`${styles['song-field']} ${styles['field-name']}`}>
                   <span className={styles['info-label']}>Song Name</span>
                   <span className={styles['info-value']}>{song.name}</span>
                 </div>
                 <div className={styles['sep']} />
-                <div className={styles['song-field']}>
+                <div className={`${styles['song-field']} ${styles['field-score']}`}>
+                  <span className={styles['info-label']}>Score</span>
+                  <div className={styles['stars']}>
+                    {[1,2,3,4,5].map(i => (
+                      <LuStar key={i} className={i <= song.score ? styles['star-filled'] : styles['star-empty']} />
+                    ))}
+                  </div>
+                </div>
+                <div className={styles['sep']} />
+                <div className={`${styles['song-field']} ${styles['field-artist']}`}>
                   <span className={styles['info-label']}>Artist</span>
                   <span className={styles['info-value']}>{song.artist}</span>
                 </div>
                 <div className={styles['sep']} />
-                <div className={styles['song-field']}>
+                <div className={`${styles['song-field']} ${styles['field-bpm']}`}>
                   <span className={styles['info-label']}>BPM</span>
                   <span className={styles['info-value']}>{song.bpm}</span>
                 </div>
                 <div className={styles['sep']} />
-                <div className={styles['song-field']}>
+                <div className={`${styles['song-field']} ${styles['field-genre']}`}>
                   <span className={styles['info-label']}>Genre</span>
                   <span className={styles['info-value']}>{song.genre}</span>
                 </div>
                 <div className={styles['sep']} />
+                <button className={styles['play-btn']}>
+                  <LuPlay />
+                  Start Lesson
+                </button>
                 <button className={styles['save-btn']}>
                   <LuBookOpen />
-                  Save to Songbook
+                  Save
                 </button>
               </div>
             ))}
