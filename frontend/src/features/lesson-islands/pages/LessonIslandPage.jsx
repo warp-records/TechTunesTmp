@@ -46,7 +46,7 @@ export default function LessonIslandPage() {
     const token = localStorage.getItem('token')
     if (!token) return
 
-    fetch('/api/all_songs_meta')
+    fetch('/api/songs')
       .then(res => res.ok ? res.json() : [])
       .then(songs => {
         const names = {}

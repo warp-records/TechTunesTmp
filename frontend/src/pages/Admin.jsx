@@ -293,7 +293,7 @@ function LessonPanel({ onClose }) {
 
   function fetchSongs() {
     const token = localStorage.getItem('token');
-    fetch('/api/all_songs_meta', { headers: { Authorization: 'Bearer ' + token } })
+    fetch('/api/songs', { headers: { Authorization: 'Bearer ' + token } })
       .then(r => r.json())
       .then(data => {
         setSongs(data);

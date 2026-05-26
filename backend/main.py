@@ -39,7 +39,7 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 from sqlalchemy.orm import Session
-from database import SessionLocal, init_db, UserDB, SessionDB, AvatarDB, SongDB, LessonTileDB, NonProfitDB, UsedKeyDB, ProgressDB, TileResultDB
+from database import SessionLocal, init_db, UserDB, SessionDB, AvatarDB, SongDB, LessonTileDB, NonProfitDB, UsedKeyDB, ProgressDB, TileResultDB, SavedSongDB
 
 from datetime import datetime
 import stripe
@@ -646,17 +646,51 @@ async def upload_song(song_file: UploadFile, _: None = Depends(is_admin), db: Se
 
     return { "name": song.name, "skipped_notes": skipped }
 
-@app.get("/api/all_songs_meta", tags=["songs"])
-def all_songs_meta(db: Session = Depends(get_db)):
+
+@app.get("/api/songs", tags=["songs"])
+def get_songs(db: Session = Depends(get_db)):
     songs = db.query(SongDB).all()
     tiles = db.query(LessonTileDB).all()
     tile_map: dict[int, list] = {}
     for t in tiles:
         tile_map.setdefault(t.song_id, []).append({"tile_number": t.tile_number, "instrument": t.instrument, "level": t.level})
     return [
-        { "id": s.id, "name": s.name, "instrument": s.instrument, "tempo": s.tempo, "difficulty": s.difficulty, "genre": s.genre, "tiles": tile_map.get(s.id, []), "show_in_search": s.show_in_search }
+        {"id": s.id, "name": s.name, "instrument": s.instrument, "tempo": s.tempo, "difficulty": s.difficulty, "genre": s.genre, "tiles": tile_map.get(s.id, []), "show_in_search": s.show_in_search}
         for s in songs
     ]
+
+@app.get("/api/user_song_data", tags=["songs"])
+def user_song_data(user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
+    saved = {r.song_id for r in db.query(SavedSongDB).filter(SavedSongDB.user_id == user_id).all()}
+    tile_results = db.query(TileResultDB).filter(TileResultDB.user_id == user_id).all()
+    tile_to_song = {(t.tile_number, t.instrument, t.level): t.song_id for t in db.query(LessonTileDB).all()}
+    stars_by_song: dict[int, int] = {}
+    for r in tile_results:
+        song_id = tile_to_song.get((r.tile_number, r.instrument, r.level))
+        if song_id is not None:
+            stars_by_song[song_id] = max(stars_by_song.get(song_id, 0), r.best_stars)
+    all_ids = saved | set(stars_by_song.keys())
+    return {
+        song_id: {"saved": song_id in saved, "best_stars": stars_by_song.get(song_id, 0)}
+        for song_id in all_ids
+    }
+
+@app.post("/api/songbook/save", tags=["songs"])
+def save_song(song_id: int, user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
+    if db.query(SongDB).filter(SongDB.id == song_id).first() is None:
+        raise HTTPException(status_code=404, detail="Song not found")
+    if db.query(SavedSongDB).filter(SavedSongDB.user_id == user_id, SavedSongDB.song_id == song_id).first() is None:
+        db.add(SavedSongDB(user_id=user_id, song_id=song_id))
+        db.commit()
+    return {"ok": True}
+
+@app.delete("/api/songbook/remove", tags=["songs"])
+def remove_song(song_id: int, user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
+    row = db.query(SavedSongDB).filter(SavedSongDB.user_id == user_id, SavedSongDB.song_id == song_id).first()
+    if row:
+        db.delete(row)
+        db.commit()
+    return {"ok": True}
 
 @app.get("/api/song_meta", tags=["songs"])
 def song_meta(song_id: int, db: Session = Depends(get_db)):

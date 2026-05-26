@@ -94,6 +94,12 @@ class TileResultDB(Base):
     best_stars  = Column(Integer, nullable=False, default=0)
     best_score  = Column(Integer, nullable=False, default=0)
 
+class SavedSongDB(Base):
+    __tablename__ = "saved_songs"
+
+    user_id = Column(Integer, ForeignKey("users.id"), primary_key=True)
+    song_id = Column(Integer, ForeignKey("songs.id"), primary_key=True)
+
 class UsedKeyDB(Base):
     __tablename__ = "used_keys"
 
