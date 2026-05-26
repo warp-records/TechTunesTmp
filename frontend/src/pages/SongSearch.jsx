@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { LuHouse, LuUser, LuBookPlus, LuSearch, LuDisc3, LuBookOpen, LuStar, LuPlay } from 'react-icons/lu'
+import { LuHouse, LuUser, LuBookPlus, LuSearch, LuDisc3, LuBookOpen, LuStar, LuPlay, LuBookOpenText, LuBookMarked } from 'react-icons/lu'
 import styles from './SongSearch.module.css'
 
 const PLACEHOLDER_SONGS = [
@@ -24,7 +24,11 @@ export default function SongSearch() {
             <LuUser />
           </Link>
           <div className={styles['sidebar-songbook']}>
-            <LuBookPlus className={styles['sidebar-songbook-icon']} />
+            <LuBookOpenText className={styles['sidebar-songbook-icon']} />
+            <span className={styles['sidebar-songbook-label']}>All Songs</span>
+          </div>
+          <div className={styles['sidebar-songbook']}>
+            <LuBookMarked className={styles['sidebar-songbook-icon']} />
             <span className={styles['sidebar-songbook-label']}>My Songbook</span>
           </div>
         </div>
@@ -42,7 +46,6 @@ export default function SongSearch() {
           <div className={styles['song-list']}>
             {PLACEHOLDER_SONGS.map(song => (
               <div key={song.id} className={styles['song-card']}>
-                <LuBookPlus className={styles['card-add-icon']} />
                 <div className={styles['disc-wrap']}>
                   <LuDisc3 className={styles['disc-icon']} />
                 </div>
