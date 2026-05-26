@@ -11,12 +11,281 @@
   background-attachment: fixed;
   display: flex;
   justify-content: center;
-  align-items: center;
-  font-family: 'Arial', sans-serif;
+  align-items: flex-start;
+  padding-top: 20px;
   position: relative;
+  font-family: 'Nunito', 'Arial', sans-serif;
+  box-sizing: border-box;
 }
 
-.song-search-page .floor {
+/* ── Main glass panel ─────────────────────────────────── */
+
+.main-panel {
+  display: flex;
+  flex-direction: row;
+  width: 84vw;
+  height: calc(100vh - 40px);
+  background: rgba(18, 8, 38, 0.72);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 12px 60px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(212, 158, 251, 0.07);
+  z-index: 11;
+}
+
+/* ── Sidebar ──────────────────────────────────────────── */
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 110px;
+  flex-shrink: 0;
+  padding: 28px 0 28px;
+  gap: 20px;
+  background: rgba(10, 4, 22, 0.45);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sidebar-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 24px;
+  text-decoration: none;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.sidebar-icon-btn:hover {
+  background: rgba(212, 158, 251, 0.15);
+  color: #fff;
+}
+
+.sidebar-songbook {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.sidebar-songbook-icon {
+  font-size: 26px;
+  color: rgba(255, 255, 255, 0.75);
+  transition: color 0.18s ease;
+}
+
+.sidebar-songbook:hover .sidebar-songbook-icon {
+  color: #fff;
+}
+
+.sidebar-songbook-label {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.65);
+  text-align: center;
+  line-height: 1.3;
+  letter-spacing: 0.3px;
+}
+
+/* ── Content area ─────────────────────────────────────── */
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 20px 16px;
+  overflow: hidden;
+  gap: 14px;
+}
+
+/* ── Search bar ───────────────────────────────────────── */
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.09);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 50px;
+  padding: 11px 22px;
+  flex-shrink: 0;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.search-bar:focus-within {
+  border-color: rgba(212, 158, 251, 0.55);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.search-icon {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.5);
+  flex-shrink: 0;
+}
+
+.search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-size: 15px;
+  font-family: 'Nunito', 'Arial', sans-serif;
+}
+
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* ── Song list ────────────────────────────────────────── */
+
+.song-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+  padding-right: 4px;
+  padding-bottom: 210px;
+}
+
+.song-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+.song-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.song-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 4px;
+}
+
+/* ── Song card ────────────────────────────────────────── */
+
+.song-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  background:
+    radial-gradient(ellipse at 42% 50%, rgba(0, 210, 185, 0.16) 0%, transparent 62%),
+    rgba(255, 255, 255, 0.055);
+  transition: background 0.2s ease, border-color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.song-card:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  background:
+    radial-gradient(ellipse at 42% 50%, rgba(0, 210, 185, 0.24) 0%, transparent 62%),
+    rgba(255, 255, 255, 0.09);
+}
+
+.card-add-icon {
+  font-size: 20px;
+  color: rgba(255, 255, 255, 0.35);
+  flex-shrink: 0;
+}
+
+/* ── Disc ─────────────────────────────────────────────── */
+
+.disc-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: rgba(10, 4, 22, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+
+.disc-icon {
+  font-size: 36px;
+  color: rgba(200, 200, 220, 0.8);
+}
+
+/* ── Song text info ───────────────────────────────────── */
+
+.song-info {
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: auto auto auto auto;
+  row-gap: 1px;
+  flex: 1;
+  min-width: 0;
+}
+
+.info-label {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.45);
+  line-height: 1.3;
+  letter-spacing: 0.2px;
+}
+
+.info-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── BPM / Genre meta ─────────────────────────────────── */
+
+.song-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 110px;
+  flex-shrink: 0;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.5;
+}
+
+/* ── Save button ──────────────────────────────────────── */
+
+.save-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: rgba(235, 235, 242, 0.9);
+  color: #1a0e33;
+  border: none;
+  border-radius: 11px;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'Nunito', 'Arial', sans-serif;
+  cursor: pointer;
+  flex-shrink: 0;
+  white-space: nowrap;
+  transition: background 0.18s ease, transform 0.15s ease;
+}
+
+.save-btn:hover {
+  background: #fff;
+  transform: translateY(-1px);
+}
+
+/* ── Floor ────────────────────────────────────────────── */
+
+.floor {
   position: fixed;
   bottom: 0;
   left: 0;
@@ -29,24 +298,4 @@
   background-repeat: no-repeat;
   background-attachment: fixed;
   z-index: 10;
-}
-
-.wip-container {
-  text-align: center;
-  z-index: 20;
-  background: rgba(138, 43, 226, 0.15);
-  padding: 60px 80px;
-  border-radius: 30px;
-  backdrop-filter: blur(10px);
-  border: 3px solid rgba(138, 43, 226, 0.5);
-  box-shadow: 0 10px 40px rgba(138, 43, 226, 0.3);
-}
-
-.wip-container h1 {
-  font-size: 4rem;
-  color: #ffffff;
-  margin: 0;
-  text-shadow: 0 0 20px rgba(138, 43, 226, 0.8);
-  font-weight: bold;
-  letter-spacing: 2px;
 }
