@@ -57,6 +57,7 @@ export default function SongSearch() {
   const [userSongData, setUserSongData] = useState({})
   const [query, setQuery] = useState('')
   const [view, setView] = useState('all')
+  const [genreFilter, setGenreFilter] = useState(null)
 
   useEffect(() => {
     fetch('/api/songs')
@@ -88,9 +89,12 @@ export default function SongSearch() {
     })
   }
 
+  const genres = [...new Set(songs.map(s => s.genre).filter(Boolean))].sort()
+
   const filtered = songs
     .filter(s => s.show_in_search)
     .filter(s => view === 'songbook' ? userSongData[s.id]?.saved : true)
+    .filter(s => !genreFilter || s.genre === genreFilter)
     .filter(s => {
       if (!query) return true
       const q = query.toLowerCase()
@@ -127,11 +131,27 @@ export default function SongSearch() {
             <input
               type="text"
               className={styles['search-input']}
-              placeholder="Search for songs... (e.g., Bohemian Rhapsody)"
+              placeholder="Search for songs..."
               value={query}
               onChange={e => setQuery(e.target.value)}
             />
           </div>
+
+          {genres.length > 0 && (
+            <div className={styles['filter-row']}>
+              <button
+                className={`${styles['filter-btn']} ${genreFilter === null ? styles['filter-btn-active'] : ''}`}
+                onClick={() => setGenreFilter(null)}
+              >All</button>
+              {genres.map(genre => (
+                <button
+                  key={genre}
+                  className={`${styles['filter-btn']} ${genreFilter === genre ? styles['filter-btn-active'] : ''}`}
+                  onClick={() => setGenreFilter(g => g === genre ? null : genre)}
+                >{genre}</button>
+              ))}
+            </div>
+          )}
 
           <div className={styles['song-list']}>
             {filtered.length === 0 && view === 'songbook'
