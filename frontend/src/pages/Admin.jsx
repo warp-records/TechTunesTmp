@@ -289,6 +289,8 @@ function LessonPanel({ onClose }) {
   const [editingName, setEditingName] = useState('');
   const [editingGenreId, setEditingGenreId] = useState(null);
   const [editingGenre, setEditingGenre] = useState('');
+  const [editingArtistId, setEditingArtistId] = useState(null);
+  const [editingArtist, setEditingArtist] = useState('');
   const navigate = useNavigate();
 
   function fetchSongs() {
@@ -323,6 +325,17 @@ function LessonPanel({ onClose }) {
       body: JSON.stringify({ genre: editingGenre.trim() || null }),
     })
     setEditingGenreId(null)
+    fetchSongs()
+  }
+
+  async function handleArtistEdit(song) {
+    const token = localStorage.getItem('token')
+    await fetch(`/api/update_song?song_id=${song.id}`, {
+      method: 'PATCH',
+      headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ artist: editingArtist.trim() || null }),
+    })
+    setEditingArtistId(null)
     fetchSongs()
   }
 
@@ -364,6 +377,7 @@ function LessonPanel({ onClose }) {
                 <thead>
                   <tr>
                     <th>Song</th>
+                    <th>Artist</th>
                     <th>Instrument</th>
                     <th>Difficulty</th>
                     <th>Genre</th>
@@ -398,6 +412,32 @@ function LessonPanel({ onClose }) {
                                 className={styles['rename-btn']}
                                 onClick={e => { e.stopPropagation(); setEditingId(song.id); setEditingName(song.name) }}
                                 title="Rename"
+                              ><MdOutlineModeEdit /></button>
+                            </>
+                          )}
+                        </div>
+                      </td>
+                      <td>
+                        <div className={styles['song-name-cell']}>
+                          {editingArtistId === song.id ? (
+                            <input
+                              className={styles['search-input']}
+                              style={{ padding: '2px 6px', fontSize: '0.875rem' }}
+                              value={editingArtist}
+                              autoFocus
+                              placeholder="Artist"
+                              onChange={e => setEditingArtist(e.target.value)}
+                              onBlur={() => handleArtistEdit(song)}
+                              onKeyDown={e => { if (e.key === 'Enter') handleArtistEdit(song); if (e.key === 'Escape') setEditingArtistId(null) }}
+                              onClick={e => e.stopPropagation()}
+                            />
+                          ) : (
+                            <>
+                              <span>{song.artist ?? '—'}</span>
+                              <button
+                                className={styles['rename-btn']}
+                                onClick={e => { e.stopPropagation(); setEditingArtistId(song.id); setEditingArtist(song.artist ?? '') }}
+                                title="Edit artist"
                               ><MdOutlineModeEdit /></button>
                             </>
                           )}
