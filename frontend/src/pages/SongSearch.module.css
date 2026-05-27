@@ -199,7 +199,7 @@
   gap: 10px;
   overflow-y: auto;
   padding-right: 4px;
-  padding-bottom: 210px;
+  padding-bottom: 16px;
 }
 
 .song-list::-webkit-scrollbar {
@@ -337,6 +337,35 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* ── Scrolling marquee text ───────────────────────────── */
+
+.scroll-text {
+  display: block;
+  width: 100%;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.scroll-text-inner {
+  display: inline-block;
+  transform: translateX(0);
+  transition: transform 0.4s ease;
+}
+
+.scroll-text-overflow {
+  mask-image: linear-gradient(to right, black 0%, black calc(100% - 24px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, black 0%, black calc(100% - 24px), transparent 100%);
+}
+
+.song-card:hover .scroll-text-overflow .scroll-text-inner {
+  transform: translateX(var(--scroll-distance));
+  transition: transform 2s linear 0.4s;
 }
 
 /* ── Play button ──────────────────────────────────────── */

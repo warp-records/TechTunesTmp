@@ -3,6 +3,36 @@ import { Link, useNavigate } from 'react-router-dom'
 import { LuHouse, LuUser, LuSearch, LuDisc3, LuBookOpen, LuBookMarked, LuStar, LuPlay, LuBookOpenText, LuDog } from 'react-icons/lu'
 import styles from './SongSearch.module.css'
 
+function ScrollingText({ children }) {
+  const wrapperRef = useRef(null)
+  const innerRef = useRef(null)
+  const [overflow, setOverflow] = useState(0)
+
+  useEffect(() => {
+    const wrapper = wrapperRef.current
+    const inner = innerRef.current
+    if (!wrapper || !inner) return
+    const check = () => {
+      const diff = inner.scrollWidth - wrapper.clientWidth
+      setOverflow(diff > 0 ? diff : 0)
+    }
+    check()
+    const ro = new ResizeObserver(check)
+    ro.observe(wrapper)
+    return () => ro.disconnect()
+  }, [children])
+
+  return (
+    <div
+      ref={wrapperRef}
+      className={`${styles['scroll-text']} ${overflow > 0 ? styles['scroll-text-overflow'] : ''}`}
+      style={overflow > 0 ? { '--scroll-distance': `-${overflow + 16}px` } : undefined}
+    >
+      <span ref={innerRef} className={styles['scroll-text-inner']}>{children}</span>
+    </div>
+  )
+}
+
 function SongEntry({ song, saved, stars, onToggleSave, onStartLesson }) {
   return (
     <div className={styles['song-card']}>
@@ -26,7 +56,7 @@ function SongEntry({ song, saved, stars, onToggleSave, onStartLesson }) {
       <div className={styles['sep']} />
       <div className={`${styles['song-field']} ${styles['field-artist']}`}>
         <span className={styles['info-label']}>Artist</span>
-        <span className={styles['info-value']}>{song.artist ?? '—'}</span>
+        <ScrollingText>{song.artist ?? '—'}</ScrollingText>
       </div>
       <div className={styles['sep']} />
       <div className={`${styles['song-field']} ${styles['field-bpm']}`}>
