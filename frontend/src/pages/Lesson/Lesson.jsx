@@ -480,6 +480,7 @@ function LessonGame({ onRetry }) {
     const pct = totalNotes > 0 ? hitNotes / totalNotes * 100 : 0
     const gameOverStars = pct >= 90 ? 5 : pct >= 80 ? 4 : pct >= 65 ? 3 : pct >= 50 ? 2 : 1
     const { tile_number: playedTile, instrument, level } = tileInfoRef.current ?? {}
+    // todo: update this to use song ID only
     fetchUser(buildRequestToken(
       scoreRef.current,
       gameOverStars,
@@ -489,7 +490,7 @@ function LessonGame({ onRetry }) {
     ))
     const token = localStorage.getItem('token')
     localStorage.setItem('pointsGained', scoreRef.current)
-    if (gameOverStars >= 2) {
+    if (gameOverStars >= 2 && tileInfoRef.current) {
       fetch('/api/get_progress', { headers: { Authorization: 'Bearer ' + token } })
         .then(res => res.ok ? res.json() : null)
         .then(data => {

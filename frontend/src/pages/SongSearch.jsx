@@ -39,7 +39,7 @@ function SongEntry({ song, saved, stars, onToggleSave, onStartLesson }) {
         <span className={styles['info-value']}>{song.genre ?? '—'}</span>
       </div>
       <div className={styles['sep']} />
-      <button className={styles['play-btn']} onClick={onStartLesson} disabled={!song.tile}>
+      <button className={styles['play-btn']} onClick={onStartLesson}>
         <LuPlay />
         Start Lesson
       </button>
