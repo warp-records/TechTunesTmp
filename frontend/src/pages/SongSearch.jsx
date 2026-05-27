@@ -91,16 +91,9 @@ export default function SongSearch() {
   const listRef = useRef(null)
 
   useEffect(() => {
-    const DUMMY_SONGS = [
-      { id: 9001, name: 'Smoke on the Water', artist: 'Deep Purple', tempo: 112, genre: 'Rock', show_in_search: true },
-      { id: 9002, name: 'Wonderwall', artist: 'Oasis', tempo: 87, genre: 'Rock', show_in_search: true },
-      { id: 9003, name: 'Billie Jean', artist: 'Michael Jackson', tempo: 117, genre: 'Pop', show_in_search: true },
-      { id: 9004, name: 'Fur Elise', artist: 'Beethoven', tempo: 58, genre: 'Classical', show_in_search: true },
-      { id: 9005, name: 'Sweet Home Chicago', artist: 'Robert Johnson', tempo: 132, genre: 'Blues', show_in_search: true },
-    ]
     fetch('/api/songs')
       .then(r => r.ok ? r.json() : [])
-      .then(data => setSongs([...data, ...DUMMY_SONGS]))
+      .then(setSongs)
 
     const token = localStorage.getItem('token')
     if (token) {
