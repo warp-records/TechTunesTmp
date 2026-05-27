@@ -38,6 +38,7 @@ export default function LessonIslandPage() {
   const [currentTile, setCurrentTile] = useState(null)
   const [tileResults, setTileResults] = useState({})
   const [tileSongNames, setTileSongNames] = useState({})
+  const [tileSongIds, setTileSongIds] = useState({})
   const [tileUnlocked] = useState(() => localStorage.getItem('tileUnlocked') === 'true')
   const [jumpToNextLesson] = useState(() => localStorage.getItem('jumpToNextLesson') === 'true')
   useEffect(() => { localStorage.removeItem('tileUnlocked'); localStorage.removeItem('jumpToNextLesson') }, [])
@@ -52,14 +53,17 @@ export default function LessonIslandPage() {
     ]).then(([songs, data]) => {
       const names = {}
       const songTileMap = {}
+      const ids = {}
       for (const song of songs) {
         const tile = song.tile
         if (tile && tile.instrument === instrument && tile.level === level) {
           names[tile.tile_number] = song.name
+          ids[tile.tile_number] = song.id
           songTileMap[song.id] = tile.tile_number
         }
       }
       setTileSongNames(names)
+      setTileSongIds(ids)
 
       if (data) {
         const row = data.progress.find(p => p.instrument === instrument && p.level === level)
@@ -71,7 +75,8 @@ export default function LessonIslandPage() {
               new Audio(levelUnlockSrc).play()
               if (jumpToNextLesson) {
                 setTimeout(() => {
-                  navigate(`/lesson?tile_number=${row.unlocked_tile}&instrument=${instrument}&level=${level}`)
+                  const nextSongId = ids[row.unlocked_tile]
+                  if (nextSongId != null) navigate(`/lesson?song_id=${nextSongId}`)
                 }, 1800)
               }
             }, 800)
@@ -137,7 +142,7 @@ export default function LessonIslandPage() {
 
   return (
     <>
-      <LessonIslandScene scene={scene} assignSongId={assignSongId} onAssignTile={assignSongId ? onAssignTile : null} showTutorial={showTutorial} playTutorial={playLessonTutorial} closeTutorial={closeTutorial} avatarData={avatarData} currentTile={currentTile} tileResults={tileResults} tileSongNames={tileSongNames} />
+      <LessonIslandScene scene={scene} assignSongId={assignSongId} onAssignTile={assignSongId ? onAssignTile : null} showTutorial={showTutorial} playTutorial={playLessonTutorial} closeTutorial={closeTutorial} avatarData={avatarData} currentTile={currentTile} tileResults={tileResults} tileSongNames={tileSongNames} tileSongIds={tileSongIds} />
       {debug && <DebugTileMapper />}
       {showTutorial && <TutorialPopup {...tutorialPopupProps} />}
       {arrowPos && <ArrowIndicator x={arrowPos.x} y={arrowPos.y} direction="right" />}

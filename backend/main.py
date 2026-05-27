@@ -703,24 +703,21 @@ def song_meta(song_id: int, db: Session = Depends(get_db)):
         "difficulty": song.difficulty,
     }
 
-@app.get("/api/lesson_tile", tags=["songs"])
-def get_lesson_tile(tile_number: int, instrument: str, level: str, user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
+@app.get("/api/song_lesson", tags=["songs"])
+def song_lesson(song_id: int, user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
+    tile = db.query(LessonTileDB).filter(LessonTileDB.song_id == song_id).first()
+    if tile is None:
+        raise HTTPException(status_code=404, detail="Song not assigned to any lesson")
     progress = db.query(ProgressDB).filter(
         ProgressDB.user_id == user_id,
-        ProgressDB.instrument == instrument,
-        ProgressDB.level == level,
+        ProgressDB.instrument == tile.instrument,
+        ProgressDB.level == tile.level,
     ).first()
-    if progress is None or tile_number > progress.unlocked_tile:
+    if progress is None or tile.tile_number > progress.unlocked_tile:
         raise HTTPException(status_code=403, detail="Tile not unlocked")
-
-    tile = db.query(LessonTileDB).filter(
-        LessonTileDB.tile_number == tile_number,
-        LessonTileDB.instrument == instrument,
-        LessonTileDB.level == level,
-    ).first()
-    if tile is None or tile.song_id is None:
-        raise HTTPException(status_code=404, detail="No lesson assigned to this tile")
-    song = db.query(SongDB).filter(SongDB.id == tile.song_id).first()
+    song = db.query(SongDB).filter(SongDB.id == song_id).first()
+    if song is None:
+        raise HTTPException(status_code=404, detail="Song not found")
     with open(song.json_path, "r") as f:
         song_data = json.load(f)
     return {
@@ -730,6 +727,7 @@ def get_lesson_tile(tile_number: int, instrument: str, level: str, user_id: int 
         "tempo": song.tempo,
         "difficulty": song.difficulty,
         "data": song_data,
+        "tile": {"tile_number": tile.tile_number, "instrument": tile.instrument, "level": tile.level},
     }
 
 # decoy endpoint: score param is ignored, real score comes via cache_id on /api/me

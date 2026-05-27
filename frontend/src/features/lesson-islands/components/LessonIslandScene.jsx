@@ -52,7 +52,7 @@ function SceneAsset({ asset, className }) {
   )
 }
 
-function SceneHotspot({ hotspot, isAssigning, onAssignTile, instrument, level, showTutorial, playTutorial, closeTutorial, currentTile, onTileNavigate, bestStars, songName }) {
+function SceneHotspot({ hotspot, isAssigning, onAssignTile, instrument, level, showTutorial, playTutorial, closeTutorial, currentTile, onTileNavigate, bestStars, songName, tileSongIds }) {
   const hotspotStyle = {
     left: toPercent(hotspot.left),
     top: toPercent(hotspot.top),
@@ -86,9 +86,12 @@ function SceneHotspot({ hotspot, isAssigning, onAssignTile, instrument, level, s
     if (isAssigning && onAssignTile) {
       onAssignTile(hotspot.tile_number)
     } else if (isTile) {
+      const songId = tileSongIds?.[hotspot.tile_number]
       const path = playTutorial && hotspot.tile_number === 1
         ? '/lesson_tutorial'
-        : `/lesson?tile_number=${hotspot.tile_number}&instrument=${instrument}&level=${level}`
+        : songId != null
+          ? `/lesson?song_id=${songId}`
+          : `/lesson?tile_number=${hotspot.tile_number}&instrument=${instrument}&level=${level}`
       if (playTutorial && hotspot.tile_number === 1) closeTutorial?.()
       onTileNavigate(hotspot.tile_number, path)
     }
@@ -118,7 +121,7 @@ function SceneHotspot({ hotspot, isAssigning, onAssignTile, instrument, level, s
   )
 }
 
-export default function LessonIslandScene({ scene, assignSongId, onAssignTile, showTutorial, playTutorial, closeTutorial, avatarData, currentTile, tileResults = {}, tileSongNames = {} }) {
+export default function LessonIslandScene({ scene, assignSongId, onAssignTile, showTutorial, playTutorial, closeTutorial, avatarData, currentTile, tileResults = {}, tileSongNames = {}, tileSongIds = {} }) {
   const navigate = useNavigate()
   const [displayTile, setDisplayTile] = useState(currentTile)
   const navTimeoutRef = useRef(null)
@@ -170,7 +173,7 @@ export default function LessonIslandScene({ scene, assignSongId, onAssignTile, s
           ))}
 
           {scene.hotspots?.map((hotspot) => (
-            <SceneHotspot key={hotspot.id} hotspot={hotspot} isAssigning={!!assignSongId} onAssignTile={onAssignTile} instrument={scene.instrument} level={scene.level} showTutorial={showTutorial} playTutorial={playTutorial} closeTutorial={closeTutorial} currentTile={currentTile} onTileNavigate={handleTileNavigate} bestStars={tileResults[hotspot.tile_number] ?? 0} songName={tileSongNames[hotspot.tile_number]} />
+            <SceneHotspot key={hotspot.id} hotspot={hotspot} isAssigning={!!assignSongId} onAssignTile={onAssignTile} instrument={scene.instrument} level={scene.level} showTutorial={showTutorial} playTutorial={playTutorial} closeTutorial={closeTutorial} currentTile={currentTile} onTileNavigate={handleTileNavigate} bestStars={tileResults[hotspot.tile_number] ?? 0} songName={tileSongNames[hotspot.tile_number]} tileSongIds={tileSongIds} />
           ))}
 
           {avatarData && displayTile != null && (() => {

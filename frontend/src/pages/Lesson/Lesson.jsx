@@ -77,9 +77,11 @@ export default function Lesson() {
 function LessonGame({ onRetry }) {
   const { fetchUser } = useAuth()
   const navigate = useNavigate()
-  // contains the tile number, instrument, and level number
   const [searchParams] = useSearchParams()
-  const islandUrl = `/lesson-islands/${searchParams.get('instrument')}/${searchParams.get('level')}`;
+  const tileInfoRef = useRef(null)
+  const islandUrl = tileInfoRef.current
+    ? `/lesson-islands/${tileInfoRef.current.instrument}/${tileInfoRef.current.level}`
+    : '/homepage'
   const [songName, setSongName] = useState('')
   const [levelNum, setLevelNum] = useState(1)
   const [ready, setReady] = useState(false)
@@ -95,12 +97,7 @@ function LessonGame({ onRetry }) {
   }
 
   useEffect(() => {
-    const params = new URLSearchParams({
-      tile_number: searchParams.get('tile_number'),
-      instrument: searchParams.get('instrument'),
-      level: searchParams.get('level'),
-    })
-    fetch(`/api/lesson_tile?${params}`, {
+    fetch(`/api/song_lesson?song_id=${searchParams.get('song_id')}`, {
       headers: { Authorization: 'Bearer ' + localStorage.getItem('token') }
     }).then(r => {
         if (!r.ok) { navigate('/bad_page'); return null }
@@ -108,19 +105,15 @@ function LessonGame({ onRetry }) {
       })
       .then(data => {
         if (!data) return
-        // replace songChartRef notes mapping in the fetch:
-        const baseBpm = data.data.bpm
-        updateBpm(baseBpm)
-
-        const notes = data.data.notes.map(n => ({
-          time: n.beat_time,  // keep raw, don't convert yet
+        tileInfoRef.current = data.tile
+        updateBpm(data.data.bpm)
+        songChartRef.current = data.data.notes.map(n => ({
+          time: n.beat_time,
           string: n.string,
           fret: n.fret,
           slide_start: n.slide_start ?? false,
           slide_stop: n.slide_stop ?? false,
         }))
-        
-        songChartRef.current = notes
         setSongName(data.name)
         setReady(true)
       })
@@ -486,18 +479,16 @@ function LessonGame({ onRetry }) {
     const hitNotes = inputHistory.current.filter(e => e.type === 'hit').length
     const pct = totalNotes > 0 ? hitNotes / totalNotes * 100 : 0
     const gameOverStars = pct >= 90 ? 5 : pct >= 80 ? 4 : pct >= 65 ? 3 : pct >= 50 ? 2 : 1
+    const { tile_number: playedTile, instrument, level } = tileInfoRef.current ?? {}
     fetchUser(buildRequestToken(
       scoreRef.current,
       gameOverStars,
-      Number(searchParams.get('tile_number')),
-      searchParams.get('instrument'),
-      searchParams.get('level'),
+      playedTile,
+      instrument,
+      level,
     ))
     const token = localStorage.getItem('token')
     localStorage.setItem('pointsGained', scoreRef.current)
-    const playedTile = Number(searchParams.get('tile_number'))
-    const instrument = searchParams.get('instrument')
-    const level = searchParams.get('level')
     if (gameOverStars >= 2) {
       fetch('/api/get_progress', { headers: { Authorization: 'Bearer ' + token } })
         .then(res => res.ok ? res.json() : null)
@@ -512,12 +503,7 @@ function LessonGame({ onRetry }) {
     fetch('/api/submit_lesson_score', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
-      body: JSON.stringify({
-        tile_number: Number(searchParams.get('tile_number')),
-        instrument: searchParams.get('instrument'),
-        level: searchParams.get('level'),
-        score: scoreRef.current,
-      }),
+      body: JSON.stringify({ tile_number: playedTile, instrument, level, score: scoreRef.current }),
     })
     setFadeStrings(true)
     setTimeout(() => setFadeFrets(true), 1000)

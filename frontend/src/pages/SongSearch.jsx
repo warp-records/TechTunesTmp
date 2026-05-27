@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { LuHouse, LuUser, LuSearch, LuDisc3, LuBookOpen, LuBookMarked, LuStar, LuPlay, LuBookOpenText, LuDog } from 'react-icons/lu'
 import styles from './SongSearch.module.css'
 
-function SongEntry({ song, saved, stars, onToggleSave }) {
+function SongEntry({ song, saved, stars, onToggleSave, onStartLesson }) {
   return (
     <div className={styles['song-card']}>
       <div className={styles['disc-wrap']}>
@@ -39,7 +39,7 @@ function SongEntry({ song, saved, stars, onToggleSave }) {
         <span className={styles['info-value']}>{song.genre ?? '—'}</span>
       </div>
       <div className={styles['sep']} />
-      <button className={styles['play-btn']}>
+      <button className={styles['play-btn']} onClick={onStartLesson} disabled={!song.tile}>
         <LuPlay />
         Start Lesson
       </button>
@@ -52,6 +52,7 @@ function SongEntry({ song, saved, stars, onToggleSave }) {
 }
 
 export default function SongSearch() {
+  const navigate = useNavigate()
   const [songs, setSongs] = useState([])
   const [userSongData, setUserSongData] = useState({})
   const [query, setQuery] = useState('')
@@ -145,6 +146,7 @@ export default function SongSearch() {
                     saved={userSongData[song.id]?.saved ?? false}
                     stars={userSongData[song.id]?.best_stars ?? 0}
                     onToggleSave={() => toggleSave(song.id)}
+                    onStartLesson={() => navigate(`/lesson?song_id=${song.id}`)}
                   />
                 ))
             }
