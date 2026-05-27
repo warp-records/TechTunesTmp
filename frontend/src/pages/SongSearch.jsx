@@ -26,7 +26,7 @@ function SongEntry({ song, saved, stars, onToggleSave, onStartLesson }) {
       <div className={styles['sep']} />
       <div className={`${styles['song-field']} ${styles['field-artist']}`}>
         <span className={styles['info-label']}>Artist</span>
-        <span className={styles['info-value']}></span>
+        <span className={styles['info-value']}>{song.artist ?? '—'}</span>
       </div>
       <div className={styles['sep']} />
       <div className={`${styles['song-field']} ${styles['field-bpm']}`}>

@@ -52,6 +52,7 @@ class SongDB(Base):
     tempo = Column(Integer, nullable=False)
     difficulty = Column(Integer, nullable=True)
     
+    artist = Column(String, nullable=True)
     musicxml_path = Column(String, nullable=False)
     json_path = Column(String, nullable=False)
     show_in_search = Column(Boolean, nullable=False, default=True)

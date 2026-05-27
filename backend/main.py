@@ -638,11 +638,14 @@ async def upload_song(song_file: UploadFile, _: None = Depends(is_admin), db: Se
     if existing:
         existing.instrument = song.instrument
         existing.tempo = song.tempo
+        if song.artist is not None:
+            existing.artist = song.artist
     else:
         db.add(SongDB(
             name=song.name,
             instrument=song.instrument,
             tempo=song.tempo,
+            artist=song.artist,
             musicxml_path=musicxml_path,
             json_path=json_path,
         ))
@@ -659,7 +662,7 @@ def get_songs(db: Session = Depends(get_db)):
         for t in db.query(LessonTileDB).all() if t.song_id is not None
     }
     return [
-        {"id": s.id, "name": s.name, "instrument": s.instrument, "tempo": s.tempo, "difficulty": s.difficulty, "genre": s.genre, "tile": tile_map.get(s.id), "show_in_search": s.show_in_search}
+        {"id": s.id, "name": s.name, "artist": s.artist, "instrument": s.instrument, "tempo": s.tempo, "difficulty": s.difficulty, "genre": s.genre, "tile": tile_map.get(s.id), "show_in_search": s.show_in_search}
         for s in songs
     ]
 
@@ -736,6 +739,7 @@ def submit_lesson_score(body: LessonScoreSubmission, _: int = Depends(get_curren
 
 class UpdateSongRequest(BaseModel):
     name: Optional[str] = None
+    artist: Optional[str] = None
     show_in_search: Optional[bool] = None
     genre: Optional[str] = None
 
@@ -746,6 +750,8 @@ def update_song(song_id: int, body: UpdateSongRequest, _: None = Depends(is_admi
         raise HTTPException(status_code=404, detail="Song not found")
     if body.name is not None:
         song.name = body.name
+    if body.artist is not None:
+        song.artist = body.artist
     if body.show_in_search is not None:
         song.show_in_search = body.show_in_search
     if body.genre is not None:

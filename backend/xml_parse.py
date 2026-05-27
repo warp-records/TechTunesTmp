@@ -80,11 +80,12 @@ class Note:
        
      
 class Song:
-    def __init__(self, name: str, instrument: str, tempo: int, data: list):
+    def __init__(self, name: str, instrument: str, tempo: int, data: list, artist: str | None = None):
         self.name = name
         self.instrument = instrument
         self.tempo = tempo
         self.data = data
+        self.artist = artist
 
     def to_json(self) -> str:
         return json.dumps({ 'name': self.name, 'instrument': self.instrument, 'bpm': self.tempo, 'notes': self.data })
@@ -140,6 +141,8 @@ def parse_song(file: BytesIO, allow_unplayable: bool = False) -> tuple[Song, int
     movement_title = root.find("movement-title")
     work_title = root.find("work/work-title")
     name = (movement_title if movement_title is not None else work_title).text # type: ignore[union-attr]
+    creator_el = root.find(".//identification/creator[@type='composer']")
+    artist = creator_el.text.strip() if creator_el is not None and creator_el.text else None
 
     # time in score in beats
     curr_time = 0
@@ -247,7 +250,7 @@ def parse_song(file: BytesIO, allow_unplayable: bool = False) -> tuple[Song, int
 
             output.append(output_note)
 
-    return Song(name, instrument, bpm, output), skipped_notes
+    return Song(name, instrument, bpm, output, artist), skipped_notes
 
 
 if __name__ == "__main__":
