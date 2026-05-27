@@ -199,10 +199,6 @@ export default function Userpage() {
                 </a>
                 {/* <a role="menuitem">Add Spotify</a> */}
                 {/* <a role="menuitem">Add Apple Music</a> */}
-                <a role="menuitem">
-                  <span>SongBook</span>
-                  <LuBook />
-                </a>
                 {authUser?.admin && (
                   <Link to="/admin" style={{ color: "#66aaff" }}>
                     <span>Admin</span>

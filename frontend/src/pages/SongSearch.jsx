@@ -105,9 +105,6 @@ export default function SongSearch() {
           <Link to="/homepage" className={styles['sidebar-icon-btn']} title="Home">
             <LuHouse />
           </Link>
-          <Link to="/userpage" className={styles['sidebar-icon-btn']} title="Profile">
-            <LuUser />
-          </Link>
           <div
             className={`${styles['sidebar-songbook']} ${view === 'all' ? styles['sidebar-songbook-active'] : ''}`}
             onClick={() => setView('all')}
