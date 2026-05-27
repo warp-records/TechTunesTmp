@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { LuHouse, LuUser, LuSearch, LuDisc3, LuBookOpen, LuBookMarked, LuStar, LuPlay, LuBookOpenText, LuDog } from 'react-icons/lu'
 import styles from './SongSearch.module.css'
@@ -58,11 +58,19 @@ export default function SongSearch() {
   const [query, setQuery] = useState('')
   const [view, setView] = useState('all')
   const [genreFilter, setGenreFilter] = useState(null)
+  const listRef = useRef(null)
 
   useEffect(() => {
+    const DUMMY_SONGS = [
+      { id: 9001, name: 'Smoke on the Water', artist: 'Deep Purple', tempo: 112, genre: 'Rock', show_in_search: true },
+      { id: 9002, name: 'Wonderwall', artist: 'Oasis', tempo: 87, genre: 'Rock', show_in_search: true },
+      { id: 9003, name: 'Billie Jean', artist: 'Michael Jackson', tempo: 117, genre: 'Pop', show_in_search: true },
+      { id: 9004, name: 'Fur Elise', artist: 'Beethoven', tempo: 58, genre: 'Classical', show_in_search: true },
+      { id: 9005, name: 'Sweet Home Chicago', artist: 'Robert Johnson', tempo: 132, genre: 'Blues', show_in_search: true },
+    ]
     fetch('/api/songs')
       .then(r => r.ok ? r.json() : [])
-      .then(setSongs)
+      .then(data => setSongs([...data, ...DUMMY_SONGS]))
 
     const token = localStorage.getItem('token')
     if (token) {
@@ -100,6 +108,17 @@ export default function SongSearch() {
       const q = query.toLowerCase()
       return s.name.toLowerCase().includes(q) || (s.genre ?? '').toLowerCase().includes(q)
     })
+
+  useEffect(() => {
+    const list = listRef.current
+    if (!list) return
+    const observer = new IntersectionObserver(
+      entries => entries.forEach(e => e.target.classList.toggle(styles['visible'], e.isIntersecting)),
+      { root: list, rootMargin: '-60px 0px', threshold: 0 }
+    )
+    Array.from(list.children).forEach(card => observer.observe(card))
+    return () => observer.disconnect()
+  }, [filtered])
 
   return (
     <div className={styles['song-search-page']}>
@@ -153,7 +172,7 @@ export default function SongSearch() {
             </div>
           )}
 
-          <div className={styles['song-list']}>
+          <div className={styles['song-list']} ref={listRef}>
             {filtered.length === 0 && view === 'songbook'
               ? <div className={styles['empty-msg']}>Nothing to see here <LuDog /></div>
               : filtered.map(song => (
