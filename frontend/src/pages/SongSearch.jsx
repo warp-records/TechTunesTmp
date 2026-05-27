@@ -93,7 +93,7 @@ export default function SongSearch() {
 
   const filtered = songs
     .filter(s => s.show_in_search)
-    .filter(s => view === 'songbook' ? (userSongData[s.id]?.saved || userSongData[s.id]?.best_stars > 0) : true)
+    .filter(s => view === 'songbook' ? userSongData[s.id]?.saved : true)
     .filter(s => !genreFilter || s.genre === genreFilter)
     .filter(s => {
       if (!query) return true
