@@ -92,7 +92,7 @@ export default function SongSearch() {
   const genres = [...new Set(songs.map(s => s.genre).filter(Boolean))].sort()
 
   const filtered = songs
-    .filter(s => s.show_in_search)
+    .filter(s => s.show_in_search || userSongData[s.id]?.best_stars > 0)
     .filter(s => view === 'songbook' ? userSongData[s.id]?.saved : true)
     .filter(s => !genreFilter || s.genre === genreFilter)
     .filter(s => {
